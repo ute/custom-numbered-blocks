@@ -1,0 +1,93 @@
+---
+title: "Custom-numbered-blocks Example"
+filters:
+  - custom-numbered-blocks
+format:
+  html: default
+  pdf: default
+
+custom-numbered-blocks:
+  groups:
+    thmlike:
+      colors: [caace6, 7719aa]
+      boxstyle: fancybox.simple
+    todos: default  
+  classes:
+    Theorem:
+      group: thmlike
+    Conjecture:
+      group: thmlike
+    Definition:
+      group: thmlike
+      colors: [d999d3, a01793]
+    Feature: default
+    TODO:
+      label: "To do"
+      colors: [e7b1b4, 8c3236]
+      collapse: false
+      group: todos
+    DONE:
+      label: "DONE is Done :-)"
+      colors: [cce7b1, 86b754]  
+      group: todos
+
+
+---
+
+## Custom blocks and crossreferencing
+
+With this filter, you can define custom div classes (environments) that come with numbering, such as theorems, examples, exercises. The filter supports output formats pdf and html.
+
+::: Feature
+### Numbering
+Numbering is (currently) within section for single documents, or within chapter for books. Grouped classes share the same counter, and the same default style.
+
+Numbered custom blocks can be cross-referenced with `\ref`.
+
+Default numbering can be switched off for the whole class by setting the `numbered` to false, or for an individual block by adding the class `unnumbered`.
+:::
+
+::: {.Feature title="Block box style"}
+The default style for custom divs is `fancybox`: a collapsible similar to quarto's callouts, with a collapse button at the bottom that makes it easier collapse long boxes, and box open to the right. It comes with the variant `fancybox.simple`, with closed box and no additional close button.
+:::
+
+
+## Pseudomath examples
+
+::: Definition
+### F$\alpha$ncybox
+A box is called *f$\alpha$ncybox* if it looks quite fancy. 
+
+In this context, by *fancy* we mean that the title of the box appears as a clickable button when rendered as html, where *clickable* implies that it throws a small shadow that becomes bigger when hovering over it.
+:::
+
+::: {.Conjecture #TeachersHope}
+Students are lured into clicking on the title and unfolding the fancybox. 
+::: 
+
+::: {.Theorem #TeacherHopes collapse="true"}
+This extension has been written by a teacher who hopes that students read the course notes...
+:::
+
+Theorem \ref{TeacherHopes} is suggested by Conjecture \ref{TeachersHope}, but it cannot be proven theoretically. It does give rise to more conjectures, though.
+
+::: {.Conjecture .unnumbered}
+The teacher mentioned in Theorem \ref{Teacherhopes} is a statistician who got addicted to quarto due to James J Balamuta's web-r extension, and desparately wanted to have a common counter for theorem and alike.
+:::
+
+## Future plans
+
+Here are some of the features planned for future releases.
+
+::: TODO
+### Custom styles
+- [ ] create an API for user defined block styles
+- [ ] provide an example
+- [ ] and documentation
+:::
+
+::: TODO
+### Custom list of blocks
+Make lists of selected block classes available as `qmd` , optionally intermitted with headers from the document for easy customization and commenting.
+This way, one could make a list of all definitions, examples, or {theorems, propositions and lemmas} etc.
+:::
