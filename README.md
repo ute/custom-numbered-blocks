@@ -17,7 +17,9 @@ If you're using version control, you will want to check in this directory.
 
 ## Using
 
-### Define and use a new class: minimal example
+Usage is illustrated more comprehensively in `example.qmd`.
+
+### Defining and using a user defined class
 To specify a new class of numbered div blocks, `Example`, say, add yaml code:
 ```yaml
 custom-numbered-blocks:
@@ -35,7 +37,7 @@ here is some exemplary text
 ### Change default options for a class
 The default style (and currently only possible style) renders as a collapsible box with title button, similar to quarto callouts. You can change the following options in yaml or individually in the div specification:
   - `colors` : an array of two hex rgb color codes, for title button color and frame color. `colors: [a08080, 500000]` would give a pink title button and dark red frame.
-  - `collapsed`: boolean, default `true`. Initial state of the collapsible box.
+  - `collapse`: boolean, default `true`. Initial state of the collapsible box.
   - `label`: the label to print before the number (string).
 
 ### Groups of classes with joint counter and joint default style
