@@ -35,17 +35,17 @@ ul.task-list li input[type="checkbox"] {
 <link href="example_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <link href="example_files/libs/quarto-contrib/foldbox/foldbox.css" rel="stylesheet">
 <style>
-.Definition {
-  --color1: #d999d3;
-  --color2: #a01793;
-}
-.DONE {
-  --color1: #cce7b1;
-  --color2: #86b754;
-}
 .Feature {
   --color1: #c0c0c0;
   --color2: #808080;
+}
+.Corollary {
+  --color1: #948bde;
+  --color2: #584eab;
+}
+.Definition {
+  --color1: #d999d3;
+  --color2: #a01793;
 }
 .Conjecture {
   --color1: #948bde;
@@ -55,11 +55,11 @@ ul.task-list li input[type="checkbox"] {
   --color1: #e7b1b4;
   --color2: #8c3236;
 }
-.Theorem {
-  --color1: #948bde;
-  --color2: #584eab;
+.DONE {
+  --color1: #cce7b1;
+  --color2: #86b754;
 }
-.Corollary {
+.Theorem {
   --color1: #948bde;
   --color2: #584eab;
 }
@@ -96,10 +96,15 @@ ul.task-list li input[type="checkbox"] {
 <h1 data-number="1"><span class="header-section-number">1</span> Custom blocks and crossreferencing</h1>
 <p>With this filter, you can define custom div classes (environments) that come with numbering, such as theorems, examples, exercises. The filter supports output formats pdf and html.</p>
 <div id="numbering" class="Feature" title="Numbering">
-<p></p><details class="Feature fbx-default closebutton"><summary><strong>Feature 1.1: </strong>Numbering</summary><div>Numbering is (currently) within section for single documents, or within chapter for books. Grouped classes share the same counter, and the same default style.<p></p>
+<details class="Feature fbx-default closebutton"><summary><strong>Feature 1.1: </strong>Numbering</summary><div>
+<p>Numbering is (currently) within section for single documents, or within chapter for books. Grouped classes share the same counter, and the same default style.</p>
 <p>Numbered custom blocks can be cross-referenced with <code>\ref</code>.</p>
 <p>Default numbering can be switched off for the whole class by setting the <code>numbered</code> to false, or for an individual block by adding the class <code>unnumbered</code>.</p>
 <p>Crossreferences my need a re-run to update.</p>
+<div id="boxes-can-be-nested" class="Feature" title="Boxes can be nested">
+<p></p><details class="Feature fbx-default closebutton"><summary><strong>Feature: </strong>Boxes can be nested</summary><div>However, inner boxes are not numbered – it would be hard to put them in a sequence with outer boxes anyway.<p></p>
+</div></details>
+</div>
 </div></details>
 </div>
 <div class="DONE">
@@ -132,7 +137,7 @@ ul.task-list li input[type="checkbox"] {
 </div></details>
 </div>
 <div class="Corollary">
-<p></p><details class="Corollary fbx-default closebutton"><summary><strong>Corollary 2.2</strong></summary><div>By Definition <span class="math inline">\(\ref{fancy}\)</span>, <code>foldboxes</code> are fancyboxes.<p></p>
+<p></p><details class="Corollary fbx-default closebutton"><summary><strong>Corollary 2.2</strong></summary><div>By Definition <a href="#fancy">2.1</a>, <code>foldboxes</code> are fancyboxes.<p></p>
 <p>Needs fix: ref filter does not crawl into divs yet.</p>
 </div></details>
 </div>

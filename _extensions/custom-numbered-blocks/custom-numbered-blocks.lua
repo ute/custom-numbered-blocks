@@ -59,8 +59,12 @@ local function ifelse(condition, iftrue, iffalse)
   if condition then return iftrue else return iffalse end
 end  
 
-local function ifnil(existvalue, replacevalue)
-  if existvalue then return existvalue else return replacevalue end
+local function replaceifnil(existvalue, replacevalue)
+  if existvalue ~= nil then return existvalue else return replacevalue end
+end  
+
+local function replaceifempty(existvalue, replacevalue)
+  if existvalue == nil or existvalue=="" then return replacevalue else return existvalue end
 end  
 
 
@@ -205,12 +209,12 @@ local function Meta_initClassDefaults (meta)
     local clinfo = DeInline(val)
     -- classinfo[key] = DeInline(val)
     table.insert(fbx.knownclasses, str(key))
-    local theGroup = ifnil(clinfo.group, "default")
+    local theGroup = replaceifnil(clinfo.group, "default")
     clinfo = updateTable(groupDefaults[theGroup], clinfo)
-    clinfo.label = ifnil(clinfo.label, str(key))
-    clinfo.reflabel = ifnil(clinfo.reflabel, clinfo.label)
+    clinfo.label = replaceifnil(clinfo.label, str(key))
+    clinfo.reflabel = replaceifnil(clinfo.reflabel, clinfo.label)
     -- assign counter --  
-    clinfo.cntname = ifnil(clinfo.group, str(key))
+    clinfo.cntname = replaceifnil(clinfo.group, str(key))
     fbx.counter[clinfo.cntname] = 0 -- sets the counter up if non existing
     fbx.classDefaults[key] = clinfo
   end 
@@ -250,12 +254,14 @@ local function fboxDiv_setAttributes(el, cls, prefix)
   local idnumber = "0.0"
    
   -- mark known, set prefix
-  ela._process_me = "true"
-  ela._fbxclass = str(cls)
+
+ -- ela._process_me = "true"
+ -- ela._fbxclass = str(cls)
   ela._prefix = prefix
 
-  if id == nil then id = "" end
-  if tag == nil then tag = "" end
+  id = replaceifnil(id ,"") 
+  tag = replaceifnil(tag ,"") 
+  
   
   --- determine if numbered and / or tagged ------
   
@@ -275,7 +281,9 @@ local function fboxDiv_setAttributes(el, cls, prefix)
     
   cnts = fbx.counter[cntkey] +1
   fbx.counter[cntkey] = cnts
-  
+ 
+  idnumber = ifelse(prefix ~= "", prefix .. '.' .. cnts, str(cnts))
+  --[[
   if prefix ~="" then  idnumber = prefix .. '.' .. cnts
     else idnumber = str(cnts)
   end    
@@ -285,6 +293,8 @@ local function fboxDiv_setAttributes(el, cls, prefix)
     else tag = idnumber.."("..tag..")" 
     end  
   end  
+]]--
+  if numbered then tag = idnumber..ifelse(tagged, "("..tag..")", "" ) end
 
   if id == "" then
     if numbered then
@@ -297,7 +307,7 @@ local function fboxDiv_setAttributes(el, cls, prefix)
   end  
   
  --- update div attributes -------
-  
+  --[[
  if ela.collapse then 
   ela._collapse = str(ela.collapse)
   else ela._collapse = ClassDef.collapse 
@@ -311,7 +321,7 @@ end
 if ela.label then ela._label = ela.label else ela._label = ClassDef.label end
 
 if ela.reflabel then ela._reflabel = ela.reflabel else ela._reflabel = ClassDef.reflabel end
-
+--]]
   -- do not change identifier el.identifier = id
   
   ela._autoid = autoid 
@@ -320,6 +330,25 @@ if ela.reflabel then ela._reflabel = ela.reflabel else ela._reflabel = ClassDef.
  -- pout("tag: "..tag)
  -- pout(el.attributes)
   return(el)
+end
+
+-- initial attributes without prefix and counts to allow for inner boxes
+
+local function fboxDiv_mark_for_processing(div)
+  local diva=div.attributes
+  local cls = fbx.is_cunumblo(div)
+  local ClassDef = fbx.classDefaults[cls]
+  if(cls) then
+    diva._process_me = "true"
+    diva._fbxclass = str(cls)
+    diva._prefix = ""
+    diva._tag = ""
+    diva._collapse = str(replaceifnil(diva.collapse, ClassDef.collapse)) 
+    diva._boxstyle = str(replaceifnil(diva.boxstyle, ClassDef.boxstyle)) 
+    diva._label = str(replaceifnil(diva.label, ClassDef.label)) 
+    diva._reflabel = str(replaceifnil(diva.reflabel, ClassDef.reflabel)) 
+    end  
+  return(div)
 end
 
 
@@ -362,6 +391,7 @@ local function Pandoc_prefix_count(doc)
          for k in pairs(fbx.counter) do fbx.counter[k]=0 end
       end  
 
+      -- problem: only the outer divs are captured
     elseif blk.t=="Div" then 
         local known = fbx.is_cunumblo(blk)
         if  known then 
@@ -419,6 +449,17 @@ local function Divs_maketitle(el)
  
 ---------------- initialize xref ----------
 -- xrefinit = require ("fbx3")
+
+local function pandocblocks(doc)
+  for k,v in pairs(doc.blocks) do
+    pout(v.t)
+  end
+end
+
+local function pandocdivs(div)
+  pout(div.t.." - "..div.identifier)
+  pout(div.attributes)
+end
 
 
 -- xref split into prepare and finalize to allow xref in titles (future)
@@ -657,7 +698,11 @@ return{
     end 
     }
     ]]--
-  , {Meta = Meta_readxref, Pandoc = Pandoc_prefix_count} 
+  , {Meta = Meta_readxref, Div=fboxDiv_mark_for_processing,
+     Pandoc = Pandoc_prefix_count} 
+ -- , {Div=pandocdivs, Pandoc=pandocblocks}
+  --[[ ]]
+   
   , {Pandoc = Pandoc_preparexref}
   , {Pandoc = Pandoc_resolvexref}
   , {Div = Divs_maketitle}
@@ -666,5 +711,6 @@ return{
   , {Div = renderDiv}
   , {Pandoc = insertStylesPandoc}
   , {Div = Div_cleanupAttribs}
+ -- ]]
 }
 
