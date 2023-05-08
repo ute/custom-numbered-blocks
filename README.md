@@ -65,5 +65,5 @@ custom-numbered-blocks:
 
 ## Example
 
-Here is the source code for a (not so) minimal example: [example.qmd](example.qmd). And here's the rendered [example.html](doc/example.html) and [example.pdf](doc/example.pdf) 
+Here is the source code for a (not so) minimal example: [example.qmd](example.qmd). And here's the rendered [example.html](https://ute.github.io/custom-numbered-blocks/doc/example.html) and [example.pdf](doc/example.pdf) 
 
