@@ -108,5 +108,5 @@ This extension has been written by a teacher who hopes that students read the co
 Theorem \ref{TeacherHopes} is suggested by Conjecture \ref{TeachersHope}, but it cannot be proven theoretically. It does give rise to more conjectures, though.
 
 ::: {.Conjecture .unnumbered}
-The teacher mentioned in Theorem \ref{Teacherhopes} is a statistician who got addicted to quarto due to James J Balamuta's web-r extension, and desparately wanted to have a common counter for theorem and alike. She got also convinced that everything is possible in quarto by the many nice extensions from Shafayet Khan Shafee. 
+The teacher mentioned in Theorem \ref{TeacherHopes} is a statistician who got addicted to quarto due to James J Balamuta's web-r extension, and desparately wanted to have a common counter for theorem and alike. She got also convinced that everything is possible in quarto by the many nice extensions from Shafayet Khan Shafee. 
 :::
