@@ -1,4 +1,4 @@
-# (coming soon :-) Custom Numbered Blocks Extension for Quarto
+# Custom Numbered Blocks Extension for Quarto
 
 This extension provides user defined custom div classes (environments) that come with numbering, such as theorems, examples, exercises. Numbered blocks can be cross referenced. 
 
@@ -6,10 +6,14 @@ By default, the div's text block is enclosed in a collapsible box, similar to qu
 
 The filter supports output formats pdf and html.
 
+## Status
+
+This is still a very preliminary version
+
 ## Installing
 
 ```bash
-quarto add <ute>/custom-numbered-blocks
+quarto add ute/custom-numbered-blocks
 ```
 
 This will install the extension under the `_extensions` subdirectory.
@@ -61,5 +65,5 @@ custom-numbered-blocks:
 
 ## Example
 
-Here is the source code for a (not so) minimal example: [example.qmd](example.qmd).
+Here is the source code for a (not so) minimal example: [example.qmd](example.qmd). And here's the rendered [example.html](doc/example.html) and [example.pdf](doc/example.pdf) 
 
