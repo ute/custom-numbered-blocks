@@ -29,7 +29,8 @@ blockStart = function (tt, fmt)
   
   elseif fmt =="tex" then
     if tt.boxstyle=="simplebox" then texEnv = "fbxSimple" end
-    return('\\begin{'..texEnv..'}{'..tt.type..'}{'..tt.typtitel..'}{'..tt.title..'}\n')
+    return('\\begin{'..texEnv..'}{'..tt.type..'}{'..tt.typtitel..'}{'..tt.title..'}\n'..
+           '\\phantomsection\\label{'..tt.id..'}\n')
   else  
     return("<details><summary>Hallihallo</summary>")
   end

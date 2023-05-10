@@ -567,13 +567,14 @@ end
 -------------- render -------------------
 -- render = require ("fbx4")
 
-local tt_from_attributes = function(A)
+local tt_from_attributes_id = function(A, id)
   local tyti =""
   local tt = {}
   if A._tag == "" then tyti = A._label 
   else tyti = A._label..' '..A._tag end 
 --    print("TYTI: === "..tyti)
-tt = {type = A._fbxclass, 
+tt = {id = id,
+      type = A._fbxclass, 
       title = A._title, 
       titeltyp = A._label,
       typtitel = tyti,
@@ -596,7 +597,7 @@ renderDiv = function(thediv)
   if A._fbxclass ~= nil then
     
     collapsstr = str(A._collapse)
-    tt = tt_from_attributes(A)
+    tt = tt_from_attributes_id(A, thediv.identifier)
     
     local fmt='html'
     if quarto.doc.is_format("pdf") then fmt = "tex" end;
@@ -686,7 +687,7 @@ local function listof(doc)
       if blk.level==1 then zeile = ("\n## "..str(blk.content).."\n") end
     elseif blk.t=="Div" then 
       if blk.attributes._process_me then
-        tt = tt_from_attributes (blk.attributes)
+        tt = tt_from_attributes_id (blk.attributes, blk.identifier)
         zeile = ("\n[**"..tt.typtitel.."**](#"..blk.identifier..")"..ifelse(tt.title=="","",": "..tt.title)..
               " \\Pageref{"..blk.identifier.."}")
       end 
