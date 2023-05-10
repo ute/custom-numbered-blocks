@@ -253,15 +253,11 @@ local function fboxDiv_setAttributes(el, cls, prefix)
   local cnts = 0
   local idnumber = "0.0"
    
-  -- mark known, set prefix
-
- -- ela._process_me = "true"
- -- ela._fbxclass = str(cls)
+  --  set prefix
   ela._prefix = prefix
 
   id = replaceifnil(id ,"") 
   tag = replaceifnil(tag ,"") 
-  
   
   --- determine if numbered and / or tagged ------
   
@@ -306,27 +302,13 @@ local function fboxDiv_setAttributes(el, cls, prefix)
     else autoid = ela._fbxclass..'-id-'..id
   end  
   
- --- update div attributes -------
-  --[[
- if ela.collapse then 
-  ela._collapse = str(ela.collapse)
-  else ela._collapse = ClassDef.collapse 
-end 
-
-if ela.boxstyle then 
-  ela._boxstyle = str(ela.boxstyle)
-  else ela._boxstyle = ClassDef.boxstyle 
-end 
-
-if ela.label then ela._label = ela.label else ela._label = ClassDef.label end
-
-if ela.reflabel then ela._reflabel = ela.reflabel else ela._reflabel = ClassDef.reflabel end
---]]
   -- do not change identifier el.identifier = id
   
   ela._autoid = autoid 
    
   ela._tag = tag
+
+ -- ela._file = fbx.processedfile not necessary, qurto / pandoc can crossref to chapters :-)
  -- pout("tag: "..tag)
  -- pout(el.attributes)
   return(el)
@@ -403,7 +385,7 @@ local function Pandoc_prefix_count(doc)
 end
 
 ----------- title of divs ----------------
-local function Divs_maketitle(el)
+local function Divs_maketitlenid(el)
   -- local known = getKnownEnv(el.attr.classes)
    local ela = el.attributes
    local titl = ela.title
@@ -411,9 +393,7 @@ local function Divs_maketitle(el)
    local id = el.identifier
    
    if not ela._process_me then return(el) end
-   
-  -- ela._process_me = "true"
-  -- ela._fbxclass = str(known)
+
    ClassDef = fbx.classDefaults[ela._fbxclass]
  
    if titl == nil then    
@@ -443,24 +423,14 @@ local function Divs_maketitle(el)
    end
    ela._title = titl    -- keep the title as attribute for pandoc
    
+   -- replace empty identifier with autoid
+   if el.identifier == "" then el.identifier = ela._autoid end
   -- ela._tag = ""
    return(el)
  end
  
 ---------------- initialize xref ----------
 -- xrefinit = require ("fbx3")
-
-local function pandocblocks(doc)
-  for k,v in pairs(doc.blocks) do
-    pout(v.t)
-  end
-end
-
-local function pandocdivs(div)
-  pout(div.t.." - "..div.identifier)
-  pout(div.attributes)
-end
-
 
 -- xref split into prepare and finalize to allow xref in titles (future)
 local function Pandoc_preparexref(doc)
@@ -495,11 +465,11 @@ local function Pandoc_preparexref(doc)
             label    = bla._label,
             reflabel = bla._reflabel,
             reftag   = bla._tag,
-            refnum   = bla._tag,
+            refnum   = replaceifempty(bla._tag, "??"), 
             file     = fbx.output_file
           }
-          if not xinfo.reftag then xinfo.reftag ="" end
-          if xinfo.refnum == ""  then xinfo.refnum ="??" end
+          -- if not xinfo.reftag then xinfo.reftag ="" end
+          -- if xinfo.refnum == ""  then xinfo.refnum ="??" end
           --[[
           if bla._tag 
               then 
@@ -597,6 +567,21 @@ end
 -------------- render -------------------
 -- render = require ("fbx4")
 
+local tt_from_attributes = function(A)
+  local tyti =""
+  local tt = {}
+  if A._tag == "" then tyti = A._label 
+  else tyti = A._label..' '..A._tag end 
+--    print("TYTI: === "..tyti)
+tt = {type = A._fbxclass, 
+      title = A._title, 
+      titeltyp = A._label,
+      typtitel = tyti,
+      collapse = A._collapse,
+      boxstyle = A._boxstyle
+}
+  return(tt)
+end
 
 insertStylesPandoc = function(doc)
   -- if stylez.extractStyleFromYaml then stylez.extractStyleFromYaml() end
@@ -607,20 +592,11 @@ end;
 
 renderDiv = function(thediv)    
   local A = thediv.attributes
+  local tt = {}
   if A._fbxclass ~= nil then
     
     collapsstr = str(A._collapse)
-  
-    if A._tag == "" then tyti = A._label 
-      else tyti = A._label..' '..A._tag end 
- --    print("TYTI: === "..tyti)
-    tt = {type = A._fbxclass, 
-          title = A._title, 
-          titeltyp = A._label,
-          typtitel = tyti,
-          collapse = A._collapse,
-          boxstyle = A._boxstyle
-    }
+    tt = tt_from_attributes(A)
     
     local fmt='html'
     if quarto.doc.is_format("pdf") then fmt = "tex" end;
@@ -688,6 +664,44 @@ function Div_cleanupAttribs (el)
 end
 
 
+local function pandocblocks(doc)
+  for k,v in pairs(doc.blocks) do
+    pout(v.t)
+  end
+end
+
+local function pandocdivs(div)
+  pout(div.t.." - "..div.identifier)
+  pout(div.attributes)
+end
+
+
+local function listof(doc)
+  local tt = {}
+  local zeile = ""
+  local zeilen ="\\providecommand{\\Pageref}[1]{\\hfil p.#1}"
+  local file = io.open("listof.qmd","w")
+  for i, blk in ipairs(doc.blocks) do
+    if blk.t=="Header" then 
+      if blk.level==1 then zeile = ("\n## "..str(blk.content).."\n") end
+    elseif blk.t=="Div" then 
+      if blk.attributes._process_me then
+        tt = tt_from_attributes (blk.attributes)
+        zeile = ("\n[**"..tt.typtitel.."**](#"..blk.identifier..")"..ifelse(tt.title=="","",": "..tt.title)..
+              " \\Pageref{"..blk.identifier.."}")
+      end 
+    end
+    -- pout(blk.identifier)
+    -- pout(zeile)
+    zeilen = zeilen .."\n" .. zeile
+    zeile = ""
+  end    
+  if file ~= nil then 
+    file:write(zeilen) 
+    file:close()
+  end
+end
+
 return{
     {Meta = initMeta}
     --[[
@@ -705,9 +719,9 @@ return{
    
   , {Pandoc = Pandoc_preparexref}
   , {Pandoc = Pandoc_resolvexref}
-  , {Div = Divs_maketitle}
+  , {Div = Divs_maketitlenid}
   , {Pandoc = Pandoc_finalizexref}
-  , {Meta = Meta_writexref}
+  , {Meta = Meta_writexref, Pandoc = listof}
   , {Div = renderDiv}
   , {Pandoc = insertStylesPandoc}
   , {Div = Div_cleanupAttribs}

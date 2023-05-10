@@ -1,4 +1,7 @@
 *.html
 *.pdf
+!doc/*
 *_files/
-/.luarc.json
+!doc/*_files/
+*.json
+.Rproj.user
