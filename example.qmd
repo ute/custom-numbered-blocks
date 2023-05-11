@@ -13,7 +13,7 @@ custom-numbered-blocks:
   groups:
     thmlike:
       colors: [948bde, 584eab]
-#      boxstyle: foldbox.simple needs quickfix
+      boxstyle: foldbox.simple
       collapse: false
     todos: default  
   classes:

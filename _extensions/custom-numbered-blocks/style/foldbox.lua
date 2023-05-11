@@ -19,7 +19,7 @@ blockStart = function (tt, fmt)
   if #tt.title > 0 then tt.typtitel = tt.typtitel..": " end
   if fmt =="html" then
     if tt.collapse =="false" then Open=" open" end
-    if tt.boxstyle =="simplebox" 
+    if tt.boxstyle =="foldbox.simple" 
       then 
         BoxStyle=" fbx-simplebox fbx-default" 
         Open=" open"
@@ -28,7 +28,7 @@ blockStart = function (tt, fmt)
     return result
   
   elseif fmt =="tex" then
-    if tt.boxstyle=="simplebox" then texEnv = "fbxSimple" end
+    if tt.boxstyle=="foldbox.simple" then texEnv = "fbxSimple" end
     return('\\begin{'..texEnv..'}{'..tt.type..'}{'..tt.typtitel..'}{'..tt.title..'}\n'..
            '\\phantomsection\\label{'..tt.id..'}\n')
   else  
@@ -41,7 +41,7 @@ blockEnd = function (tt, fmt)
   if fmt =="html" then
     return('</div></details>')
   elseif fmt =="tex" then
-    if tt.boxstyle=="simplebox" then texEnv = "fbxSimple" end
+    if tt.boxstyle=="foldbox.simple" then texEnv = "fbxSimple" end
      return('\\end{'..texEnv..'}\n')
   else return ('ende mit format '..fmt..'=================')
   end  

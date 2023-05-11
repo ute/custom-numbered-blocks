@@ -193,12 +193,12 @@ local function Meta_initClassDefaults (meta)
 -- simplified copy of yaml data: inlines to string
   for key, val in pairs(cunumbl.groups) do
     local ginfo = DeInline(val)
-    --[[ TODO
+    --[[
+    pout(ginfo)
     if ginfo.boxstyle then
       local mainstyle, substyle = ginfo.boxstyle:match "([^.]*).(.*)"
     --  pout("main "..mainstyle.." :: "..substyle)
       -- TODO: here account for multiple styles
-      ginfo = updateOptions(stylez.defaultOptions, ginfo)
     end
     --]]--
     ginfo = updateTable(stylez.defaultOptions, ginfo)
@@ -722,7 +722,7 @@ return{
   , {Pandoc = Pandoc_resolvexref}
   , {Div = Divs_maketitlenid}
   , {Pandoc = Pandoc_finalizexref}
-  , {Meta = Meta_writexref, Pandoc = listof}
+  , {Meta = Meta_writexref}--, Pandoc = listof}
   , {Div = renderDiv}
   , {Pandoc = insertStylesPandoc}
   , {Div = Div_cleanupAttribs}
