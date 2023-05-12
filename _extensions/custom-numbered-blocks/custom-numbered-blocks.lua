@@ -191,6 +191,7 @@ local function Meta_initClassDefaults (meta)
   end
   
 -- simplified copy of yaml data: inlines to string
+ if cunumbl.groups then
   for key, val in pairs(cunumbl.groups) do
     local ginfo = DeInline(val)
     --[[
@@ -205,6 +206,7 @@ local function Meta_initClassDefaults (meta)
     --fbx.
     groupDefaults[key] = ginfo
   end 
+end  
   for key, val in pairs(cunumbl.classes) do
     local clinfo = DeInline(val)
     -- classinfo[key] = DeInline(val)

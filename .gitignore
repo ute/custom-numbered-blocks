@@ -5,3 +5,5 @@
 !doc/*_files/
 *.json
 .Rproj.user
+
+/.luarc.json
