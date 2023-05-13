@@ -41,10 +41,12 @@ here is some exemplary text
 ```
 
 ### Change default options for a class
-The default style (and currently only possible style) renders as a collapsible box with title button, similar to quarto callouts. You can change the following options in yaml or individually in the div specification:
+The default style renders as a collapsible box with title button, similar to quarto callouts. It comes with a small close button bottom right. You can change the following options in yaml or individually in the div specification:
   - `colors` : an array of two hex rgb color codes, for title button color and frame color. `colors: [a08080, 500000]` would give a pink title button and dark red frame.
   - `collapse`: boolean, default `true`. Initial state of the collapsible box.
   - `label`: the label to print before the number (string).
+  - `boxstyle`: set to `foldbox.simple` for a boxed environment without close button. There will quite likely come more options in a future version.
+  - `listin`: register for a [list-of](listof) 
 
 ### Groups of classes with joint counter and joint default style
 Jointly counted block classes are specified by yaml option `groups`. These groups can also have a common default style. For each class, option `group` indicates membership. 
@@ -65,7 +67,7 @@ custom-numbered-blocks:
       group: thmlike                  
 ```
 
-### Lists-of ("listin" version)
+### [Lists-of](#listof) ("listin" version)
 To generate a list of all divs belonging to a class, `Example`, say, add key listin to the class and give the name of the list. The same can be done for groups of classes. This will produce a file `list-of-`name`.qmd` that contains headers and references to the respective blocks. The following code will generage files `list-of-allthingsmath.qmd` and `list-of-examples.qmd`:
 
 ```yaml
