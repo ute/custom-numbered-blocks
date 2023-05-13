@@ -9,7 +9,7 @@
   --border-radius: .3rem;
   
   --padding-left: .8rem; /* for title (summary) and content (next div) */
-  --padding-content: 0.3rem; 
+  --padding-content: 0.5rem; 
   
   --thickshadow: 4px 4px 6px #555;
   --thinshadow: 1px 1px 2px #555;
@@ -48,7 +48,8 @@ details.fbx-default[open] > summary{
 details.fbx-default > div{
   padding: var(--padding-content);
   padding-left: var(--padding-left);
- 
+  padding-bottom: 0;
+
   border-left: var(--border-radius) solid var(--border-color);
   border-top: 0;
   margin-top: 0;
@@ -60,6 +61,7 @@ details.fbx-default > div{
 /* simple box */
 
 details.fbx-simplebox > div{
+  padding-bottom: 0;
   border-right: 1px solid var(--border-color);
   border-bottom-right-radius: .3rem;
 }
@@ -88,7 +90,7 @@ background-color: var(--close-background-color);
 */  
   border: 1px solid var(--close-background-color);
   border-radius: 0.3rem;
-  padding: 0.2rem 0.5rem 0.2rem 0.5rem;
+  padding: .2rem 0.5rem 0.2rem 0.5rem;
   box-shadow: var(--thinshadow);
   position: absolute;
   right: 0;/*1rem;*/
