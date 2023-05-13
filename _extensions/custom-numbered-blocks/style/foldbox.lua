@@ -22,7 +22,8 @@ blockStart = function (tt, fmt)
     if tt.boxstyle =="foldbox.simple" 
       then 
         BoxStyle=" fbx-simplebox fbx-default" 
-        Open=" open"
+    --    Open=" open" do not force override. Chose this in yaml or individually.
+    --    we would want e.g to have remarks closed by default
       end
     result = ('<details class=\"'..tt.type..BoxStyle ..'\"'..Open..'><summary>'..'<strong>'..tt.typtitel..'</strong>'..tt.title .. '</summary><div>')
     return result

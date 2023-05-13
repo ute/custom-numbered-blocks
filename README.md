@@ -2,13 +2,15 @@
 
 This extension provides user defined custom div classes (environments) that come with numbering, such as theorems, examples, exercises. Numbered blocks can be cross referenced. 
 
-By default, the div's text block is enclosed in a collapsible box, similar to quarto callouts.
+- By default, the div's text block is enclosed in a collapsible box, similar to quarto callouts.
+- Groups of classes can be defined that share style and numbering.
+- Lists-of-classes can be extracted, such as a list of all theorems. It is also possible to generate a list of a group of classes.
 
 The filter supports output formats pdf and html.
 
 ## Status
 
-This is still a very preliminary version
+There may come changes to the yaml-UI for lists-of-classes. Otherwise, this seems to be a first working release - please discuss more features and report bugs :-)
 
 ## Installing
 
@@ -61,6 +63,19 @@ custom-numbered-blocks:
       collapse: true
     Lemma:
       group: thmlike                  
+```
+
+### Lists-of ("listin" version)
+To generate a list of all divs belonging to a class, `Example`, say, add key listin to the class and give the name of the list. The same can be done for groups of classes. This will produce a file `list-of-`name`.qmd` that contains headers and references to the respective blocks. The following code will generage files `list-of-allthingsmath.qmd` and `list-of-examples.qmd`:
+
+```yaml
+custom-numbered-blocks
+  groups:
+    thmlike:
+      collapse: false
+      listin: [allthingsmath]
+    Example:
+      listin: [examples, allthingsmath] 
 ```
 
 ## Example

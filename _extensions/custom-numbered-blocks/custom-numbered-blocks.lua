@@ -175,7 +175,7 @@ local function Meta_initClassDefaults (meta)
   -- do we want to prefix fbx numbers with section numbers?
   local cunumbl = meta["custom-numbered-blocks"]
   fbx.knownclasses = {}
-  fbx.listsfiles = {}
+  fbx.lists = {}
   --[[ TODO later
   if meta.fbx_number_within_sections then
     fbx.number_within_sections = meta.fbx_number_within_sections
@@ -210,7 +210,7 @@ local function Meta_initClassDefaults (meta)
       ginfo = updateTable(stylez.defaultOptions, ginfo)
       --fbx.
       groupDefaults[key] = ginfo
-      --pout("--------"); pout(ginfo)
+   --   pout("-----group---"); pout(ginfo)
     end 
   end  
   for key, val in pairs(cunumbl.classes) do
@@ -226,18 +226,26 @@ local function Meta_initClassDefaults (meta)
     clinfo.cntname = replaceifnil(clinfo.group, str(key))
     fbx.counter[clinfo.cntname] = 0 -- sets the counter up if non existing
     fbx.classDefaults[key] = clinfo
-  --  pout("-------");  pout(clinfo)
+ -- pout("---class----");  pout(clinfo)
   end 
   fbx.is_cunumblo = makeKnownClassDetector(fbx.knownclasses)
 -- gather lists-of and make filenames by going through all classes
-  for key, val in pairs(fbx.classDefaults) do
+  for _, val in pairs(fbx.classDefaults) do
+  --  pout("--classdefault: "..str(key))
+  --  pout(val)
     if val.listin then
       for _,v in ipairs(val.listin) do
-        fbx.listsfiles[v] = str(v)..".qmd"
+        fbx.lists[v] = {file = "list-of-"..str(v)..".qmd"}
       end
     end
   end
-  pout(fbx.listsfiles)
+-- initialize lists
+  for key, val in pairs(fbx.lists) do
+    val.contents = ifelse(fbx.isfirstfile, "\\providecommand{\\Pageref}[1]{\\hfil p.#1}", "")
+  -- listin approach does not require knownclass, since listin is in classdefaults
+  end
+ -- pout(fbx.lists)
+  --]]
 -- document can give the chapter number for books in yaml header 
 -- this becomes the counter Prefix
 end
@@ -403,48 +411,103 @@ local function Pandoc_prefix_count(doc)
   return(doc)
 end
 
------------ title of divs ----------------
-local function Divs_maketitlenid(el)
+-- if no id, get from first included header, if possible
+local function Divs_getid(el)
   -- local known = getKnownEnv(el.attr.classes)
    local ela = el.attributes
-   local titl = ela.title
-   local ClassDef = {}
    local id = el.identifier
    
    if not ela._process_me then return(el) end
+   -- pout("--- processing item with id ".. replaceifempty(id, "LEER"))
+   
+   if id == nil or id =="" then  
+    -- try in next header
+    el1 = el.content[1]
+    if el1.t=="Header" then 
+    --    pout("--- looking at header with id "..el1.identifier)
+    --    pout("--- still processing item with id ".. replaceifempty(id, "LEER"))
+     -- pout("replacing id")
+      id = el1.identifier
+      el.identifier = id
+    end
+  end 
+  if id == nil or id =="" 
+    then  
+      -- pout("immer noch leer")
+      if ela._autoid ~= nil then
+      id = ela._autoid
+      el.identifier = id
+    end 
+    --else pout("nix autoid in ");pout(ela._autoid)
+  end
+  -- pout("resulting el:"); pout(el.attr)
+  return(el)
+end
 
+
+--- utility function: stringify and sanitize math, depends on format ---
+local function str_sanimath(theInline, fmt)
+  local newstring = theInline:walk{
+    Math = function(ma)
+      local mathtxt = str(ma.text)
+      if fmt == "html" then 
+        return {'<span class="math inline">\\(' .. mathtxt .. '\\)</span>'}
+      elseif fmt == "pdf" then 
+        return {'\\(' .. mathtxt .. '\\)'}
+      elseif fmt == "md" then 
+        return  {'$' .. mathtxt .. '$'}
+      else return {mathtxt}
+      end  
+  end  
+  }
+  return str(newstring)
+end  
+
+
+----------- title of divs ----------------
+local function Divs_maketitle(el)
+  -- local known = getKnownEnv(el.attr.classes)
+   local ela = el.attributes
+   local titl = ela.title
+   local mdtitl = replaceifnil(ela.title, "")
+   local ClassDef = {}
+   -- local id = el.identifier
+   
+   if not ela._process_me then return(el) end
+  -- pout("--- processing item with id ".. replaceifempty(el.identifier, "LEER"))
+   
    ClassDef = fbx.classDefaults[ela._fbxclass]
  
-   if titl == nil then    
+   if titl == nil then  
       el1 = el.content[1]
       if el1.t=="Header" then 
         -- sanitize math inline. depends on format
         ela.title = str(el1.content)  -- readable version without math
-        local newhead = el1.content:walk{
-          Math = function(ma) 
-            local matxt = str(ma.text)
-            if ishtml then 
-              matxt = '<span class="math inline">\\(' .. matxt .. '\\)</span>'
-            elseif ispdf then
-              matxt =  '\\(' .. matxt .. '\\)'
-            end
----@diagnostic disable-next-line: return-type-mismatch
-            return matxt end
-        }
-        titl =  str(newhead) --str(el1.content) 
-         if id =="" or id == nil then
+        mdtitl = str_sanimath(el1.content, "md")
+        if ishtml then titl = str_sanimath(el1.content, "html")
+          elseif ispdf then titl = str_sanimath(el1.content, "pdf")
+          else titl = mdtitl
+        end 
+    --    pout("--- looking at header with id "..el1.identifier)
+    --    pout("--- still processing item with id ".. replaceifempty(id, "LEER"))
+    --[[    
+    if id =="" or id == nil then
+            pout("replacing id")
             id = el1.identifier
             el.identifier = id
-         end  
-         table.remove(el.content, 1)
+        end  
+        ]]--
+        table.remove(el.content, 1)
       else titl = ""
       end
    end
    ela._title = titl    -- keep the title as attribute for pandoc
-   
+   ela._mdtitle = mdtitl    -- for list of
    -- replace empty identifier with autoid
-   if el.identifier == "" then el.identifier = ela._autoid end
+   -- if el.identifier == "" then el.identifier = ela._autoid end
+   -- pout("--> sanitarer titel: "..mdtitl)
   -- ela._tag = ""
+  -- pout("resulting el:"); pout(el)
    return(el)
  end
  
@@ -508,7 +571,6 @@ local function Pandoc_preparexref(doc)
         end 
       end   
     end
-   -- doc.meta.fbx.xref = xref
     return(doc)
   end  
   
@@ -597,9 +659,11 @@ tt = {id = id,
       title = A._title, 
       titeltyp = A._label,
       typtitel = tyti,
+      mdtitle = A._mdtitle, 
       collapse = A._collapse,
       boxstyle = A._boxstyle
 }
+  -- pout("====nun====");pout(tt)
   return(tt)
 end
 
@@ -683,6 +747,8 @@ function Div_cleanupAttribs (el)
   return el
 end
 
+-- debugging stuff
+--[[
 
 local function pandocblocks(doc)
   for k,v in pairs(doc.blocks) do
@@ -694,32 +760,50 @@ local function pandocdivs(div)
   pout(div.t.." - "..div.identifier)
   pout(div.attributes)
 end
+]]--
 
-
-local function listof(doc)
+local function Pandoc_makeListof(doc)
   local tt = {}
+  local thelists = {}
   local zeile = ""
-  local zeilen ="\\providecommand{\\Pageref}[1]{\\hfil p.#1}"
-  local file = io.open("listof.qmd","w")
+  local lstfilemode = ifelse(fbx.isfirstfile, "w", "a")
+  if not fbx.lists then return(doc) end
   for i, blk in ipairs(doc.blocks) do
     if blk.t=="Header" then 
-      if blk.level==1 then zeile = ("\n## "..str(blk.content).."\n") end
+      if blk.level==1 then 
+        zeile = "\n\n## "..str(blk.content).."\n"
+      --- add to all lists
+        for _, lst in pairs (fbx.lists) do
+          lst.contents = lst.contents..zeile
+        end
+      end
     elseif blk.t=="Div" then 
       if blk.attributes._process_me then
-        tt = tt_from_attributes_id (blk.attributes, blk.identifier)
-        zeile = ("\n[**"..tt.typtitel.."**](#"..blk.identifier..")"..ifelse(tt.title=="","",": "..tt.title)..
-              " \\Pageref{"..blk.identifier.."}")
+        thelists = fbx.classDefaults[blk.attributes._fbxclass].listin
+        if thelists ~= nil and thelists ~="" then
+          tt = tt_from_attributes_id (blk.attributes, blk.identifier)
+          -- pout("thett------");pout(tt)
+          zeile = ("\n[**"..tt.typtitel.."**](#"..blk.identifier..")"..ifelse(tt.mdtitle=="","",": "..tt.mdtitle)..
+              " \\Pageref{"..blk.identifier.."}\n")
+          for _, lst in ipairs (thelists) do
+            fbx.lists[lst].contents = fbx.lists[lst].contents..zeile
+          end 
+        end
       end 
     end
-    -- pout(blk.identifier)
-    -- pout(zeile)
-    zeilen = zeilen .."\n" .. zeile
-    zeile = ""
-  end    
-  if file ~= nil then 
-    file:write(zeilen) 
-    file:close()
   end
+  --- write to file ---
+  for nam, lst in pairs(fbx.lists) do
+    if lst.file ~= nil then 
+      local file = io.open(lst.file, lstfilemode)
+      if file then 
+        file:write(lst.contents) 
+        file:close()
+      else pout("cannot write to file "..lst.file)  
+      end  
+    end  
+  end
+  return(doc)
 end
 
 return{
@@ -737,14 +821,16 @@ return{
  -- , {Div=pandocdivs, Pandoc=pandocblocks}
   --[[ ]]
    
-  , {Pandoc = Pandoc_preparexref}
+  , {Div = Divs_getid, Pandoc = Pandoc_preparexref}
   , {Pandoc = Pandoc_resolvexref}
-  , {Div = Divs_maketitlenid}
+  , {Div = Divs_maketitle}
   , {Pandoc = Pandoc_finalizexref}
-  , {Meta = Meta_writexref}--, Pandoc = listof}
+  , {Meta = Meta_writexref, Pandoc = Pandoc_makeListof}
   , {Div = renderDiv}
   , {Pandoc = insertStylesPandoc}
   , {Div = Div_cleanupAttribs}
- -- ]]
+--[[
+  
+  -- ]]
 }
 
