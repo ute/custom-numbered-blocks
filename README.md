@@ -46,7 +46,7 @@ The default style renders as a collapsible box with title button, similar to qua
   - `collapse`: boolean, default `true`. Initial state of the collapsible box.
   - `label`: the label to print before the number (string).
   - `boxstyle`: set to `foldbox.simple` for a boxed environment without close button. There will quite likely come more options in a future version.
-  - `listin`: register for a [list-of](listof) 
+  - `listin`: register for a [list-of](#lists-of-listin-version) 
 
 ### Groups of classes with joint counter and joint default style
 Jointly counted block classes are specified by yaml option `groups`. These groups can also have a common default style. For each class, option `group` indicates membership. 
@@ -67,7 +67,7 @@ custom-numbered-blocks:
       group: thmlike                  
 ```
 
-### [Lists-of](#listof) ("listin" version)
+### Lists-of ("listin" version)
 To generate a list of all divs belonging to a class, `Example`, say, add key listin to the class and give the name of the list. The same can be done for groups of classes. This will produce a file `list-of-`name`.qmd` that contains headers and references to the respective blocks. The following code will generage files `list-of-allthingsmath.qmd` and `list-of-examples.qmd`:
 
 ```yaml
