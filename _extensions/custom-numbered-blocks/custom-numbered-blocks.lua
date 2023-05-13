@@ -112,19 +112,25 @@ local function Meta_findChapterNumber(meta)
   fbx.output_file = PANDOC_STATE.output_file
  -- pout(" now in "..processedfile.." later becomes ".. str(fbx.output_file))
   fbx.ishtmlbook = meta.book ~= nil and not quarto.doc.is_format("pdf")
+  fbx.isfirstfile = not fbx.ishtmlbook
   fbx.islastfile = not fbx.ishtmlbook
   if fbx.ishtmlbook then 
  --   pout("EIN BUCH! :-)")
     
   --  if quarto.doc.is_format("pdf") then pout("-- aber pdf ---") end
+    local firstchapter = pandoc.path.split_extension(str(meta.book.render[1].file))
     local lastchapter = pandoc.path.split_extension(
                           str(meta.book.render[#meta.book.render].file))
     -- pout("the last chapter  is"..lastchapter)
     fbx.xreffile= "._"..lastchapter.."_xref.json"
+    --[[
     if processedfile == lastchapter then
       -- pout("last chapter".. processedfile)
       fbx.islastfile = true
     end
+    --]]
+    fbx.isfirstfile = processedfile == firstchapter
+    fbx.islastfile  = processedfile == lastchapter
     -- user set chapter number
     if meta.chapno then  
       fbx.chapno = str(meta.chapno)
@@ -152,6 +158,8 @@ local function Meta_findChapterNumber(meta)
     fbx.unnumbered = true
    --  pout("============== KEIN BUCH! ===========")
   end
+ -- if fbx.isfirstfile then pout("We start here "..processedfile) end
+ -- if fbx.islastfile then pout("We finish here "..processedfile) end
 end
 
 local function makeKnownClassDetector(knownclasses)
@@ -165,12 +173,9 @@ end
 
 local function Meta_initClassDefaults (meta) 
   -- do we want to prefix fbx numbers with section numbers?
-  -- local defaults = {}
-  -- local options = {} 
-  --local classinfo = {}
-  -- local groupinfo = {}
   local cunumbl = meta["custom-numbered-blocks"]
   fbx.knownclasses = {}
+  fbx.listsfiles = {}
   --[[ TODO later
   if meta.fbx_number_within_sections then
     fbx.number_within_sections = meta.fbx_number_within_sections
@@ -191,24 +196,26 @@ local function Meta_initClassDefaults (meta)
   end
   
 -- simplified copy of yaml data: inlines to string
- if cunumbl.groups then
-  for key, val in pairs(cunumbl.groups) do
-    local ginfo = DeInline(val)
-    --[[
-    pout(ginfo)
-    if ginfo.boxstyle then
-      local mainstyle, substyle = ginfo.boxstyle:match "([^.]*).(.*)"
-    --  pout("main "..mainstyle.." :: "..substyle)
-      -- TODO: here account for multiple styles
-    end
-    --]]--
-    ginfo = updateTable(stylez.defaultOptions, ginfo)
-    --fbx.
-    groupDefaults[key] = ginfo
-  end 
-end  
+  if cunumbl.groups then
+    for key, val in pairs(cunumbl.groups) do
+      local ginfo = DeInline(val)
+      --[[
+      pout("==== before after =======");  pout(ginfo)
+      if ginfo.boxstyle then
+        local mainstyle, substyle = ginfo.boxstyle:match "([^.]*).(.*)"
+      --  pout("main "..mainstyle.." :: "..substyle)
+        -- TODO: here account for multiple styles
+      end
+      --]]--
+      ginfo = updateTable(stylez.defaultOptions, ginfo)
+      --fbx.
+      groupDefaults[key] = ginfo
+      --pout("--------"); pout(ginfo)
+    end 
+  end  
   for key, val in pairs(cunumbl.classes) do
     local clinfo = DeInline(val)
+  --  pout("==== before after =======");  pout(clinfo)
     -- classinfo[key] = DeInline(val)
     table.insert(fbx.knownclasses, str(key))
     local theGroup = replaceifnil(clinfo.group, "default")
@@ -219,8 +226,18 @@ end
     clinfo.cntname = replaceifnil(clinfo.group, str(key))
     fbx.counter[clinfo.cntname] = 0 -- sets the counter up if non existing
     fbx.classDefaults[key] = clinfo
+  --  pout("-------");  pout(clinfo)
   end 
   fbx.is_cunumblo = makeKnownClassDetector(fbx.knownclasses)
+-- gather lists-of and make filenames by going through all classes
+  for key, val in pairs(fbx.classDefaults) do
+    if val.listin then
+      for _,v in ipairs(val.listin) do
+        fbx.listsfiles[v] = str(v)..".qmd"
+      end
+    end
+  end
+  pout(fbx.listsfiles)
 -- document can give the chapter number for books in yaml header 
 -- this becomes the counter Prefix
 end
@@ -312,7 +329,7 @@ local function fboxDiv_setAttributes(el, cls, prefix)
 
  -- ela._file = fbx.processedfile not necessary, qurto / pandoc can crossref to chapters :-)
  -- pout("tag: "..tag)
- -- pout(el.attributes)
+ -- pout(ela)
   return(el)
 end
 
@@ -331,7 +348,7 @@ local function fboxDiv_mark_for_processing(div)
     diva._boxstyle = str(replaceifnil(diva.boxstyle, ClassDef.boxstyle)) 
     diva._label = str(replaceifnil(diva.label, ClassDef.label)) 
     diva._reflabel = str(replaceifnil(diva.reflabel, ClassDef.reflabel)) 
-    end  
+  end  
   return(div)
 end
 
