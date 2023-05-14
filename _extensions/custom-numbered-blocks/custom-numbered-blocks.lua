@@ -241,7 +241,7 @@ local function Meta_initClassDefaults (meta)
   end
 -- initialize lists
   for key, val in pairs(fbx.lists) do
-    val.contents = ifelse(fbx.isfirstfile, "\\providecommand{\\Pageref}[1]{\\hfil p.#1}", "")
+    val.contents = ifelse(fbx.isfirstfile, "\\providecommand{\\Pageref}[1]{\\hfill p.\\pageref{#1}}", "")
   -- listin approach does not require knownclass, since listin is in classdefaults
   end
  -- pout(fbx.lists)
@@ -656,6 +656,7 @@ local tt_from_attributes_id = function(A, id)
 --    print("TYTI: === "..tyti)
 tt = {id = id,
       type = A._fbxclass, 
+      tag = A._tag,
       title = A._title, 
       titeltyp = A._label,
       typtitel = tyti,
@@ -769,6 +770,8 @@ local function Pandoc_makeListof(doc)
   local lstfilemode = ifelse(fbx.isfirstfile, "w", "a")
   if not fbx.lists then return(doc) end
   for i, blk in ipairs(doc.blocks) do
+    --[[ -- this may require manual deletion of headers in the list-of.qmd
+    -- and does in this form not help with html books anyway --
     if blk.t=="Header" then 
       if blk.level==1 then 
         zeile = "\n\n## "..str(blk.content).."\n"
@@ -777,14 +780,19 @@ local function Pandoc_makeListof(doc)
           lst.contents = lst.contents..zeile
         end
       end
-    elseif blk.t=="Div" then 
+      elseif blk.t=="Div" then 
+     ]]-- 
+     if blk.t=="Div" then 
       if blk.attributes._process_me then
         thelists = fbx.classDefaults[blk.attributes._fbxclass].listin
         if thelists ~= nil and thelists ~="" then
           tt = tt_from_attributes_id (blk.attributes, blk.identifier)
           -- pout("thett------");pout(tt)
-          zeile = ("\n[**"..tt.typtitel.."**](#"..blk.identifier..")"..ifelse(tt.mdtitle=="","",": "..tt.mdtitle)..
-              " \\Pageref{"..blk.identifier.."}\n")
+        --  zeile = ("\n[**"..tt.typtitel.."**](#"..blk.identifier..")"..ifelse(tt.mdtitle=="","",": "..tt.mdtitle)..
+        --      " \\Pageref{"..blk.identifier.."}\n")
+          zeile = ("\n[**"..tt.titeltyp.." \\ref{"..blk.identifier.."}**]" ..
+                   ifelse(tt.mdtitle=="","",": "..tt.mdtitle) ..
+                   " \\Pageref{"..blk.identifier.."}\n")
           for _, lst in ipairs (thelists) do
             fbx.lists[lst].contents = fbx.lists[lst].contents..zeile
           end 
