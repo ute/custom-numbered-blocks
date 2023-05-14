@@ -6,14 +6,17 @@ This extension provides user defined custom div classes (environments) that come
 - Groups of classes can be defined that share style and numbering.
 - Lists-of-classes can be extracted, such as a list of all theorems. It is also possible to generate a list for a group of classes.
 
-The filter supports output formats pdf and html for single documents and books in Quarto 1.2. Quarto 1.3 seems to render pdf books differently - currently numbering is broken for pdf books in Quarto 1.3.
+The filter supports output formats pdf and html.
 
 
 ![image](https://github.com/ute/custom-numbered-blocks/assets/5145859/8b69f761-fcf8-44fe-b2ee-2626f59548c9)
 
 ## Status
 
-There may come changes to the yaml-UI for lists-of-classes. Otherwise, this seems to be a first working release - please discuss more features and report bugs :-)
+Quarto 1.3 handles pdf books differently from Quarto 1.2. If chapters contain additional level 1 heading, this messes up numbering in Quarto 1.3 pdf books.
+
+There may come changes to the yaml-UI for lists-of-classes. 
+
 
 ## Installing
 
