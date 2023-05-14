@@ -4,9 +4,11 @@ This extension provides user defined custom div classes (environments) that come
 
 - By default, the div's text block is enclosed in a collapsible box, similar to quarto callouts.
 - Groups of classes can be defined that share style and numbering.
-- Lists-of-classes can be extracted, such as a list of all theorems. It is also possible to generate a list of a group of classes.
+- Lists-of-classes can be extracted, such as a list of all theorems. It is also possible to generate a list for a group of classes.
 
 The filter supports output formats pdf and html.
+
+![image](https://github.com/ute/custom-numbered-blocks/assets/5145859/8b69f761-fcf8-44fe-b2ee-2626f59548c9)
 
 ## Status
 
