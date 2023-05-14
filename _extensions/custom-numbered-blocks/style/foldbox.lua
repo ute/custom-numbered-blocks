@@ -16,7 +16,7 @@ blockStart = function (tt, fmt)
   local Open =""
   local BoxStyle =" fbx-default closebutton"
   local texEnv = "fbx"
-  if #tt.title > 0 then tt.typtitel = tt.typtitel..": " end
+  if #tt.title > 0 then tt.typlabelTag = tt.typlabelTag..": " end
   if fmt =="html" then
     if tt.collapse =="false" then Open=" open" end
     if tt.boxstyle =="foldbox.simple" 
@@ -25,12 +25,12 @@ blockStart = function (tt, fmt)
     --    Open=" open" do not force override. Chose this in yaml or individually.
     --    we would want e.g to have remarks closed by default
       end
-    result = ('<details class=\"'..tt.type..BoxStyle ..'\"'..Open..'><summary>'..'<strong>'..tt.typtitel..'</strong>'..tt.title .. '</summary><div>')
+    result = ('<details class=\"'..tt.type..BoxStyle ..'\"'..Open..'><summary>'..'<strong>'..tt.typlabelTag..'</strong>'..tt.title .. '</summary><div>')
     return result
   
   elseif fmt =="tex" then
     if tt.boxstyle=="foldbox.simple" then texEnv = "fbxSimple" end
-    return('\\begin{'..texEnv..'}{'..tt.type..'}{'..tt.typtitel..'}{'..tt.title..'}\n'..
+    return('\\begin{'..texEnv..'}{'..tt.type..'}{'..tt.typlabelTag..'}{'..tt.title..'}\n'..
            '\\phantomsection\\label{'..tt.id..'}\n')
   else  
     return("<details><summary>Hallihallo</summary>")

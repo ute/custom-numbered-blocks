@@ -335,7 +335,7 @@ local function fboxDiv_setAttributes(el, cls, prefix)
    
   ela._tag = tag
 
- -- ela._file = fbx.processedfile not necessary, qurto / pandoc can crossref to chapters :-)
+  ela._file = fbx.processedfile -- necessary to reference between chapters. At least with  quarto 1.3
  -- pout("tag: "..tag)
  -- pout(ela)
   return(el)
@@ -649,23 +649,24 @@ end
 -- render = require ("fbx4")
 
 local tt_from_attributes_id = function(A, id)
-  local tyti =""
-  local tt = {}
-  if A._tag == "" then tyti = A._label 
-  else tyti = A._label..' '..A._tag end 
+  --local tyti =""
+  --local tt = {}
+  --if A._tag == "" then tyti = A._label 
+  --else tyti = A._label..' '..A._tag end 
 --    print("TYTI: === "..tyti)
-tt = {id = id,
+return {id = id,
       type = A._fbxclass, 
       tag = A._tag,
       title = A._title, 
-      titeltyp = A._label,
-      typtitel = tyti,
+      typlabel = A._label,
+      typlabelTag = A._label .. ifelse(A._tag == "",""," "..A._tag),
       mdtitle = A._mdtitle, 
       collapse = A._collapse,
-      boxstyle = A._boxstyle
+      boxstyle = A._boxstyle,
+      link = ifelse(fbx.ishtmlbook, A._file..".qmd","").."#"..id
 }
   -- pout("====nun====");pout(tt)
-  return(tt)
+  --return(tt)
 end
 
 insertStylesPandoc = function(doc)
@@ -790,9 +791,12 @@ local function Pandoc_makeListof(doc)
           -- pout("thett------");pout(tt)
         --  zeile = ("\n[**"..tt.typtitel.."**](#"..blk.identifier..")"..ifelse(tt.mdtitle=="","",": "..tt.mdtitle)..
         --      " \\Pageref{"..blk.identifier.."}\n")
-          zeile = ("\n[**"..tt.titeltyp.." \\ref{"..blk.identifier.."}**]" ..
-                   ifelse(tt.mdtitle=="","",": "..tt.mdtitle) ..
-                   " \\Pageref{"..blk.identifier.."}\n")
+        -- TODO: should be like [**R-tip 1.1**](intro.qmd#Rtip-install)
+          --zeile = ("\n[**"..tt.titeltyp.." \\ref{"..blk.identifier.."}**]" ..
+            --       ifelse(tt.mdtitle=="","",": "..tt.mdtitle) ..
+              --     " \\Pageref{"..blk.identifier.."}\n") 
+            zeile = ("\n [**"..tt.typlabelTag.."**](" .. tt.link ..")" ..
+                     ifelse(tt.mdtitle=="","",": "..tt.mdtitle) .. "\\Pageref{".. tt.id .."}\n")                               
           for _, lst in ipairs (thelists) do
             fbx.lists[lst].contents = fbx.lists[lst].contents..zeile
           end 
