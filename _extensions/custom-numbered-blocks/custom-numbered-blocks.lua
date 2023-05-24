@@ -677,6 +677,8 @@ local tt_from_attributes_id = function(A, id)
   --if A._tag == "" then tyti = A._label 
   --else tyti = A._label..' '..A._tag end 
 --    print("TYTI: === "..tyti)
+local thelink = "#"..id
+      if fbx.ishtmlbook and A._file~=nil then thelink = A._file..".qmd"..thelink end
 return {id = id,
       type = A._fbxclass, 
       tag = A._tag,
@@ -686,7 +688,7 @@ return {id = id,
       mdtitle = A._mdtitle, 
       collapse = A._collapse,
       boxstyle = A._boxstyle,
-      link = ifelse(fbx.ishtmlbook, A._file..".qmd","").."#"..id
+      link = thelink
 }
   -- pout("====nun====");pout(tt)
   --return(tt)
