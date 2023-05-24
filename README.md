@@ -13,9 +13,9 @@ The filter supports output formats pdf and html.
 
 ## Status
 
-Quarto 1.3 handles pdf books differently from Quarto 1.2. If chapters contain additional level 1 heading, this messes up numbering in Quarto 1.3 pdf books.
+Seems that Quarto 1.3 handles pdf books differently from Quarto 1.2. If chapters contain additional level 1 heading, this messes up numbering in Quarto 1.3 pdf books. I will likely fix that soon.
 
-There may come changes to the yaml-UI for lists-of-classes. 
+There may come changes to the yaml-UI for lists-of-classes, also soon ;-). 
 
 
 ## Installing
