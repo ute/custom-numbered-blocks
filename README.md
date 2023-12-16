@@ -90,3 +90,8 @@ custom-numbered-blocks
 
 Here is the source code for a (not so) minimal example: [example.qmd](example.qmd). And here's the rendered [example.html](https://ute.github.io/custom-numbered-blocks/doc/example.html) and [example.pdf](doc/example.pdf) 
 
+## Limitations
+- References to bibliography in the title are not resolved, see [this issue by ntq2022](https://github.com/ute/custom-numbered-blocks/issues/7). This is due to the sequence of processing references. Pull requests are welcome - I am not sure
+  if I will have time to dig into this in the nearer future.
+- Cross-reference labels that are interpretable for Quarto, such as labels starting with `thm-` or `fig-`, cannot be used with this extension, since they will be processed by Quarto. This results in unexpected output, see [this issue by gyu-eun-lee](https://github.com/ute/custom-numbered-blocks/issues/8).
+  
