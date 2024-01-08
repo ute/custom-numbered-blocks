@@ -82,8 +82,8 @@ Currently, you need to give a key `listin` for any class or group of classes tha
 
 # Pseudomath examples
 
-::: Definition
-### F$\alpha$ncybox {#fancy}
+::: {.Definition #fancy}
+### F$\alpha$ncybox
 A box is called *f$\alpha$ncybox* if it looks quite fancy. 
 
 In this context, by *fancy* we mean that the title of the box appears as a clickable button when rendered as html, where *clickable* implies that it throws a small shadow that becomes bigger when hovering over it.
