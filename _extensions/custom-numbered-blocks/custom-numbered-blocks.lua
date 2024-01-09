@@ -142,7 +142,6 @@ local function chapterinfo(book, fname)
     info.isfirst = (fname == first)
     info.lastchapter = last
     info.chapno = chapno
-    pout("chapter inf:", info)
     return(info)
 end
 
