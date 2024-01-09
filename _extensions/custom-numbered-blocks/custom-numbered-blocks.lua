@@ -56,14 +56,11 @@ fbx={ -- global table, holds information for processing fboxes
 local function DeInline(tbl)  
     local result ={}
     for i, v in pairs(tbl) do
-    --   pout (str(i)..": "..pandoc.utils.type(v)..
-    --    " "..str(v))
         pdtype = pandoc.utils.type(v)   
         if pdtype == "Inlines" or pdtype =="boolean"
         then 
             result[i] = str(v)
         elseif pdtype == "List" then result[i] = DeInline(v)
-        --  else result[i] = str(v)
         end
     end  
     return(result)
@@ -126,9 +123,30 @@ end
 
 -- !!! for pdf, the workflow is very different! ---
 -- also find out if lastfile of a book
+
+-- find first and last file of a book, and chapter number of that file 
+local function chapterinfo(book, fname)
+  local first = "" 
+  local last = "" 
+  local chapno = nil
+  local info = {}
+  --if book.render then
+    for _, v in pairs(book.render) do
+      if str(v.type) == "chapter" then
+        last = pandoc.path.split_extension(str(v.file))
+        if first == "" then first = last end
+        if last == fname then chapno = v.number end
+      end
+    end
+    info.islast = (fname == last)
+    info.isfirst = (fname == first)
+    info.lastchapter = last
+    info.chapno = chapno
+    pout("chapter inf:", info)
+    return(info)
+end
+
 local function Meta_findChapterNumber(meta)
-  local chaps = {}
-  local outfile = ""
   local processedfile = pandoc.path.split_extension(PANDOC_STATE.output_file)
   fbx.processedfile = processedfile
   fbx.xreffile ="._"..processedfile.."_xref.json"
@@ -138,51 +156,27 @@ local function Meta_findChapterNumber(meta)
   fbx.isfirstfile = not fbx.ishtmlbook
   fbx.islastfile = not fbx.ishtmlbook
   if fbx.ishtmlbook then 
- --   pout("EIN BUCH! :-)")
+    local chinfo = chapterinfo(meta.book, processedfile)
+    fbx.xreffile= "._"..chinfo.lastchapter.."_xref.json"
+    fbx.isfirstfile = chinfo.isfirst 
+    fbx.islastfile  = chinfo.islast 
     
-  --  if quarto.doc.is_format("pdf") then pout("-- aber pdf ---") end
-    local firstchapter = pandoc.path.split_extension(str(meta.book.render[1].file))
-    local lastchapter = pandoc.path.split_extension(
-                          str(meta.book.render[#meta.book.render].file))
-    -- pout("the last chapter  is"..lastchapter)
-    fbx.xreffile= "._"..lastchapter.."_xref.json"
-    --[[
-    if processedfile == lastchapter then
-      -- pout("last chapter".. processedfile)
-      fbx.islastfile = true
-    end
-    --]]
-    fbx.isfirstfile = processedfile == firstchapter
-    fbx.islastfile  = processedfile == lastchapter
-    -- user set chapter number
+    fbx.unnumbered = false
+    -- user set chapter number overrides information from meta
     if meta.chapno then  
       fbx.chapno = str(meta.chapno)
-      fbx.unnumbered = false
     else
-   -- retrieve table of chapter numbers, if they exist, from m.book.render
-      for i, chp in ipairs(meta.book.render) do
-        outfile = pandoc.path.split_extension(str(chp.file))      
-        --pout(i .."  "..outfile)
-        
-        if chp.number then chaps[outfile] = str(chp.number) 
-        end  
-        if chaps[processedfile] ~= nil then
-          fbx.chapno = chaps[processedfile] 
-          fbx.unnumbered = false
-          
-        else
-          fbx.chapno = ""
-          fbx.unnumbered = true
-        end   
+      if chinfo.chapno ~= nil then
+        fbx.chapno = str(chinfo.chapno)
+      else  
+        fbx.chapno = ""
+        fbx.unnumbered = true
       end
     end
   else -- not a book. 
     fbx.chapno = ""
     fbx.unnumbered = true
-   --  pout("============== KEIN BUCH! ===========")
   end
- -- if fbx.isfirstfile then pout("We start here "..processedfile) end
- -- if fbx.islastfile then pout("We finish here "..processedfile) end
 end
 
 local function makeKnownClassDetector(knownclasses)

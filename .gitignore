@@ -6,3 +6,4 @@
 *.json
 .Rproj.user
 /.luarc.json
+list-of-*.qmd

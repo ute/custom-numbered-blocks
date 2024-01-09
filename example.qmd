@@ -89,12 +89,6 @@ A box is called *f$\alpha$ncybox* if it looks quite fancy.
 In this context, by *fancy* we mean that the title of the box appears as a clickable button when rendered as html, where *clickable* implies that it throws a small shadow that becomes bigger when hovering over it.
 :::
 
-::: {.Definition}
-A box is called *f$\alpha$ncybox* if it looks quite fancy. 
-
-In this context, by *fancy* we mean that the title of the box appears as a clickable button when rendered as html, where *clickable* implies that it throws a small shadow that becomes bigger when hovering over it.
-:::
-
 
 ::: Corollary
 By Definition \ref{fancy}, `foldboxes` are fancyboxes.
@@ -108,7 +102,7 @@ Students are lured into clicking on the title and unfolding the fancybox.
 This extension has been written by a teacher who hopes that students read the course notes...
 :::
 
-Theorem \ref{TeacherHopes} is suggested by Conjecture \ref{TeachersHope}, but it cannot be proven theoretically. It does give rise to more conjectures, though.  \ref{fancy}
+Theorem \ref{TeacherHopes} is suggested by Conjecture \ref{TeachersHope}, but it cannot be proven theoretically. It does give rise to more conjectures, though.
 
 ::: {.Conjecture .unnumbered}
 The teacher mentioned in Theorem \ref{TeacherHopes} is a statistician who got addicted to quarto due to James J Balamuta's web-r extension, and desparately wanted to have a common counter for theorem and alike. She got also convinced that everything is possible in quarto by the many nice extensions from Shafayet Khan Shafee. 
