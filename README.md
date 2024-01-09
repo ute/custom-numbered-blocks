@@ -88,7 +88,7 @@ custom-numbered-blocks
 
 ## Example
 
-Here is the source code for a (not so) minimal example: [example.qmd](example.qmd). And here's the rendered [example.html](https://ute.github.io/custom-numbered-blocks/doc/example.html) and [example.pdf](doc/example.pdf) 
+Here is the source code for a (not so) minimal example: [example.qmd](https://ute.github.io/custom-numbered-blocks/example.qmd). And here's the rendered [example.html](https://ute.github.io/custom-numbered-blocks/doc/example.html) and [example.pdf](https://ute.github.io/custom-numbered-blocks/doc/example.pdf) 
 
 ## Limitations
 - References to bibliography in the title are not resolved, see [this issue by ntq2022](https://github.com/ute/custom-numbered-blocks/issues/7). This is due to the sequence of processing references. Pull requests are welcome - I am not sure
