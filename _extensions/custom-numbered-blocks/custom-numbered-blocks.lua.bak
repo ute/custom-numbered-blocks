@@ -148,23 +148,16 @@ end
 
 local function Meta_findChapterNumber(meta)
   local processedfile = pandoc.path.split_extension(PANDOC_STATE.output_file)
-  fbx.isbook = meta.book ~= nil
-  fbx.ishtmlbook = meta.book ~= nil and not quarto.doc.is_format("pdf")
   fbx.processedfile = processedfile
- 
+  fbx.xreffile ="._"..processedfile.."_xref.json"
   fbx.output_file = PANDOC_STATE.output_file
  -- pout(" now in "..processedfile.." later becomes ".. str(fbx.output_file))
-  
+  fbx.ishtmlbook = meta.book ~= nil and not quarto.doc.is_format("pdf")
   fbx.isfirstfile = not fbx.ishtmlbook
   fbx.islastfile = not fbx.ishtmlbook
-  if fbx.isbook then 
+  if fbx.ishtmlbook then 
     local chinfo = chapterinfo(meta.book, processedfile)
-    if fbx.ishtmlbook then
-      fbx.xreffile= "._htmlbook_xref.json"
-    else 
-      fbx.xreffile= "._pdfbook_xref.json"
-      -- fbx.xreffile= "._"..chinfo.lastchapter.."_xref.json"
-    end  
+    fbx.xreffile= "._"..chinfo.lastchapter.."_xref.json"
     fbx.isfirstfile = chinfo.isfirst 
     fbx.islastfile  = chinfo.islast 
     
@@ -181,7 +174,6 @@ local function Meta_findChapterNumber(meta)
       end
     end
   else -- not a book. 
-    fbx.xreffile ="._"..processedfile.."_xref.json"
     fbx.chapno = ""
     fbx.unnumbered = true
   end
@@ -415,13 +407,8 @@ local function Pandoc_prefix_count(doc)
          then 
            prefix = "" 
          else
-            if blk.attr.attributes.secno then 
-  
-               prefix = str(blk.attr.attributes.secno)
-            else 
-               secno = secno + 1
-               prefix = str(secno)
-           end
+            secno = secno + 1
+            prefix = str(secno)
          end
          -- reset counters in fbx --
          -- this would be more complicated if there are different levels
@@ -578,7 +565,7 @@ local function Pandoc_preparexref(doc)
             reflabel = bla._reflabel,
             reftag   = bla._tag,
             refnum   = replaceifempty(bla._tag, "??"), 
-            file     = pandoc.path.split_extension(fbx.output_file)
+            file     = fbx.output_file
           }
           -- if not xinfo.reftag then xinfo.reftag ="" end
           -- if xinfo.refnum == ""  then xinfo.refnum ="??" end
@@ -747,7 +734,7 @@ local function resolveref(data)
         if data[refid] then
           local href = '#'..refid
           if fbx.ishtmlbook then 
-            href = data[refid].file .. '.html' .. href 
+            href = data[refid].file .. href 
           end  
           return pandoc.Link(data[refid].refnum, href)
       end  end
