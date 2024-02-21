@@ -95,3 +95,15 @@ Here is the source code for a (not so) minimal example: [example.qmd](https://ut
   if I will have time to dig into this in the nearer future.
 - Cross-reference labels that are interpretable for Quarto, such as labels starting with `thm-` or `fig-`, cannot be used with this extension, since they will be processed by Quarto. This results in unexpected output, see [this issue by gyu-eun-lee](https://github.com/ute/custom-numbered-blocks/issues/8).
   
+## Workarounds
+- Headers within custom numbered blocks will mess up indentation of paragraphs following that block. To avoid that, include headers in a div, for example
+  ```markdown
+  ::: {.myblock}
+  ### heading of my custom block
+  blabla
+  
+  ::::{}
+  ### new header
+  ::::
+  other stuff
+  ```
