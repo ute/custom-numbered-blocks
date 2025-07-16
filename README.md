@@ -90,6 +90,23 @@ custom-numbered-blocks
 
 Here is the source code for a (not so) minimal example: [example.qmd](https://ute.github.io/custom-numbered-blocks/example.qmd). And here's the rendered [example.html](https://ute.github.io/custom-numbered-blocks/doc/example.html) and [example.pdf](https://ute.github.io/custom-numbered-blocks/doc/example.pdf) 
 
+## Further tips
+
+### Manually changing number prefix, e.g. for appendices in books
+
+In Quarto *book* projects, custom numbered blocks are numbered with chapter number as prefix. You can replace it with a custom prefix by setting the meta key `chapno` in the yaml of the chapter's `.qmd` file. This is necessary to avoid restarting the numbering in appendices, see [this issue by @alejandroschuler](https://github.com/ute/custom-numbered-blocks/issues/11).
+```yaml
+---
+chapno: "B" 
+---
+```
+The custom prefix can be any string value
+
+For single file Quarto documents, the numbering according to section number can be overridden by setting `secno` option in the header, e.g.
+```
+# first header {secno="A" #sec-first}
+```
+
 ## Limitations
 - References to bibliography in the title are not resolved, see [this issue by ntq2022](https://github.com/ute/custom-numbered-blocks/issues/7). This is due to the sequence of processing references. Pull requests are welcome - I am not sure
   if I will have time to dig into this in the nearer future.

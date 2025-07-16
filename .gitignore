@@ -7,3 +7,4 @@
 .Rproj.user
 /.luarc.json
 list-of-*.qmd
+*.code-workspace
