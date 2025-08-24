@@ -12,11 +12,11 @@ The filter supports output formats pdf and html.
 ![image](https://github.com/ute/custom-numbered-blocks/assets/5145859/8b69f761-fcf8-44fe-b2ee-2626f59548c9)
 
 ## Status
+Works with Quarto 1.7.
 
-Seems that Quarto 1.3 handles pdf books differently from Quarto 1.2. If chapters contain additional level 1 heading, this messes up numbering in Quarto 1.3 pdf books. I will likely fix that soon.
-
-There may come changes to the yaml-UI for lists-of-classes, also soon ;-). 
-
+Setting the number prefix per page/chapter coming soon.  
+There may also soon come changes to the yaml-UI for lists-of-classes.  
+And documentation will be extended :-)
 
 ## Installing
 
