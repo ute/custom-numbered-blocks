@@ -39,6 +39,7 @@ if ishtml then fmt="html" elseif ispdf then fmt = "pdf" end
 -- TODO encapsulate stylez into a doc thing or so
 -- maybe later allow various versions concurrently. 
 -- this could probably be problematic because of option clashes in rendered header?
+--    encapsulate options in a list 
 
 local stylename="foldbox"
 
@@ -150,6 +151,10 @@ local function Meta_findChapterNumber(meta)
   fbx.isbook = meta.book ~= nil
   fbx.ishtmlbook = meta.book ~= nil and not quarto.doc.is_format("pdf")
   fbx.processedfile = processedfile
+  
+  fbx.prefix=""
+  if (fbx.numberlevel ==1) and  meta.numberprefix 
+       then fbx.prefix = str(meta.numberprefix) end
  
   fbx.output_file = PANDOC_STATE.output_file
  -- pout(" now in "..processedfile.." later becomes ".. str(fbx.output_file))
@@ -275,12 +280,18 @@ local function Meta_initClassDefaults (meta)
 end
  
 local initMeta = function(m)
+-- get numbering depth
+  fbx.numberlevel = 0
+  if m.crossref then
+    if m.crossref.chapters then fbx.numberlevel = 1 end
+  end
   if m["custom-numbered-blocks"] then
     Meta_findChapterNumber(m)
     Meta_initClassDefaults(m)
   else
     print("== @%!& == Warning == &!%@ ==\n missing cunumblo key in yaml")  
   end
+  -- print("numberlevel is ".. str(fbx.numberlevel))
   return(m)
 end
 
@@ -389,8 +400,10 @@ end
 local function Pandoc_prefix_count(doc)
   -- do evt later: non numeric chapernumbers
   local secno = 0
-  local prefix = "0"
-  if fbx.ishtmlbook then prefix = fbx.chapno end
+  local prefix = "" -- was "0" but this looks ugly. maybe give this as an option if need be, later
+  local lprefix = ""
+  if fbx.prefix then prefix = fbx.prefix 
+     elseif fbx.ishtmlbook then prefix = fbx.chapno end
  
 -- pout("this is a book?"..str(fbx.ishtmlbook))
 
@@ -405,38 +418,65 @@ local function Pandoc_prefix_count(doc)
  If this happens before quarto 1.4
    
 --]]---------- end comment ------------  
+
+--[[------comment----------
+adjust prefixing to crossref.chapters in yaml.
+This sets the level of numbering depth, either with h1 (level = 1)
+or no prefix (level = 0).
+In case of no prefix number I would still like to allow overriding.
+--]]---------- end comment ------------  
+
   for i, blk in ipairs(doc.blocks) do
 --    print(prefix.."-"..i.." "..blk.t.."\n")
-  
-    if blk.t=="Header" and not fbx.ishtmlbook then 
-      if (blk.level == 1) then -- increase prefix
-         if  blk.classes:includes("unnumbered") 
-         then 
-           prefix = "" 
-         else
-            if blk.attr.attributes.secno then 
-  
-               prefix = str(blk.attr.attributes.secno)
-            else 
-               secno = secno + 1
-               prefix = str(secno)
-           end
-         end
+     
+     -- allow headers to redefine numberprefix. Maybe this should be restricted to level 1 headers? But comes in handy when numberlevel == 0
+    if blk.t=="Header" 
+    then 
+      if blk.attr.attributes.numberprefix 
+      then  prefix = str(blk.attr.attributes.numberprefix)
+      else prefix = fbx.prefix       
+      end 
+       
+    -- reset counter if level is 1, and it is not a html book. Here only resetting by chapter = per document
+      if not fbx.ishtmlbook 
+      then 
+        creset = (fbx.numberlevel == 1) and (blk.level == 1)
+      -- if creset then print ("reset is because level = "..str(fbx.numberlevel)) end
+      --prefix = ""
+        if (creset) 
+        then -- increase prefix and renumber     
+          if (not blk.classes:includes("unnumbered") ) 
+          then 
+           --    if blk.attr.attributes.secno then 
+             --      prefix = str(blk.attr.attributes.secno)
+             --   else 
+            secno = secno + 1
+            if blk.attr.attributes.numberprefix 
+            then prefix = str(blk.attr.attributes.numberprefix)
+            else prefix = str(secno)
+            end
+          end
          -- reset counters in fbx --
          -- this would be more complicated if there are different levels
          -- of numbering depth
          -- then: add a numdepth variable to fbx with a list of keys
-         for k in pairs(fbx.counter) do fbx.counter[k]=0 end
+          for k in pairs(fbx.counter) do fbx.counter[k]=0 end
+        end
       end  
-
+    end
       -- problem: only the outer divs are captured
-    elseif blk.t=="Div" then 
+    if blk.t=="Div" 
+      then 
         local known = fbx.is_cunumblo(blk)
         if  known then 
-           blk = fboxDiv_setAttributes(blk, known, prefix)
-        end  
+           if blk.attr.attributes.numberprefix 
+              then lprefix = blk.attr.attributes.numberprefix
+              else lprefix = prefix
+           end  
+           blk = fboxDiv_setAttributes(blk, known, lprefix)
+      end  
     end
-  end  
+  end  -- for
   return(doc)
 end
 
@@ -701,13 +741,15 @@ return {id = id,
 end
 
 insertStylesPandoc = function(doc)
+  -- TODO: change for a list of styles
   -- if stylez.extractStyleFromYaml then stylez.extractStyleFromYaml() end
   if stylez.insertPreamble and (quarto.doc.is_format("html") or quarto.doc.is_format("pdf"))
     then stylez.insertPreamble(doc, fbx.classDefaults, fmt) end
   return(doc)
 end;
 
-renderDiv = function(thediv)    
+renderDiv = function(thediv) 
+  -- TODO: change for individual style   
   local A = thediv.attributes
   local tt = {}
   if A._fbxclass ~= nil then

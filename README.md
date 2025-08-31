@@ -1,9 +1,9 @@
 # Custom Numbered Blocks Extension for Quarto
 
-This extension provides user defined custom div classes (environments) that come with numbering, such as theorems, examples, exercises. Numbered blocks can be cross referenced. 
+This extension provides user defined custom div classes (environments) that come with numbering, such as theorems, examples, exercises. Numbered blocks can be cross referenced.
 
 - By default, the div's text block is enclosed in a collapsible box, similar to quarto callouts.
-- Groups of classes can be defined that share style and numbering.
+- Groups of classes can be defined that share style and numbering, similar to LaTeX amsthm.
 - Lists-of-classes can be extracted, such as a list of all theorems. It is also possible to generate a list for a group of classes.
 
 The filter supports output formats pdf and html.
@@ -14,9 +14,23 @@ The filter supports output formats pdf and html.
 ## Status
 Works with Quarto 1.7.
 
+<!--
 Setting the number prefix per page/chapter coming soon.  
 There may also soon come changes to the yaml-UI for lists-of-classes.  
 And documentation will be extended :-)
+-->
+
+## News
+Adapted numbering level according to quarto's two level cross-referencing mechanism from quarto 1.4 onwards that adds a `crossref` key to yaml. 
+
+For books, custom blocks are numbered by chapter by default. For single documents or websites, the numbering is consecutive. This can be changed with the `crossref` yaml key:
+```
+crossref:
+  chapters: true
+```
+turns on numbering by section (level 1 header) for other documents than books, and setting `crossref.chapter` to `false` in books switches numbering by chapters off.
+
+Number prefix can be overridden by setting a yaml key `numberprefix` to the desired string value. This also works as div-block attribute.
 
 ## Installing
 
@@ -85,6 +99,15 @@ custom-numbered-blocks
     Example:
       listin: [examples, allthingsmath] 
 ```
+
+### Controlling numbering depth
+Use the `crossref.chapters` key to turn off numbering by Chapter (books) or by Level 1 heading (other documents). 
+
+```yaml
+crossref
+  chapters: false
+```
+
 
 ## Example
 

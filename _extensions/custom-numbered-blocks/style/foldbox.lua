@@ -14,18 +14,18 @@ defaultOptions={
 
 blockStart = function (tt, fmt)
   local Open =""
-  local BoxStyle =" fbx-default closebutton"
+  local bxstyle =" fbx-default closebutton"
   local texEnv = "fbx"
   if #tt.title > 0 then tt.typlabelTag = tt.typlabelTag..": " end
   if fmt =="html" then
     if tt.collapse =="false" then Open=" open" end
     if tt.boxstyle =="foldbox.simple" 
       then 
-        BoxStyle=" fbx-simplebox fbx-default" 
+        bxstyle=" fbx-simplebox fbx-default" 
     --    Open=" open" do not force override. Chose this in yaml or individually.
     --    we would want e.g to have remarks closed by default
       end
-    result = ('<details class=\"'..tt.type..BoxStyle ..'\"'..Open..'><summary>'..'<strong>'..tt.typlabelTag..'</strong>'..tt.title .. '</summary><div>')
+    result = ('<details class=\"'..tt.type..bxstyle ..'\"'..Open..'><summary>'..'<strong>'..tt.typlabelTag..'</strong>'..tt.title .. '</summary><div>')
     return result
   
   elseif fmt =="tex" then
