@@ -398,7 +398,7 @@ end
 
 
 local function Pandoc_prefix_count(doc)
-  -- do evt later: non numeric chapernumbers
+  -- do evt later: non numeric chapternumbers
   local secno = 0
   local prefix = "" -- was "0" but this looks ugly. maybe give this as an option if need be, later
   local lprefix = ""
@@ -464,7 +464,11 @@ In case of no prefix number I would still like to allow overriding.
         end
       end  
     end
-      -- problem: only the outer divs are captured
+      -- problem: only the outer divs are captured 
+      -- this is good when cunumblos are nested, because numbering would be ambiguous.
+      -- it prevents them though of being processed when in other divs.
+      -- TODO: recurse on nested divs, wenn die nicht selbst known dimser sind
+      -- see: https://stackoverflow.com/questions/72752648/pandoc-lua-how-to-walk-inside-a-div
     if blk.t=="Div" 
       then 
         local known = fbx.is_cunumblo(blk)
@@ -474,6 +478,9 @@ In case of no prefix number I would still like to allow overriding.
               else lprefix = prefix
            end  
            blk = fboxDiv_setAttributes(blk, known, lprefix)
+        -- hier könnte das rekursive absuchen stattfinden
+        -- evt alles in eine boolsche funktion verpacken
+        -- oder zuerst alle divs finden und taggen
       end  
     end
   end  -- for
