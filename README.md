@@ -117,17 +117,17 @@ Here is the source code for a (not so) minimal example: [example.qmd](https://ut
 
 ### Manually changing number prefix, e.g. for appendices in books
 
-In Quarto *book* projects, custom numbered blocks are numbered with chapter number as prefix. You can replace it with a custom prefix by setting the meta key `chapno` in the yaml of the chapter's `.qmd` file. This is necessary to avoid restarting the numbering in appendices, see [this issue by @alejandroschuler](https://github.com/ute/custom-numbered-blocks/issues/11).
+In Quarto *book* projects, custom numbered blocks are numbered with chapter number as prefix. You can replace it with a custom prefix by setting the meta key `numberprefix` in the yaml of the chapter's `.qmd` file. This is necessary to avoid restarting the numbering in appendices, see [this issue by @alejandroschuler](https://github.com/ute/custom-numbered-blocks/issues/11).
 ```yaml
 ---
-chapno: "B" 
+numberprefix: "B" 
 ---
 ```
 The custom prefix can be any string value
 
-For single file Quarto documents, the numbering according to section number can be overridden by setting `secno` option in the header, e.g.
+For single file Quarto documents, the numbering according to section number can be overridden by setting `numberprefix` option in the header, e.g.
 ```
-# first header {secno="A" #sec-first}
+# first header {numberprefix="A" #sec-first}
 ```
 
 ## Limitations
