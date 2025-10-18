@@ -789,16 +789,21 @@ end -- function renderDiv
 -- TODO: make everything with walk. Looks so nice
 local function resolveref(data)
   return { 
-   RawInline = function(el)
+    RawInline = function(el)
       local refid = el.text:match("\\ref{(.*)}")
-      if refid then 
-        if data[refid] then
-          local href = '#'..refid
+      local brefid = el.text:match("\\bref{(.*)}")
+      local foundid = ifelse(refid, refid, ifelse(brefid, brefid, nil))
+       
+      if foundid and data[foundid] then
+        local target = data[foundid]
+        local linktext = target.refnum
+        if brefid then linktext = target.reflabel.." "..target.refnum end
+        local href = '#'..foundid
           if fbx.ishtmlbook then 
-            href = data[refid].file .. '.html' .. href 
+            href = data[foundid].file .. '.html' .. href 
           end  
-          return pandoc.Link(data[refid].refnum, href)
-      end  end
+          return pandoc.Link(linktext, href)
+      end  
     end
   }
 end
