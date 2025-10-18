@@ -1,6 +1,6 @@
 title: Custom-numbered-blocks
 author: Ute Hahn
-version: 0.3.0
+version: 0.3.5-beta
 quarto-required: ">=1.5.0"
 contributes:
   filters:
