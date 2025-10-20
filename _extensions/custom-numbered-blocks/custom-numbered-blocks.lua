@@ -792,19 +792,24 @@ local function resolveref(data)
     RawInline = function(el)
       local refid = el.text:match("\\ref{(.*)}")
       local brefid = el.text:match("\\bref{(.*)}")
-      local foundid = ifelse(refid, refid, ifelse(brefid, brefid, nil))
-       
-      if foundid and data[foundid] then
-        local target = data[foundid]
-        local linktext = target.refnum
-        if brefid then linktext = target.reflabel.." "..target.refnum end
-        local href = '#'..foundid
-          if fbx.ishtmlbook then 
-            href = data[foundid].file .. '.html' .. href 
-          end  
-          return pandoc.Link(linktext, href)
-      end  
-    end
+      local foundid = ifelse(refid, refid, ifelse(brefid,brefid, nil))
+      
+      if foundid then
+        if data[foundid] then
+          local target = data[foundid]
+          local linktext = target.refnum
+          if brefid then linktext = target.reflabel.." "..target.refnum end
+          local href = '#'..foundid
+            if fbx.ishtmlbook then 
+              href = data[foundid].file .. '.html' .. href 
+            end  
+            return pandoc.Link(linktext, href)
+        else
+          quarto.log.warning("unknown reference ",foundid, " <=============  inserted ?? instead")
+          return(pandoc.Strong("??"))
+        end  
+      end
+    end    
   }
 end
 
