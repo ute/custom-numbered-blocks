@@ -806,7 +806,7 @@ local function resolveref(data)
             return pandoc.Link(linktext, href)
         else
           quarto.log.warning("unknown reference ",foundid, " <=============  inserted ?? instead")
-          return(pandoc.Strong("??"))
+          return({pandoc.Strong("??"),"->[",foundid,"]"}) --,"]<-",pandoc.Strong("??")})
         end  
       end
     end    

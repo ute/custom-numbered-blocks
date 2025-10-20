@@ -65,7 +65,7 @@ Numbered custom blocks can be cross-referenced with `\ref`.
 
 Default numbering can be switched off for the whole class by setting the `numbered` to false, or for an individual block by adding the class `unnumbered`.
 
-Crossreferences my need a re-run to update.
+Crossreferences may need a re-run to update.
 
 ::: Feature
 ### Boxes can be nested
