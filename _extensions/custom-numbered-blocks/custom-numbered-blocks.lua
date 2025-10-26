@@ -41,259 +41,33 @@ if ishtml then fmt="html" elseif ispdf then fmt = "pdf" end
 -- this could probably be problematic because of option clashes in rendered header?
 --    encapsulate options in a list 
 
-local stylename="foldbox"
-
-local stylez = require("style/"..stylename)
-
-
 --- TODO: better encapsulation (luxury :-P)
 
-fbx={ -- global table, holds information for processing fboxes
-   xreffile = "._xref.json" -- default name, set to lastfile in initial meta analysis
-}
+fbx = require "cnb-global"
+
+local stylename="foldbox"
+
+fbx.stylez = require("style/"..stylename)
 
 
--- utility functions ---
-local function DeInline(tbl)  
-    local result ={}
-    for i, v in pairs(tbl) do
-        pdtype = pandoc.utils.type(v)   
-        if pdtype == "Inlines" or pdtype =="boolean"
-        then 
-            result[i] = str(v)
-        elseif pdtype == "List" then result[i] = DeInline(v)
-        end
-    end  
-    return(result)
-end
-
-local function tablecontains(tbl, val)
-  if tbl ~= nil and val ~= nil then
-    for _, v in ipairs(tbl) do
-      if val == v then return true end
-    end
-  end
-  return false
-end  
-
-local function ifelse(condition, iftrue, iffalse)
-  if condition then return iftrue else return iffalse end
-end  
-
-local function replaceifnil(existvalue, replacevalue)
-  if existvalue ~= nil then return existvalue else return replacevalue end
-end  
-
-local function replaceifempty(existvalue, replacevalue)
-  if existvalue == nil or existvalue=="" then return replacevalue else return existvalue end
-end  
 
 
-local function updateTable (oldtbl, newtbl, ignorekeys)
-  local result = {}
-  -- copy old attributes
-  for k, v in pairs(oldtbl) do result[k] = v end
-  if newtbl ~= nil then if type(newtbl) == "table" then
-      if newtbl[1] == nil then -- it is an ok table with key value pairs
-        for k, v in pairs(newtbl) do
-          if not(tablecontains(ignorekeys, k)) then
-             result[k] = v
-         end
-        end
-      -- special: set reflabel to label if not given in attribs
---        if newattribs["reflabel"] == nil then result.reflabel = result.label end 
-      -- TODO: do this elsewhere
-      end  
-    end
-  end  
-  return(result)
-end
+ute1 = require "cnb-utilities"
+
+local ifelse = ute1.ifelse
+local replaceifnil = ute1.replaceifnil
+local replaceifempty = ute1.replaceifempty
+local str_md = ute1.str_md
+local str_sanimath = ute1.str_sanimath
 
 
+
+print(fbx.ute)
 
 ---- init step ---------------------------
---- init = require ("fbx1")
+--init = require ("cnb-init")
+--print(fbx.ute)
 
--- find chapter number and file name
--- returns a table with keyed entries
---   processedfile: string, 
---   ishtmlbook: boolean, 
---   chapno: string (at least if ishtmlbook),
---   unnumbered: boolean - initial state of section / chapter
--- if the user has given a chapno yaml entry, then unnumbered = false
-
--- !!! for pdf, the workflow is very different! ---
--- also find out if lastfile of a book
-
--- find first and last file of a book, and chapter number of that file 
-local function chapterinfo(book, fname)
-  local first = "" 
-  local last = "" 
-  local chapno = nil
-  local info = {}
-  --if book.render then
-    for _, v in pairs(book.render) do
-      if str(v.type) == "chapter" then
-        last = pandoc.path.split_extension(str(v.file))
-        if first == "" then first = last end
-        if last == fname then chapno = v.number end
-      end
-    end
-    info.islast = (fname == last)
-    info.isfirst = (fname == first)
-    info.lastchapter = last
-    info.chapno = chapno
-    return(info)
-end
-
-local function Meta_findChapterNumber(meta)
-  local processedfile = pandoc.path.split_extension(PANDOC_STATE.output_file)
-  fbx.isbook = meta.book ~= nil
-  fbx.ishtmlbook = meta.book ~= nil and not quarto.doc.is_format("pdf")
-  fbx.processedfile = processedfile
-  
-  fbx.prefix=""
-  if (fbx.numberlevel ==1) and  meta.numberprefix 
-       then fbx.prefix = str(meta.numberprefix) end
- 
-  fbx.output_file = PANDOC_STATE.output_file
- -- pout(" now in "..processedfile.." later becomes ".. str(fbx.output_file))
-  
-  fbx.isfirstfile = not fbx.ishtmlbook
-  fbx.islastfile = not fbx.ishtmlbook
-  if fbx.isbook then 
-    local chinfo = chapterinfo(meta.book, processedfile)
-    if fbx.ishtmlbook then
-      fbx.xreffile= "._htmlbook_xref.json"
-    else 
-      fbx.xreffile= "._pdfbook_xref.json"
-      -- fbx.xreffile= "._"..chinfo.lastchapter.."_xref.json"
-    end  
-    fbx.isfirstfile = chinfo.isfirst 
-    fbx.islastfile  = chinfo.islast 
-    
-    fbx.unnumbered = false
-    -- user set chapter number overrides information from meta
-    if meta.chapno then  
-      fbx.chapno = str(meta.chapno)
-    else
-      if chinfo.chapno ~= nil then
-        fbx.chapno = str(chinfo.chapno)
-      else  
-        fbx.chapno = ""
-        fbx.unnumbered = true
-      end
-    end
-  else -- not a book. 
-    fbx.xreffile ="._"..processedfile.."_xref.json"
-    fbx.chapno = ""
-    fbx.unnumbered = true
-  end
-end
-
-local function makeKnownClassDetector(knownclasses)
-  return function(div)
-    for _, cls in pairs(div.classes) do
-      if tablecontains(knownclasses, cls) then return str(cls) end
-    end
-    return nil  
-  end
-end  
-
-local function Meta_initClassDefaults (meta) 
-  -- do we want to prefix fbx numbers with section numbers?
-  local cunumbl = meta["custom-numbered-blocks"]
-  fbx.knownclasses = {}
-  fbx.lists = {}
-  --[[ TODO later
-  if meta.fbx_number_within_sections then
-    fbx.number_within_sections = meta.fbx_number_within_sections
-  else   
-    fbx.number_within_sections = false
-  end 
-  --]] 
-  -- prepare information for numbering fboxes by class
-  -- fbx.knownClasses ={}
-  fbx.classDefaults ={}
-  local groupDefaults = {default = stylez.defaultOptions} -- not needed later
-  fbx.counter = {unnumbered = 0} -- counter for unnumbered divs 
-  -- ! unnumbered not for classes that have unnumbered as default !
-  -- fbx.counterx = {}
-  if cunumbl.classes == nil then
-        print("== @%!& == Warning == &!%@ ==\n wrong format for fboxes yaml: classes needed")
-        return     
-  end
-  
--- simplified copy of yaml data: inlines to string
-  if cunumbl.groups then
-    for key, val in pairs(cunumbl.groups) do
-      local ginfo = DeInline(val)
-      --[[
-      pout("==== before after =======");  pout(ginfo)
-      if ginfo.boxstyle then
-        local mainstyle, substyle = ginfo.boxstyle:match "([^.]*).(.*)"
-      --  pout("main "..mainstyle.." :: "..substyle)
-        -- TODO: here account for multiple styles
-      end
-      --]]--
-      ginfo = updateTable(stylez.defaultOptions, ginfo)
-      --fbx.
-      groupDefaults[key] = ginfo
-   --   pout("-----group---"); pout(ginfo)
-    end 
-  end  
-  for key, val in pairs(cunumbl.classes) do
-    local clinfo = DeInline(val)
-  --  pout("==== before after =======");  pout(clinfo)
-    -- classinfo[key] = DeInline(val)
-    table.insert(fbx.knownclasses, str(key))
-    local theGroup = replaceifnil(clinfo.group, "default")
-    clinfo = updateTable(groupDefaults[theGroup], clinfo)
-    clinfo.label = replaceifnil(clinfo.label, str(key))
-    clinfo.reflabel = replaceifnil(clinfo.reflabel, clinfo.label)
-    -- assign counter --  
-    clinfo.cntname = replaceifnil(clinfo.group, str(key))
-    fbx.counter[clinfo.cntname] = 0 -- sets the counter up if non existing
-    fbx.classDefaults[key] = clinfo
- -- pout("---class----");  pout(clinfo)
-  end 
-  fbx.is_cunumblo = makeKnownClassDetector(fbx.knownclasses)
--- gather lists-of and make filenames by going through all classes
-  for _, val in pairs(fbx.classDefaults) do
-  --  pout("--classdefault: "..str(key))
-  --  pout(val)
-    if val.listin then
-      for _,v in ipairs(val.listin) do
-        fbx.lists[v] = {file = "list-of-"..str(v)..".qmd"}
-      end
-    end
-  end
--- initialize lists
-  for key, val in pairs(fbx.lists) do
-    val.contents = ifelse(fbx.isfirstfile, "\\providecommand{\\Pageref}[1]{\\hfill p.\\pageref{#1}}", "")
-  -- listin approach does not require knownclass, since listin is in classdefaults
-  end
- -- pout(fbx.lists)
-  --]]
--- document can give the chapter number for books in yaml header 
--- this becomes the counter Prefix
-end
- 
-local initMeta = function(m)
--- get numbering depth
-  fbx.numberlevel = 0
-  if m.crossref then
-    if m.crossref.chapters then fbx.numberlevel = 1 end
-  end
-  if m["custom-numbered-blocks"] then
-    Meta_findChapterNumber(m)
-    Meta_initClassDefaults(m)
-  else
-    print("== @%!& == Warning == &!%@ ==\n missing cunumblo key in yaml")  
-  end
-  -- print("numberlevel is ".. str(fbx.numberlevel))
-  return(m)
-end
 
 ----------------------- oldcode, mostly -------------------------------------
 
@@ -521,23 +295,6 @@ local function Divs_getid(el)
 end
 
 
---- utility function: stringify and sanitize math, depends on format ---
-local function str_sanimath(theInline, fmt)
-  local newstring = theInline:walk{
-    Math = function(ma)
-      local mathtxt = str(ma.text)
-      if fmt == "html" then 
-        return {'<span class="math inline">\\(' .. mathtxt .. '\\)</span>'}
-      elseif fmt == "pdf" then 
-        return {'\\(' .. mathtxt .. '\\)'}
-      elseif fmt == "md" then 
-        return  {'$' .. mathtxt .. '$'}
-      else return {mathtxt}
-      end  
-  end  
-  }
-  return str(newstring)
-end  
 
 
 ----------- title of divs ----------------
@@ -750,8 +507,8 @@ end
 insertStylesPandoc = function(doc)
   -- TODO: change for a list of styles
   -- if stylez.extractStyleFromYaml then stylez.extractStyleFromYaml() end
-  if stylez.insertPreamble and (quarto.doc.is_format("html") or quarto.doc.is_format("pdf"))
-    then stylez.insertPreamble(doc, fbx.classDefaults, fmt) end
+  if fbx.stylez.insertPreamble and (quarto.doc.is_format("html") or quarto.doc.is_format("pdf"))
+    then fbx.stylez.insertPreamble(doc, fbx.classDefaults, fmt) end
   return(doc)
 end;
 
@@ -769,14 +526,14 @@ renderDiv = function(thediv)
     if #thediv.content > 0 and thediv.content[1].t == "Para" and 
       thediv.content[#thediv.content].t == "Para" then
         table.insert(thediv.content[1].content, 1, 
-          pandoc.RawInline(fmt, stylez.blockStart(tt, fmt)))
+          pandoc.RawInline(fmt, fbx.stylez.blockStart(tt, fmt)))
         table.insert(thediv.content,
-          pandoc.RawInline(fmt, stylez.blockEnd(tt, fmt)))
+          pandoc.RawInline(fmt, fbx.stylez.blockEnd(tt, fmt)))
       else
         table.insert(thediv.content, 1, 
-          pandoc.RawBlock(fmt, stylez.blockStart(tt, fmt)))
+          pandoc.RawBlock(fmt, fbx.stylez.blockStart(tt, fmt)))
         table.insert(thediv.content,  
-          pandoc.RawBlock(fmt, stylez.blockEnd(tt, fmt)))
+          pandoc.RawBlock(fmt, fbx.stylez.blockEnd(tt, fmt)))
     end  
     --]]
   end  
@@ -909,15 +666,20 @@ local function Pandoc_makeListof(doc)
 end
 
 return{
-    {Meta = initMeta}
+    require("cnb-init") -- Meta: set up chapter numbers and classes
+    
     --[[
     ,{Pandoc = function(d)
-      for k, v in pairs(stylez) do
+      for k, v in pairs(fbx.stylez) do
         pout(k..":  ".. type(v))
       end 
+      for k, v in pairs(fbx) do
+        pout(k..":  ".. type(v))
+      end 
+      
     end 
     }
-    ]]--
+    --]]--
   , {Meta = Meta_readxref, Div=fboxDiv_mark_for_processing,
      Pandoc = Pandoc_prefix_count} 
  -- , {Div=pandocdivs, Pandoc=pandocblocks}
