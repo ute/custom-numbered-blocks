@@ -791,7 +791,7 @@ local function resolveref(data)
   return { 
     RawInline = function(el)
       local refid = el.text:match("\\ref{(.*)}")
-      local brefid = el.text:match("\\bref{(.*)}")
+      local brefid = el.text:match("\\longref{(.*)}")
       local foundid = ifelse(refid, refid, ifelse(brefid,brefid, nil))
       
       if foundid then
