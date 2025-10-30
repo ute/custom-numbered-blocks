@@ -8,7 +8,6 @@ local ifelse = ute1.ifelse
 local replaceifnil = ute1.replaceifnil
 local replaceifempty = ute1.replaceifempty
 local str_md = ute1.str_md
-local str_sanimath = ute1.str_sanimath
 local tablecontains = ute1.tablecontains
 local updateTable = ute1.updateTable
 local deInline = ute1.deInline

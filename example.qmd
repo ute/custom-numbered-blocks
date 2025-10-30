@@ -6,6 +6,7 @@ filters:
 format:
   html: default
   pdf: default
+#  typst: default
 
 custom-numbered-blocks:
   groups:
@@ -80,7 +81,7 @@ The default style for custom divs is `foldbox`: a collapsible similar to quarto'
 
 
 ::: TODO
-### Custom styles
+### Custom **styles**
 - [ ] create an API for user defined block styles
 - [ ] provide an example
 - [ ] and documentation

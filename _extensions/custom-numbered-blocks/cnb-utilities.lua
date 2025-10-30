@@ -188,7 +188,11 @@ return {id = id,
 end
 
 
---[[-- make all this global later
+local warn = function(whatswrong)
+   quarto.log.output ("=== [custom-numbered-blocks] Warning: "..whatswrong) --"..\n===============")
+end  
+
+--[[-- make all this global later?
 ---]]
 return{
     tablecontains = tablecontains,
@@ -199,7 +203,8 @@ return{
     deInline = DeInline,
     str_md = str_md,
     str_sanimath = str_sanimath,
-    tt_from_attributes_id = tt_from_attributes_id
+    tt_from_attributes_id = tt_from_attributes_id,
+    warn = warn
 }
 --]]------
 ---

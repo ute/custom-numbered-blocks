@@ -2,16 +2,16 @@
 
 next steps:
 
-- [ ] split: fmt in init
+- [x] split: fmt in init
 - [ ] title rendering
 
 ## Split up in chunks
 
 - [x] split monolith up into parts for each step of processing
-- [ ] repair bugs due to splitting:
+- [x] repair bugs due to splitting:
   - [x] fmt not detected -> insert in `cnbx` list
-  - [ ] clean up code, put this into init
-  - [ ] titles are not rendered properly. Maybe this is futile because titles will change anyway
+  - [x] clean up code, put this into init
+  - [x] titles are not rendered properly. Maybe this is futile because titles will change anyway
 
 ## Document
 
@@ -23,7 +23,7 @@ This has to be ongoing
 
 - [ ] store title as Inlines
 - [ ] use this stored title for rendering
-- [ ] concurrently store md version as `mdtitle`, using the new translator function `deInline`
+- [x] concurrently store md version as `mdtitle`, using the new translator function `str_md`
 
 ## Simplify stylez interface: no use of fmt
 

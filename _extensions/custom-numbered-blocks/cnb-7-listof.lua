@@ -8,7 +8,6 @@ local str = pandoc.utils.stringify
 local replaceifnil = ute1.replaceifnil
 local replaceifempty = ute1.replaceifempty
 local str_md = ute1.str_md
-local str_sanimath = ute1.str_sanimath
 local tablecontains = ute1.tablecontains
 local updateTable = ute1.updateTable
 local deInline = ute1.deInline
@@ -64,7 +63,7 @@ local function Pandoc_makeListof(doc)
       if file then 
         file:write(lst.contents) 
         file:close()
-      else pout("cannot write to file "..lst.file)  
+      else quarto.log.output("cannot write to file "..lst.file)  
       end  
     end  
   end

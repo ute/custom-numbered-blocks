@@ -6,7 +6,6 @@ local replaceifnil = ute1.replaceifnil
 --[[
 local replaceifempty = ute1.replaceifempty
 local str_md = ute1.str_md
-local str_sanimath = ute1.str_sanimath
 local tablecontains = ute1.tablecontains
 local updateTable = ute1.updateTable
 local deInline = ute1.deInline
@@ -201,6 +200,26 @@ In case of no prefix number I would still like to allow overriding.
   return(doc)
 end
 
+local function Meta_readxref(meta)
+  local file = io.open(cnbx.xreffile,"r")
+  if file then 
+     local xrfjson = file:read "*a"
+    file:close()
+    --[[
+    if xrfjson then meta.fbx.xref = quarto.json.decode(xrfjson)
+    else meta.fbx.xref = {} end
+   --   pout("eingelesen")
+   -- pout(meta.fbx.xref)
+  else meta.fbx.xref ={}
+    --]]--
+    if xrfjson then cnbx.xref = quarto.json.decode(xrfjson)
+    else cnbx.xref = {} end
+    --  pout("eingelesen")
+    --pout(fbx.xref)
+  else cnbx.xref ={}
+  end  
+  return(meta)
+end
 
 
 return{

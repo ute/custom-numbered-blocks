@@ -2,14 +2,16 @@ ute1 = require "cnb-utilities"
 
 local str = pandoc.utils.stringify
 local replaceifnil = ute1.replaceifnil
-local str_sanimath = ute1.str_sanimath
+-- local str_sanimath = ute1.str_sanimath
+local str_md = ute1.str_md
+
 --[[
 local ifelse = ute1.ifelse
 local replaceifempty = ute1.replaceifempty
-local str_md = ute1.str_md
 local tablecontains = ute1.tablecontains
 local updateTable = ute1.updateTable
 local deInline = ute1.deInline
+
 --]]--
 
 
@@ -25,18 +27,20 @@ local function Divs_maketitle(el)
    if not ela._process_me then return(el) end
   -- pout("--- processing item with id ".. replaceifempty(el.identifier, "LEER"))
    
-   ClassDef = cnbx.classDefaults[ela._fbxclass]
+--   ClassDef = cnbx.classDefaults[ela._fbxclass]
  
    if titl == nil then  
       el1 = el.content[1]
       if el1.t=="Header" then 
         -- sanitize math inline. depends on format
         ela.title = str(el1.content)  -- readable version without math
-        mdtitl = str_sanimath(el1.content, "md")
-        if ishtml then titl = str_sanimath(el1.content, "html")
-          elseif ispdf then titl = str_sanimath(el1.content, "pdf")
-          else titl = mdtitl
-        end 
+        mdtitl = str_md(el1.content) --str_sanimath(el1.content, "md")
+        --mdtitl = str_sanimath(el1.content, "md")
+        -- if cnbx.fmt ~= "unsupported" 
+        --  then 
+        titl = str_sanimath(el1.content, cnbx.fmt)
+        --  else titl = mdtitl
+        --end 
     --    pout("--- looking at header with id "..el1.identifier)
     --    pout("--- still processing item with id ".. replaceifempty(id, "LEER"))
     --[[    

@@ -26,15 +26,11 @@ SOFTWARE.
 -- partial rewrite, complete later
 
 -- nice rename function learned from shafayetShafee :-)
-local str = pandoc.utils.stringify
-local pout = quarto.log.output
+--local str = pandoc.utils.stringify
+--local pout = quarto.log.output
 
 -- important quasi global variables
 
-local ishtml = quarto.doc.is_format("html")
-local ispdf = quarto.doc.is_format("pdf")
-local fmt=""
-if ishtml then fmt="html" elseif ispdf then fmt = "pdf" end
 
 -- TODO encapsulate stylez into a doc thing or so
 -- maybe later allow various versions concurrently. 
@@ -44,7 +40,12 @@ if ishtml then fmt="html" elseif ispdf then fmt = "pdf" end
 --- TODO: better encapsulation (luxury :-P)
 
 cnbx = require "cnb-global"
-cnbx.fmt = fmt
+util = require "cnb-utilities"
+
+if cnbx.fmt == "unsupported" then
+  util.warn ("format "..FORMAT.." not supported")
+  return
+end  
 
 local stylename="foldbox"
 
@@ -54,33 +55,7 @@ cnbx.stylez = require("style/"..stylename)
 
 
 
-
-ute1 = require "cnb-utilities"
-local tt_from_attributes_id = ute1.tt_from_attributes_id
-
-
---[[
-local ifelse = ute1.ifelse
-local replaceifnil = ute1.replaceifnil
-local replaceifempty = ute1.replaceifempty
--- local str_md = ute1.str_md
-local str_sanimath = ute1.str_sanimath
-]]--
-
-
 --print(cnbx.ute)
-
-
-
----------------- initialize xref ----------
--- xrefinit = require ("fbx3")
-
-
--------------- render -------------------
--- render = require ("fbx4")
-
-
-
 
 
 -- debugging stuff
@@ -134,8 +109,5 @@ return{
  -- , {Div = renderDiv,  Pandoc = insertStylesPandoc}
   , require("cnb-9-cleanup")  
  -- , {Div = Div_cleanupAttribs}
---[[
-  
-  -- ]]
 }
 
