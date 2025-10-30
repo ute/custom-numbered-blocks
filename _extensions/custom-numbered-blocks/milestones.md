@@ -1,5 +1,10 @@
 # What to do next
 
+next steps:
+
+- [ ] split: fmt in init
+- [ ] title rendering
+
 ## Split up in chunks
 
 - [x] split monolith up into parts for each step of processing

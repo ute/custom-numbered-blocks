@@ -49,8 +49,9 @@ blockEnd = function (tt, fmt)
 end,
 
 
+-- TODO: remove
 fakeinsertPreamble = function(doc, classDefs, fmt)
-  print("inserting now premble for format "..fmt)
+  print("inserting now preamble for format "..fmt)
   if classDefs==nil then
     print("no class Defaults")
   end
