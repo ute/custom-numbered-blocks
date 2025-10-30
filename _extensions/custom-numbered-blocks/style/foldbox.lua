@@ -48,6 +48,14 @@ blockEnd = function (tt, fmt)
   end  
 end,
 
+
+fakeinsertPreamble = function(doc, classDefs, fmt)
+  print("inserting now premble for format "..fmt)
+  if classDefs==nil then
+    print("no class Defaults")
+  end
+end,
+
 insertPreamble = function(doc, classDefs, fmt)
   local ishtml = quarto.doc.is_format("html")
   local ispdf = quarto.doc.is_format("pdf")

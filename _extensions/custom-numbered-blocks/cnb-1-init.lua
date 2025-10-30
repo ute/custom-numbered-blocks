@@ -25,9 +25,9 @@ SOFTWARE.
 
 local str = pandoc.utils.stringify
 
-fbx = require "cnb-global"
+cnbx = require "cnb-global"
 
-fbx.ute="huhn"
+cnbx.ute="huhn"
 
 ute1 = require "cnb-utilities"
 
@@ -77,46 +77,46 @@ end
 
 local Meta_findChapterNumber = function (meta)
   local processedfile = pandoc.path.split_extension(PANDOC_STATE.output_file)
-  fbx.isbook = meta.book ~= nil
-  fbx.ishtmlbook = meta.book ~= nil and not quarto.doc.is_format("pdf")
-  fbx.processedfile = processedfile
+  cnbx.isbook = meta.book ~= nil
+  cnbx.ishtmlbook = meta.book ~= nil and not quarto.doc.is_format("pdf")
+  cnbx.processedfile = processedfile
   
-  fbx.prefix=""
-  if (fbx.numberlevel ==1) and  meta.numberprefix 
-       then fbx.prefix = str(meta.numberprefix) end
+  cnbx.prefix=""
+  if (cnbx.numberlevel ==1) and  meta.numberprefix 
+       then cnbx.prefix = str(meta.numberprefix) end
  
-  fbx.output_file = PANDOC_STATE.output_file
- -- pout(" now in "..processedfile.." later becomes ".. str(fbx.output_file))
+  cnbx.output_file = PANDOC_STATE.output_file
+ -- pout(" now in "..processedfile.." later becomes ".. str(cnbx.output_file))
   
-  fbx.isfirstfile = not fbx.ishtmlbook
-  fbx.islastfile = not fbx.ishtmlbook
-  if fbx.isbook then 
+  cnbx.isfirstfile = not cnbx.ishtmlbook
+  cnbx.islastfile = not cnbx.ishtmlbook
+  if cnbx.isbook then 
     local chinfo = chapterinfo(meta.book, processedfile)
-    if fbx.ishtmlbook then
-      fbx.xreffile= "._htmlbook_xref.json"
+    if cnbx.ishtmlbook then
+      cnbx.xreffile= "._htmlbook_xref.json"
     else 
-      fbx.xreffile= "._pdfbook_xref.json"
-      -- fbx.xreffile= "._"..chinfo.lastchapter.."_xref.json"
+      cnbx.xreffile= "._pdfbook_xref.json"
+      -- cnbx.xreffile= "._"..chinfo.lastchapter.."_xref.json"
     end  
-    fbx.isfirstfile = chinfo.isfirst 
-    fbx.islastfile  = chinfo.islast 
+    cnbx.isfirstfile = chinfo.isfirst 
+    cnbx.islastfile  = chinfo.islast 
     
-    fbx.unnumbered = false
+    cnbx.unnumbered = false
     -- user set chapter number overrides information from meta
     if meta.chapno then  
-      fbx.chapno = str(meta.chapno)
+      cnbx.chapno = str(meta.chapno)
     else
       if chinfo.chapno ~= nil then
-        fbx.chapno = str(chinfo.chapno)
+        cnbx.chapno = str(chinfo.chapno)
       else  
-        fbx.chapno = ""
-        fbx.unnumbered = true
+        cnbx.chapno = ""
+        cnbx.unnumbered = true
       end
     end
   else -- not a book. 
-    fbx.xreffile ="._"..processedfile.."_xref.json"
-    fbx.chapno = ""
-    fbx.unnumbered = true
+    cnbx.xreffile ="._"..processedfile.."_xref.json"
+    cnbx.chapno = ""
+    cnbx.unnumbered = true
   end
 end
 
@@ -124,7 +124,7 @@ local makeKnownClassDetector = function (knownclasses)
   -- print("making babies "..str(knownclasses))
   return function(div)
     for _, cls in pairs(div.classes) do
-      if tablecontains(knownclasses, cls) then return str(cls) end
+      if tablecontains(knownclasses, cls) then return pandoc.utils.stringify(cls) end
     end
     return nil  
   end
@@ -134,22 +134,22 @@ end
 local Meta_initClassDefaults = function (meta) 
   -- do we want to prefix fbx numbers with section numbers?
   local cunumbl = meta["custom-numbered-blocks"]
-  fbx.knownclasses = {}
-  fbx.lists = {}
+  cnbx.knownclasses = {}
+  cnbx.lists = {}
   --[[ TODO later
   if meta.fbx_number_within_sections then
-    fbx.number_within_sections = meta.fbx_number_within_sections
+    cnbx.number_within_sections = meta.fbx_number_within_sections
   else   
-    fbx.number_within_sections = false
+    cnbx.number_within_sections = false
   end 
   --]] 
   -- prepare information for numbering fboxes by class
-  -- fbx.knownClasses ={}
-  fbx.classDefaults ={}
-  local groupDefaults = {default = fbx.stylez.defaultOptions} -- not needed later
-  fbx.counter = {unnumbered = 0} -- counter for unnumbered divs 
+  -- cnbx.knownClasses ={}
+  cnbx.classDefaults ={}
+  local groupDefaults = {default = cnbx.stylez.defaultOptions} -- not needed later
+  cnbx.counter = {unnumbered = 0} -- counter for unnumbered divs 
   -- ! unnumbered not for classes that have unnumbered as default !
-  -- fbx.counterx = {}
+  -- cnbx.counterx = {}
   if cunumbl.classes == nil then
         print("== @%!& == Warning == &!%@ ==\n wrong format for fboxes yaml: classes needed")
         return     
@@ -167,8 +167,8 @@ local Meta_initClassDefaults = function (meta)
         -- TODO: here account for multiple styles
       end
       --]]--
-      ginfo = updateTable(fbx.stylez.defaultOptions, ginfo)
-      --fbx.
+      ginfo = updateTable(cnbx.stylez.defaultOptions, ginfo)
+      --cnbx.
       groupDefaults[key] = ginfo
    --   pout("-----group---"); pout(ginfo)
     end 
@@ -177,34 +177,34 @@ local Meta_initClassDefaults = function (meta)
     local clinfo = deInline(val)
   --  pout("==== before after =======");  pout(clinfo)
     -- classinfo[key] = deInline(val)
-    table.insert(fbx.knownclasses, str(key))
+    table.insert(cnbx.knownclasses, str(key))
     local theGroup = replaceifnil(clinfo.group, "default")
     clinfo = updateTable(groupDefaults[theGroup], clinfo)
     clinfo.label = replaceifnil(clinfo.label, str(key))
     clinfo.reflabel = replaceifnil(clinfo.reflabel, clinfo.label)
     -- assign counter --  
     clinfo.cntname = replaceifnil(clinfo.group, str(key))
-    fbx.counter[clinfo.cntname] = 0 -- sets the counter up if non existing
-    fbx.classDefaults[key] = clinfo
+    cnbx.counter[clinfo.cntname] = 0 -- sets the counter up if non existing
+    cnbx.classDefaults[key] = clinfo
  -- pout("---class----");  pout(clinfo)
   end 
-  fbx.is_cunumblo = makeKnownClassDetector(fbx.knownclasses)
+  cnbx.is_cunumblo = makeKnownClassDetector(cnbx.knownclasses)
 -- gather lists-of and make filenames by going through all classes
-  for _, val in pairs(fbx.classDefaults) do
+  for _, val in pairs(cnbx.classDefaults) do
   --  pout("--classdefault: "..str(key))
   --  pout(val)
     if val.listin then
       for _,v in ipairs(val.listin) do
-        fbx.lists[v] = {file = "list-of-"..str(v)..".qmd"}
+        cnbx.lists[v] = {file = "list-of-"..str(v)..".qmd"}
       end
     end
   end
 -- initialize lists
-  for key, val in pairs(fbx.lists) do
-    val.contents = ifelse(fbx.isfirstfile, "\\providecommand{\\Pageref}[1]{\\hfill p.\\pageref{#1}}", "")
+  for key, val in pairs(cnbx.lists) do
+    val.contents = ifelse(cnbx.isfirstfile, "\\providecommand{\\Pageref}[1]{\\hfill p.\\pageref{#1}}", "")
   -- listin approach does not require knownclass, since listin is in classdefaults
   end
- -- pout(fbx.lists)
+ -- pout(cnbx.lists)
   --]]
 -- document can give the chapter number for books in yaml header 
 -- this becomes the counter Prefix
@@ -212,11 +212,11 @@ end
 
 return{
 Meta = function(m)
-  print("1. Init Meta")
+ -- print("1. Init Meta")
 -- get numbering depth
-  fbx.numberlevel = 0
+  cnbx.numberlevel = 0
   if m.crossref then
-    if m.crossref.chapters then fbx.numberlevel = 1 end
+    if m.crossref.chapters then cnbx.numberlevel = 1 end
   end
   if m["custom-numbered-blocks"] then
     Meta_findChapterNumber(m)
@@ -224,7 +224,7 @@ Meta = function(m)
   else
     print("== @%!& == Warning == &!%@ ==\n missing cunumblo key in yaml")  
   end
-  -- print("numberlevel is ".. str(fbx.numberlevel))
+  -- print("numberlevel is ".. str(cnbx.numberlevel))
   return(m)
 end
 }

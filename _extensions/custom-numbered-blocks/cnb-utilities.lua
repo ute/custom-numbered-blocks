@@ -164,6 +164,30 @@ function str_sanimath(theInline, fmt)
 end  
 
 
+local tt_from_attributes_id = function(A, id)
+  --local tyti =""
+  --local tt = {}
+  --if A._tag == "" then tyti = A._label 
+  --else tyti = A._label..' '..A._tag end 
+--    print("TYTI: === "..tyti)
+local thelink = "#"..id
+      if cnbx.ishtmlbook and A._file~=nil then thelink = A._file..".qmd"..thelink end
+return {id = id,
+      type = A._fbxclass, 
+      tag = A._tag,
+      title = A._title, 
+      typlabel = A._label,
+      typlabelTag = A._label .. ifelse(A._tag == "",""," "..A._tag),
+      mdtitle = A._mdtitle, 
+      collapse = A._collapse,
+      boxstyle = A._boxstyle,
+      link = thelink
+}
+  -- pout("====nun====");pout(tt)
+  --return(tt)
+end
+
+
 --[[-- make all this global later
 ---]]
 return{
@@ -174,7 +198,8 @@ return{
     updateTable = updateTable,
     deInline = DeInline,
     str_md = str_md,
-    str_sanimath = str_sanimath
+    str_sanimath = str_sanimath,
+    tt_from_attributes_id = tt_from_attributes_id
 }
 --]]------
 ---
