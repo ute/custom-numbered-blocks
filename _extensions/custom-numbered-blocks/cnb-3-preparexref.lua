@@ -1,4 +1,34 @@
- 
+ --[[
+  In this module, gather information about all custom numbered blocks
+  Rewrite this. 
+  Gather most information in cnbx-xref. Only add one fbx-id to the blocks 
+  attributes.
+]]--
+
+--[[
+MIT License
+
+Copyright (c) 2026 Ute Hahn
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+]]--
+
 
 ute1 = require "cnb-utilities"
 
@@ -83,7 +113,7 @@ local function Pandoc_preparexref(doc)
             reflabel = bla._reflabel,
             reftag   = bla._tag,
             refnum   = replaceifempty(bla._tag, "??"), 
-            file     = pandoc.path.split_extension(cnbx.output_file)
+            file     = cnbx.processedfile --pandoc.path.split_extension(cnbx.output_file)
           }
           -- if not xinfo.reftag then xinfo.reftag ="" end
           -- if xinfo.refnum == ""  then xinfo.refnum ="??" end

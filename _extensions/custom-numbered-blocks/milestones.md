@@ -19,9 +19,13 @@ This has to be ongoing
 
 - [ ] landmap for the parts `cnb-1` to `cnb-9`
 
+New parts:
+
+- [ ] cnb-global
+
 ## Change title rendering: make use of pandoc utilities
 
-- [ ] store title as Inlines
+- [ ] store title as Inlines `pandoctitle`
 - [ ] use this stored title for rendering
 - [x] concurrently store md version as `mdtitle`, using the new translator function `str_md`
 
@@ -34,3 +38,11 @@ This is a big one. Remove looking up format. Let return separate lists for each 
 This is also a big one
 
 - [ ] make a template for a simple style, not using details-summary
+
+# Reorganize the whole thing
+
+- [ ] no new extra arguments to divs, but store in global list with identifier
+- [ ] 1. round: crossreferences and identifiers, store as json
+- [ ] for books: register if changes occur and if there are unresolved references
+- [ ] for monofile document types: delete json file in the end
+  

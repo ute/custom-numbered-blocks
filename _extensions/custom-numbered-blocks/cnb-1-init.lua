@@ -1,7 +1,7 @@
 --[[
 MIT License
 
-Copyright (c) 2023 Ute Hahn
+Copyright (c) 2026 Ute Hahn
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ]]--
 
-
+-- shortcuts
 local str = pandoc.utils.stringify
 
 cnbx = require "cnb-global"
@@ -36,24 +36,23 @@ local tablecontains = ute1.tablecontains
 local updateTable = ute1.updateTable
 local ifelse = ute1.ifelse
 local replaceifnil = ute1.replaceifnil
-local replaceifempty = ute1.replaceifempty
+--local replaceifempty = ute1.replaceifempty
 
 
 
--- find chapter number and file name
--- returns a table with keyed entries
---   processedfile: string, 
---   ishtmlbook: boolean, 
---   chapno: string (at least if ishtmlbook),
---   unnumbered: boolean - initial state of section / chapter
--- if the user has given a chapno yaml entry, then unnumbered = false
-
--- !!! for pdf, the workflow is very different! ---
--- also find out if lastfile of a book
-
--- find first and last file of a book, and chapter number of that file 
-
-
+--- find chapter number of current file, whether first or last file, and last file for books
+--- only sensible for books
+--- @param book table yaml entries from quarto
+--- @param fname string currently rendered file
+--- @return table with keyed entries
+---   isfirst, islast: logical
+---   lastchapter: name of last chapter
+---   chapno: string (at least if ishtmlbook),
+---   unnumbered: boolean - initial state of section / chapter
+--- if the user has given a chapno yaml entry, then unnumbered = false
+--- !!! for pdf, the rendering workflow is very different! ---
+--- also find out if lastfile of a book
+--- find first and last file of a book, and chapter number of that file 
 local chapterinfo =  function (book, fname)
   local first = "" 
   local last = "" 
@@ -74,19 +73,29 @@ local chapterinfo =  function (book, fname)
     return(info)
 end
 
-
-local Meta_findChapterNumber = function (meta)
+--- find chapter information in meta table
+--- sideeffects: add the following to cnbx:
+---     isbook: logical
+---     ishtmlbook: logical
+---     processedfile: string, filename without extension
+---     isfirstfile, islastfile : logical, for htmlbooks
+---     xreffile: filename for json file to store crossref information
+---     prefix: common prefix for all numbers instead of chapter or section number (if any)
+---     chapno: chapter number, if any
+--- @param meta table document meta information
+local findChapterInfo = function (meta)
   local processedfile = pandoc.path.split_extension(PANDOC_STATE.output_file)
   cnbx.isbook = meta.book ~= nil
   cnbx.ishtmlbook = meta.book ~= nil and not quarto.doc.is_format("pdf")
   cnbx.processedfile = processedfile
+  -- cnbx.output_file = PANDOC_STATE.output_file -- with extension
   
   cnbx.prefix=""
   if (cnbx.numberlevel ==1) and  meta.numberprefix 
        then cnbx.prefix = str(meta.numberprefix) end
  
-  cnbx.output_file = PANDOC_STATE.output_file
- -- pout(" now in "..processedfile.." later becomes ".. str(cnbx.output_file))
+  
+ -- print(" now in "..processedfile.." later becomes ".. str(cnbx.output_file))
   
   cnbx.isfirstfile = not cnbx.ishtmlbook
   cnbx.islastfile = not cnbx.ishtmlbook
@@ -120,6 +129,9 @@ local Meta_findChapterNumber = function (meta)
   end
 end
 
+
+--- "function factory" that detects if a pandoc Div has one of the classes given
+--- @param knownclasses table containing strings of classes defined in as custom numbered block
 local makeKnownClassDetector = function (knownclasses)
   -- print("making babies "..str(knownclasses))
   return function(div)
@@ -131,9 +143,19 @@ local makeKnownClassDetector = function (knownclasses)
 end  
 
 
-local Meta_initClassDefaults = function (meta) 
+--- Initialize known custom numbered block classes, and their defaults
+--- needs to be adapted later to styles
+--- side effects: add entries to global table cnbx. Could be encapsulated.
+---     is_cunumblo: function that takes a div and returns logic value
+---     knownclasses
+---     lists
+---     classDefaults
+---     groupDefaults
+---     counter table with counter for each known class, and unnmbered
+--- @param cunumbl table yaml entries under custom-numbered-blocks
+local initClassDefaults = function (cunumbl) 
   -- do we want to prefix fbx numbers with section numbers?
-  local cunumbl = meta["custom-numbered-blocks"]
+  --local cunumbl = meta["custom-numbered-blocks"]
   cnbx.knownclasses = {}
   cnbx.lists = {}
   --[[ TODO later
@@ -151,7 +173,7 @@ local Meta_initClassDefaults = function (meta)
   -- ! unnumbered not for classes that have unnumbered as default !
   -- cnbx.counterx = {}
   if cunumbl.classes == nil then
-        print("== @%!& == Warning == &!%@ ==\n wrong format for fboxes yaml: classes needed")
+        quarto.log.warning("== @%!& == Warning == &!%@ ==\n wrong format for fboxes yaml: classes needed")
         return     
   end
   
@@ -210,21 +232,47 @@ local Meta_initClassDefaults = function (meta)
 -- this becomes the counter Prefix
 end
 
+
+--- extract custom-numbered-block yaml from meta, according to Michael Canouils new policies
+--- https://mickael.canouil.fr/posts/2025-11-06-quarto-extensions-lua/
+--- still allowing the old syntax, with 1st level custom-numbered-blocks key
+--- @param meta table document meta information
+--- @return table cnby: part of meta that belongs to custom-numbered-blocks 
+function cunumblo_yaml(meta)
+  local cnby = meta["custom-numbered-blocks"]
+  if not cnby then
+    local extensions_yaml = meta.extensions
+    if extensions_yaml then
+      cnby = extensions_yaml["custom-numbered-blocks"] 
+    else
+      cnby = nil
+    end
+  end  
+  if not cnby then
+      quarto.log.warning("== @%!& == Warning == &!%@ ==\n missing cunumblo key in yaml")
+      return{}
+    else 
+      return cnby
+    end
+end
+
+
+
 return{
-Meta = function(m)
+Meta = function(meta)
+  cnbx.yaml = cunumblo_yaml(meta)
  -- print("1. Init Meta")
--- get numbering depth
+ 
+ -- get numbering depth
   cnbx.numberlevel = 0
-  if m.crossref then
-    if m.crossref.chapters then cnbx.numberlevel = 1 end
+  if meta.crossref then
+    if meta.crossref.chapters then 
+      cnbx.numberlevel = 1 end
   end
-  if m["custom-numbered-blocks"] then
-    Meta_findChapterNumber(m)
-    Meta_initClassDefaults(m)
-  else
-    print("== @%!& == Warning == &!%@ ==\n missing cunumblo key in yaml")  
-  end
-  -- print("numberlevel is ".. str(cnbx.numberlevel))
-  return(m)
+  
+  findChapterInfo(meta)
+  
+  if cnbx.yaml then initClassDefaults(cnbx.yaml) end
+  return(meta)
 end
 }
