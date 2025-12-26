@@ -123,7 +123,7 @@ local findChapterInfo = function (meta)
       end
     end
   else -- not a book. 
-    cnbx.xreffile ="._"..processedfile.."_xref.json"
+--    cnbx.xreffile ="._"..processedfile.."_xref.json"
     cnbx.chapno = ""
     cnbx.unnumbered = true
   end

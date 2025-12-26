@@ -201,10 +201,12 @@ In case of no prefix number I would still like to allow overriding.
 end
 
 local function Meta_readxref(meta)
-  local file = io.open(cnbx.xreffile,"r")
-  if file then 
-     local xrfjson = file:read "*a"
-    file:close()
+  cnbx.xref ={}
+  if cnbx.isbook then
+    local file = io.open(cnbx.xreffile,"r")
+    if file then 
+      local xrfjson = file:read "*a"
+      file:close()
     --[[
     if xrfjson then meta.fbx.xref = quarto.json.decode(xrfjson)
     else meta.fbx.xref = {} end
@@ -212,12 +214,12 @@ local function Meta_readxref(meta)
    -- pout(meta.fbx.xref)
   else meta.fbx.xref ={}
     --]]--
-    if xrfjson then cnbx.xref = quarto.json.decode(xrfjson)
-    else cnbx.xref = {} end
+      if xrfjson then cnbx.xref = quarto.json.decode(xrfjson)
+      else cnbx.xref = {} end
     --  pout("eingelesen")
     --pout(fbx.xref)
-  else cnbx.xref ={}
-  end  
+    end  
+end
   return(meta)
 end
 

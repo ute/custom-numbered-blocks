@@ -15,6 +15,7 @@ local deInline = ute1.deInline
 
 
 local function Meta_writexref(meta)
+  if cnbx.isbook then
   local xref = cnbx.xref
   local xrjson = quarto.json.encode(cnbx.xref)
   local file = io.open(cnbx.xreffile,"w")
@@ -35,6 +36,8 @@ local function Meta_writexref(meta)
   --  pout(xref)
   end  
 end
+end
+
 
 return{
   Meta = Meta_writexref
