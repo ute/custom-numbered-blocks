@@ -36,6 +36,23 @@ local function FileExists(fname)
   return(false)
 end
 
+local function findFile(fname, directories)
+  local result = ""
+  if directories == nil then
+    directories = {""}
+  end  
+  for _, dir in pairs(directories) do
+    result = dir..fname
+   -- print("try "..result)
+    local file = io.open(quarto.utils.resolve_path(result),"r")
+    if file ~= nil then
+      io.close(file)
+      return {found = true, dir = str(dir), path = result}
+    end
+  end
+  return {found = false}
+end
+
 
 local function DeInline(tbl)  
     local result ={}
@@ -216,7 +233,8 @@ return{
     str_sanimath = str_sanimath,
     tt_from_attributes_id = tt_from_attributes_id,
     warn = warn,
-    FileExists = FileExists
+    FileExists = FileExists,
+    findFile = findFile
 }
 --]]------
 ---

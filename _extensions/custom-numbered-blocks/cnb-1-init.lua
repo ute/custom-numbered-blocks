@@ -36,6 +36,7 @@ local tablecontains = ute1.tablecontains
 local updateTable = ute1.updateTable
 local ifelse = ute1.ifelse
 local replaceifnil = ute1.replaceifnil
+local findFile = ute1.findFile
 
 --local replaceifempty = ute1.replaceifempty
 
@@ -54,31 +55,15 @@ local initBoxStyles = function (cnbyaml)
   end  
   if blksty then
     -- TODO: check if default style present. Otherwise add that one as faltbox
-
-    -- check if the .lua file can be found
-    for stil, path in pairs(blksty) do
-      stilpath = str(path)
-      print("use stil ".. str(stil).." to be found in "..stilpath.." or "..
-         quarto.utils.resolve_path(stilpath..".lua"))
-      OK = ute1.FileExists(stilpath)
-      --print("I found "..str(OK))
-      if not OK then -- try in directory styles
-        stilpath = "styles/"..stilpath
-       -- print("try to find "..stilpath..".lua")
-        OK = ute1.FileExists(stilpath..".lua") 
-      end
-      --print("I found "..str(OK))
-      if OK then
+    for stil, fname in pairs(blksty) do
+      fnamstr = str(fname)
+      findlua = findFile(fnamstr..".lua",{"styles/","styles/"..fnamstr.."/"})
+      if findlua.found then 
+      --  print("findlua found it: "..findlua.dir.." nemlig".. findlua.path) 
+        stilpath = findlua.dir..fnamstr
         cnbx.styles[stil] = require(stilpath)
         cnbx.styles[stil].path = stilpath
-        things = cnbx.styles[stil]
-        if things ~= nil then 
-          print("found it, things is "..type(things)) 
-          for k, v in pairs(things) do
-             print(str(k))
-           end 
-          end   
-       else ute1.warn("style "..stilpath.." not found")    
+       else ute1.warn("file "..fnamstr..".lua".." not found")    
       end
     end
   end
