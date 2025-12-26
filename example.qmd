@@ -8,36 +8,39 @@ format:
   pdf: default
 #  typst: default
 
-custom-numbered-blocks:
-  groups:
-    thmlike:
-      colors: [948bde, 584eab]
-      boxstyle: foldbox.simple
-      collapse: false
-      listin: [mathstuff]
-    todos: default  
-  classes:
-    Theorem:
-      group: thmlike
-    Corollary:
-      group: thmlike
-    Conjecture:
-      group: thmlike
-      collapse: true  
-    Definition:
-      group: thmlike
-      colors: [d999d3, a01793]
-      reflabel: "Def."
-    Feature: default
-    TODO:
-      label: "To do"
-      colors: [e7b1b4, 8c3236]
-      group: todos
-      listin: [stilltodo]
-    DONE:
-      label: "Done"
-      colors: [cce7b1, 86b754]  
-      group: todos
+extensions:
+  custom-numbered-blocks:
+    blockstyles:
+      default: faltbox
+    groups:
+      thmlike:
+        colors: [948bde, 584eab]
+        boxstyle: foldbox.simple
+        collapse: false
+        listin: [mathstuff]
+      todos: default  
+    classes:
+      Theorem:
+        group: thmlike
+      Corollary:
+        group: thmlike
+      Conjecture:
+        group: thmlike
+        collapse: true  
+      Definition:
+        group: thmlike
+        colors: [d999d3, a01793]
+        reflabel: "Def."
+      Feature: default
+      TODO:
+        label: "To do"
+        colors: [e7b1b4, 8c3236]
+        group: todos
+        listin: [stilltodo]
+      DONE:
+        label: "Done"
+        colors: [cce7b1, 86b754]  
+        group: todos
 
 crossref:
   chapters: true
@@ -70,7 +73,7 @@ Crossreferences may need a re-run to update.
 
 ::: Feature
 ### Boxes can be nested
-However, inner boxes are not numbered -- it would be hard to put them in a sequence with outer boxes anyway.
+However, inner boxes are never numbered -- it would be hard to put them in a sequence with outer boxes anyway.
 :::
 :::
 
@@ -81,7 +84,7 @@ The default style for custom divs is `foldbox`: a collapsible similar to quarto'
 
 
 ::: TODO
-### Custom **styles**
+### Custom **styles** getting even closer, actually?
 - [ ] create an API for user defined block styles
 - [ ] provide an example
 - [ ] and documentation

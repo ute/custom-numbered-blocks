@@ -1,7 +1,9 @@
 local cnbx={ -- global table, holds information for processing fboxes
    xreffile = "._xref.json" -- default name, set to lastfile in initial meta analysis
-   ,
+   , -- todo drop this, it is only needed for books
+   styles = {},
    ute = "hahn"
+   -- formalla = {pdf = "itsapdf", html = "webbra"}
 }
 
 

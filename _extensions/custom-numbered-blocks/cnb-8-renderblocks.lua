@@ -15,21 +15,24 @@ local deInline = ute1.deInline
 --]]--
 
 
-
 insertStylesPandoc = function(doc)
-  -- TODO: change for a list of styles
+  -- Done: change for a list of styles
   -- if stylez.extractStyleFromYaml then stylez.extractStyleFromYaml() end
  -- print("doing style insert - this is going to change [big TODO]")
-  if cnbx.stylez.insertPreamble and (quarto.doc.is_format("html") or quarto.doc.is_format("pdf"))
-    then cnbx.stylez.insertPreamble(doc, cnbx.classDefaults, cnbx.fmt) 
- --  cnbx.stylez.fakeinsertPreamble(doc, cnbx.classDefaults, cnbx.fmt) 
-    else print("could not insert styles")
-    end
+
+-- TODO: decided on 26.12.25: for pdf and html use standard packages until change needed
+-- insert extra css and latex with same name in same directory
+  for key, val in pairs(cnbx.styles) do
+    print("insert preamble for ".. key)
+    val.render[cnbx.fmt].insertPreamble(doc, cnbx.classDefaults)
+  end  
+
   return(doc)
 end;
 
+
 renderDiv = function(thediv) 
-  -- TODO: change for individual style   
+  -- Done: change for individual style   
   local A = thediv.attributes
   local tt = {}
   if A._fbxclass ~= nil then
@@ -37,28 +40,26 @@ renderDiv = function(thediv)
     collapsstr = str(A._collapse)
     tt = tt_from_attributes_id(A, thediv.identifier)
     
-    local fmt='html'
-    if quarto.doc.is_format("pdf") then fmt = "tex" end;
+    local fmt=cnbx.fmt
+    if fmt=="pdf" then fmt = "tex" end;
+    local rendering = cnbx.styles[tt.blockstyle].render[cnbx.fmt]
+    
+    local blockStart = pandoc.RawInline(fmt, rendering.blockStart(tt))
+    local blockEnd = pandoc.RawInline(fmt, rendering.blockEnd(tt))
+
     if #thediv.content > 0 and thediv.content[1].t == "Para" and 
       thediv.content[#thediv.content].t == "Para" then
-        table.insert(thediv.content[1].content, 1, 
-          pandoc.RawInline(fmt, cnbx.stylez.blockStart(tt, fmt)))
-        table.insert(thediv.content,
-          pandoc.RawInline(fmt, cnbx.stylez.blockEnd(tt, fmt)))
+        table.insert(thediv.content[1].content, 1, blockStart)
       else
-        table.insert(thediv.content, 1, 
-          pandoc.RawBlock(fmt, cnbx.stylez.blockStart(tt, fmt)))
-        table.insert(thediv.content,  
-          pandoc.RawBlock(fmt, cnbx.stylez.blockEnd(tt, fmt)))
-    end  
+        table.insert(thediv.content, 1, blockStart)
+    end   
+    table.insert(thediv.content, blockEnd) 
+          
     --]]
   end  
   -- print("tried to render the div")
   return(thediv)
 end -- function renderDiv
-
-
-
 
 return{
   Div = renderDiv,

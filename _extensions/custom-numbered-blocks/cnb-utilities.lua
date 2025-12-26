@@ -27,6 +27,16 @@ SOFTWARE.
 
 local str = pandoc.utils.stringify
 
+local function FileExists(fname)
+  local file = io.open(quarto.utils.resolve_path(fname),"r")
+  if file ~= nil then
+    io.close(file)
+    return(true)
+  end
+  return(false)
+end
+
+
 local function DeInline(tbl)  
     local result ={}
     for i, v in pairs(tbl) do
@@ -181,6 +191,7 @@ return {id = id,
       mdtitle = A._mdtitle, 
       collapse = A._collapse,
       boxstyle = A._boxstyle,
+      blockstyle = "default", -- TODO here
       link = thelink
 }
   -- pout("====nun====");pout(tt)
@@ -189,7 +200,7 @@ end
 
 
 local warn = function(whatswrong)
-   quarto.log.output ("=== [custom-numbered-blocks] Warning: "..whatswrong) --"..\n===============")
+   quarto.log.output ("=== [custom-numbered-blocks] === Warning: "..whatswrong.."\n") --"..\n===============")
 end  
 
 --[[-- make all this global later?
@@ -204,7 +215,8 @@ return{
     str_md = str_md,
     str_sanimath = str_sanimath,
     tt_from_attributes_id = tt_from_attributes_id,
-    warn = warn
+    warn = warn,
+    FileExists = FileExists
 }
 --]]------
 ---

@@ -1,7 +1,7 @@
 --[[
 MIT License
 
-Copyright (c) 2026 Ute Hahn
+Copyright (c) 2023, 2026 Ute Hahn
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -36,7 +36,54 @@ local tablecontains = ute1.tablecontains
 local updateTable = ute1.updateTable
 local ifelse = ute1.ifelse
 local replaceifnil = ute1.replaceifnil
+
 --local replaceifempty = ute1.replaceifempty
+
+
+--- register box styles for rendering. 
+--- analyze the yaml, check if styles can be found, include them in cnbx
+--- in all cases set up styles/default, if no custom style is given
+--- no return value, but side effect
+local initBoxStyles = function (cnbyaml)
+  local blksty = cnbyaml.blockstyles
+  local minimaldefault = {default = "faltbox"}
+  if blksty == nil then 
+    blksty = minimaldefault
+  elseif blksty.default == nil then
+    blksty.default = "faltbox"
+  end  
+  if blksty then
+    -- TODO: check if default style present. Otherwise add that one as faltbox
+
+    -- check if the .lua file can be found
+    for stil, path in pairs(blksty) do
+      stilpath = str(path)
+      print("use stil ".. str(stil).." to be found in "..stilpath.." or "..
+         quarto.utils.resolve_path(stilpath..".lua"))
+      OK = ute1.FileExists(stilpath)
+      --print("I found "..str(OK))
+      if not OK then -- try in directory styles
+        stilpath = "styles/"..stilpath
+       -- print("try to find "..stilpath..".lua")
+        OK = ute1.FileExists(stilpath..".lua") 
+      end
+      --print("I found "..str(OK))
+      if OK then
+        cnbx.styles[stil] = require(stilpath)
+        cnbx.styles[stil].path = stilpath
+        things = cnbx.styles[stil]
+        if things ~= nil then 
+          print("found it, things is "..type(things)) 
+          for k, v in pairs(things) do
+             print(str(k))
+           end 
+          end   
+       else ute1.warn("style "..stilpath.." not found")    
+      end
+    end
+  end
+end
+
 
 
 
@@ -83,7 +130,7 @@ end
 ---     prefix: common prefix for all numbers instead of chapter or section number (if any)
 ---     chapno: chapter number, if any
 --- @param meta table document meta information
-local findChapterInfo = function (meta)
+local initRenderInfo = function (meta)
   local processedfile = pandoc.path.split_extension(PANDOC_STATE.output_file)
   cnbx.isbook = meta.book ~= nil
   cnbx.ishtmlbook = meta.book ~= nil and not quarto.doc.is_format("pdf")
@@ -94,9 +141,7 @@ local findChapterInfo = function (meta)
   if (cnbx.numberlevel ==1) and  meta.numberprefix 
        then cnbx.prefix = str(meta.numberprefix) end
  
-  
  -- print(" now in "..processedfile.." later becomes ".. str(cnbx.output_file))
-  
   cnbx.isfirstfile = not cnbx.ishtmlbook
   cnbx.islastfile = not cnbx.ishtmlbook
   if cnbx.isbook then 
@@ -260,6 +305,7 @@ end
 
 return{
 Meta = function(meta)
+  -- print("going i gang. makke eine "..cnbx.formalla[cnbx.fmt])
   cnbx.yaml = cunumblo_yaml(meta)
  -- print("1. Init Meta")
  
@@ -270,9 +316,13 @@ Meta = function(meta)
       cnbx.numberlevel = 1 end
   end
   
-  findChapterInfo(meta)
-  
-  if cnbx.yaml then initClassDefaults(cnbx.yaml) end
+  initRenderInfo(meta)
+  if cnbx.yaml then 
+    initBoxStyles(cnbx.yaml)
+    initClassDefaults(cnbx.yaml) 
+  end
+
+  --print("default stil path "..cnbx.styles.default.path)
   return(meta)
 end
 }
