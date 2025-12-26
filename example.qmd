@@ -12,6 +12,7 @@ extensions:
   custom-numbered-blocks:
     blockstyles:
       default: faltbox
+      besonders: foldbox
     groups:
       thmlike:
         colors: [948bde, 584eab]
@@ -84,8 +85,18 @@ The default style for custom divs is `foldbox`: a collapsible similar to quarto'
 
 
 ::: TODO
-### Custom **styles** getting even closer, actually?
-- [ ] create an API for user defined block styles
+### Custom **styles** almost done
+- [x] create an API for user defined block styles
+- [ ] provide an example
+- [ ] and documentation
+:::
+
+::: TODO
+### Colors
+Use colors as they are defined in brand
+
+- [ ] Implement using brand colors 
+- [ ] Deprecate the old colors for foldboxes
 - [ ] provide an example
 - [ ] and documentation
 :::

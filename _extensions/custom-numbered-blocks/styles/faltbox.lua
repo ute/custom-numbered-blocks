@@ -26,29 +26,6 @@ local pdfblockstart = function(ttt)
 end  
 
 
-local htmlpreamble = function(doc, classDefs)
-  local preamblestuff = colorCSSTeX("html", classDefs)
-  -- quarto.log.output(preamblestuff)
-  quarto.doc.add_html_dependency({
-      name = 'faltbox',
-      -- version = '0.0.1',
-      stylesheets = {'styles/faltbox.css'}
-    })
-  if preamblestuff then quarto.doc.include_text("in-header", preamblestuff) end
-  return(doc)
-end
-
-local pdfpreamble = function(doc, classDefs)
-  local preamblestuff = colorCSSTeX("pdf", classDefs)
-  -- quarto.log.output(preamblestuff)
-  quarto.doc.use_latex_package("tcolorbox","many")
-  quarto.doc.include_file("in-header", 'styles/faltbox.tex')
-  if preamblestuff then quarto.doc.include_text("in-header", preamblestuff) end
-  return(doc)
-end
-
-
-
 return {
 defaultOptions = {
     numbered = "true",
@@ -59,8 +36,7 @@ defaultOptions = {
 render = {
    html = {
      blockStart = htmlblockstart,
-     blockEnd = function(ttt) return('</div></details>') end,
-     insertPreamble = htmlpreamble
+     blockEnd = function(ttt) return('</div></details>') end
    },
    pdf = {
      blockStart = pdfblockstart,
@@ -68,8 +44,7 @@ render = {
        local texEnv = "fbx"
        if ttt.boxstyle=="foldbox.simple" then texEnv = "fbxSimple" end
        return('\\end{'..texEnv..'}\n')
-     end,  
-     insertPreamble = pdfpreamble
+     end
    }
   }
 }
