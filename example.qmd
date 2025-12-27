@@ -12,9 +12,10 @@ extensions:
   custom-numbered-blocks:
     blockstyles:
       default: faltbox
-      besonders: foldbox
+      besonders: faltbox
     groups:
       thmlike:
+        blockstyle: besonders
         colors: [948bde, 584eab]
         boxstyle: foldbox.simple
         collapse: false

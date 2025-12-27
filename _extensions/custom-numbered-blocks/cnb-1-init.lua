@@ -211,16 +211,8 @@ local initClassDefaults = function (cunumbl)
   if cunumbl.groups then
     for key, val in pairs(cunumbl.groups) do
       local ginfo = deInline(val)
-      --[[
-      pout("==== before after =======");  pout(ginfo)
-      if ginfo.boxstyle then
-        local mainstyle, substyle = ginfo.boxstyle:match "([^.]*).(.*)"
-      --  pout("main "..mainstyle.." :: "..substyle)
-        -- TODO: here account for multiple styles
-      end
-      --]]--
-      ginfo = updateTable(cnbx.styles.default.defaultOptions, ginfo)
-      --cnbx.
+      local bst = replaceifnil(ginfo.blockstyle, "default")
+      ginfo = updateTable(cnbx.styles[bst].defaultOptions, ginfo)
       groupDefaults[key] = ginfo
    --   pout("-----group---"); pout(ginfo)
     end 
