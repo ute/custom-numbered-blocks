@@ -4,6 +4,10 @@ next steps:
 
 - [x] split: fmt in init
 - [ ] styles
+  - [ ] modify this, to allow title rendering in original format
+    - [x] styles are hierarchical list that starts with format
+    - [x] need to sandwich title in beginBlock. This could be more challenging for contributers. But who wants to make their own style. At most a handful of cracks.
+    - [x] beginBlock returns **list of pandoc inlines**. Do the same for endBlock
 - [ ] title rendering and crossref reorg
 - [ ] colors
 

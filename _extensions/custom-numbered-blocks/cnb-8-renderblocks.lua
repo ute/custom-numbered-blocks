@@ -72,22 +72,26 @@ renderDiv = function(thediv)
     
     local fmt=cnbx.fmt
     if fmt=="pdf" then fmt = "tex" end;
-    local rendering = cnbx.styles[tt.blockstyle].render[cnbx.fmt]
     
-    local blockStart = pandoc.RawInline(fmt, rendering.blockStart(tt))
-    local blockEnd = pandoc.RawInline(fmt, rendering.blockEnd(tt))
+    local rendernew = cnbx.styles[tt.blockstyle][cnbx.fmt]
+    
+    --local blockStart = pandoc.RawInline(fmt, rendering.blockStart(tt))
+    --local blockEnd = pandoc.RawInline(fmt, rendering.blockEnd(tt))
 
-    if #thediv.content > 0 and thediv.content[1].t == "Para" and 
-      thediv.content[#thediv.content].t == "Para" then
-        table.insert(thediv.content[1].content, 1, blockStart)
-      else
-        table.insert(thediv.content, 1, blockStart)
-    end   
-    table.insert(thediv.content, blockEnd) 
-          
-    --]]
+    local beginBlock = rendernew.beginBlock(tt)
+    local endBlock = rendernew.endBlock(tt)
+    
+    -- diagnostics
+    --print(" the div " .. thediv.identifier.. " has content lrngth "..#thediv.content.. " and type of first entry is "
+    --     .. str(thediv.content[1].t))
+    --print(" beginblock has length ".. #beginBlock)     
+     --   print("inserting in plain content")
+     
+    table.insert(thediv.content, 1, beginBlock)--blockStart)  
+    table.insert(thediv.content, endBlock)--blockEnd) 
+    
+   -- print("----")
   end  
-  -- print("tried to render the div")
   return(thediv)
 end -- function renderDiv
 

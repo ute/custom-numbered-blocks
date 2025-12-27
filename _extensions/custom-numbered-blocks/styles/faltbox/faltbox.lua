@@ -1,11 +1,17 @@
 -- TODO: remove dependence from path, make a utility function for this
-clu = require "cnb-colors"
-local colorCSSTeX = clu.colorCSSTeX_legacy
 
-local htmlblockstart = function(ttt)
+local defaultOptions = {
+    numbered = "true",
+    boxstyle = "foldbox.default", -- this is an extra option of this very box style
+    collapse = "true",
+    colors   = {"c0c0c0","808080"} 
+  }
+
+local beginBlock_html = function(ttt)
   local Open =""
   local bxstyle =" fbx-default closebutton"
-  if #ttt.title > 0 then ttt.typlabelTag = ttt.typlabelTag..": " end
+  local typlabelTag = ttt.typlabelTag
+  if #ttt.title > 0 then typlabelTag = typlabelTag..": " end
   if ttt.collapse =="false" then Open=" open" end
   if ttt.boxstyle =="foldbox.simple" 
     then 
@@ -13,38 +19,45 @@ local htmlblockstart = function(ttt)
     --    Open=" open" do not force override. Chose this in yaml or individually.
     --    we would want e.g to have remarks closed by default
     end
-  result = ('<details class=\"'..ttt.type..bxstyle ..'\"'..Open..'><summary>'..'<strong>'..ttt.typlabelTag..'</strong>'..ttt.title .. '</summary><div>')
-  return result
+  return {
+    pandoc.RawInline("html", '<details class=\"'..ttt.type..bxstyle ..'\"'..Open..'><summary>'..'<strong>'..typlabelTag..'</strong>'),
+    pandoc.RawInline("html", ttt.title), -- change this later
+    pandoc.RawInline("html", '</summary><div>')
+  }
 end  
 
-local pdfblockstart = function(ttt)
+local endBlock_html = function(ttt)
+  return({pandoc.RawInline("html","</div></details>")})
+end  
+
+
+local beginBlock_pdf = function(ttt)
   local texEnv = "fbx"
-  if #ttt.title > 0 then ttt.typlabelTag = ttt.typlabelTag..": " end
+  local typlabelTag = ttt.typlabelTag
+  if #ttt.title > 0 then typlabelTag = typlabelTag..": " end
   if ttt.boxstyle=="foldbox.simple" then texEnv = "fbxSimple" end
-  return('\\begin{'..texEnv..'}{'..ttt.type..'}{'..ttt.typlabelTag..'}{'..ttt.title..'}\n'..
-         '\\phantomsection\\label{'..ttt.id..'}\n')
+  return {
+    pandoc.RawInline("tex",'\\begin{'..texEnv..'}{'..ttt.type..'}{'..typlabelTag..'}{'),
+    pandoc.RawInline("tex", ttt.title), -- change this later
+    pandoc.RawInline("tex" ,'}\n'..'\\phantomsection\\label{'..ttt.id..'}\n') -- necessary for crossreferencing
+  }
 end  
 
+local endBlock_pdf = function(ttt)
+  local texEnv = "fbx"
+  if ttt.boxstyle=="foldbox.simple" then texEnv = "fbxSimple" end
+  return(pandoc.RawInline("tex",'\\end{'..texEnv..'}\n'))
+end
 
 return {
-defaultOptions = {
-    numbered = "true",
-    boxstyle = "foldbox.default", -- this is an extra option of this very box style
-    collapse = "true",
-    colors   = {"c0c0c0","808080"} 
+  defaultOptions = defaultOptions,
+  html = {
+    -- headerincludes = "": future option to modify default = stylename.tex
+    beginBlock = beginBlock_html,
+    endBlock = endBlock_html
   },
-render = {
-   html = {
-     blockStart = htmlblockstart,
-     blockEnd = function(ttt) return('</div></details>') end
-   },
-   pdf = {
-     blockStart = pdfblockstart,
-     blockEnd = function(ttt) 
-       local texEnv = "fbx"
-       if ttt.boxstyle=="foldbox.simple" then texEnv = "fbxSimple" end
-       return('\\end{'..texEnv..'}\n')
-     end
-   }
+  pdf = {
+    beginBlock = beginBlock_pdf,
+    endBlock = endBlock_pdf
   }
 }
