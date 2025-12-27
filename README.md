@@ -13,6 +13,7 @@ The filter supports output formats pdf and html.
 
 ## Status
 Works with Quarto 1.7.
+🎅🎄An extended version of custom-numbered-blocks is on the way! It will among others allow for different block styles.
 
 <!--
 Setting the number prefix per page/chapter coming soon.  
