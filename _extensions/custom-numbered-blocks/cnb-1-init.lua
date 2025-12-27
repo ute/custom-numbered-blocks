@@ -198,7 +198,7 @@ local initClassDefaults = function (cunumbl)
   -- prepare information for numbering fboxes by class
   -- cnbx.knownClasses ={}
   cnbx.classDefaults ={}
-  local groupDefaults = {default = cnbx.stylez.defaultOptions} -- not needed later
+  local groupDefaults = {default = cnbx.styles.default.defaultOptions} -- not needed later???
   cnbx.counter = {unnumbered = 0} -- counter for unnumbered divs 
   -- ! unnumbered not for classes that have unnumbered as default !
   -- cnbx.counterx = {}
@@ -219,7 +219,7 @@ local initClassDefaults = function (cunumbl)
         -- TODO: here account for multiple styles
       end
       --]]--
-      ginfo = updateTable(cnbx.stylez.defaultOptions, ginfo)
+      ginfo = updateTable(cnbx.styles.default.defaultOptions, ginfo)
       --cnbx.
       groupDefaults[key] = ginfo
    --   pout("-----group---"); pout(ginfo)

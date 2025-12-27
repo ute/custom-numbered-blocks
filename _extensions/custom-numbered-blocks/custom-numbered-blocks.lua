@@ -47,14 +47,6 @@ if cnbx.fmt == "unsupported" then
   return
 end  
 
-local stylename="foldbox"
-
--- here it is tricky for the css inserts
-
-cnbx.stylez = require("style/"..stylename)
-
-
-
 --print(cnbx.ute)
 
 

@@ -23,10 +23,7 @@ local deInline = ute1.deInline
 
 insertStylesPandoc = function(doc)
   -- Done: change for a list of styles
-  -- if stylez.extractStyleFromYaml then stylez.extractStyleFromYaml() end
- -- print("doing style insert - this is going to change [big TODO]")
-
--- TODO: decided on 26.12.25: for pdf and html use standard packages until change needed
+  -- Done: decided on 26.12.25: for pdf and html use standard packages until change needed
 -- insert extra css and latex with same name in same directory
   
   local preamblestuff = colorCSSTeX(cnbx.fmt, cnbx.classDefaults)
@@ -58,26 +55,8 @@ insertStylesPandoc = function(doc)
  --   val.render[cnbx.fmt].insertPreamble(doc, cnbx.classDefaults)
     end  
   end  
-  
 
   if preamblestuff then quarto.doc.include_text("in-header", preamblestuff) end
-  return(doc)
-end;
-
-
-
-insertStylesPandoc0 = function(doc)
-  -- Done: change for a list of styles
-  -- if stylez.extractStyleFromYaml then stylez.extractStyleFromYaml() end
- -- print("doing style insert - this is going to change [big TODO]")
-
--- TODO: decided on 26.12.25: for pdf and html use standard packages until change needed
--- insert extra css and latex with same name in same directory
-  for key, val in pairs(cnbx.styles) do
-    print("insert preamble for ".. key)
-    val.render[cnbx.fmt].insertPreamble(doc, cnbx.classDefaults)
-  end  
-
   return(doc)
 end;
 
