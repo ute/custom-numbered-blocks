@@ -26,6 +26,7 @@ extensions:
         group: thmlike
       Corollary:
         group: thmlike
+        blockstyle: besonders
       Conjecture:
         group: thmlike
         collapse: true  
@@ -90,6 +91,7 @@ The default style for custom divs is `foldbox`: a collapsible similar to quarto'
 - [x] create an API for user defined block styles
 - [ ] provide an example
 - [ ] and documentation
+- [ ] secure that it also works for classes
 :::
 
 ::: TODO

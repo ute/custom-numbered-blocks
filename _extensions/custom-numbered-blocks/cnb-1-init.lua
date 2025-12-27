@@ -223,7 +223,16 @@ local initClassDefaults = function (cunumbl)
     -- classinfo[key] = deInline(val)
     table.insert(cnbx.knownclasses, str(key))
     local theGroup = replaceifnil(clinfo.group, "default")
-    clinfo = updateTable(groupDefaults[theGroup], clinfo)
+    -- check if a blockstyle is defined for the class, and if yes, respect it
+    -- if it is different from the group, only use the group for counting,
+    -- do not add superflous key value pairs
+    local bst = clinfo.blockstyle
+    if bst ~= nil then if bst ~= groupDefaults[theGroup].blockstyle then
+      clinfo = updateTable(cnbx.styles[bst].defaultOptions, clinfo)
+    end end
+    if bst==nil or bst == groupDefaults[theGroup].blockstyle then
+      clinfo = updateTable(groupDefaults[theGroup], clinfo)
+    end
     clinfo.label = replaceifnil(clinfo.label, str(key))
     clinfo.reflabel = replaceifnil(clinfo.reflabel, clinfo.label)
     -- assign counter --  
@@ -282,7 +291,7 @@ end
 
 return{
 Meta = function(meta)
-  -- print("going i gang. makke eine "..cnbx.formalla[cnbx.fmt])
+  
   cnbx.yaml = cunumblo_yaml(meta)
  -- print("1. Init Meta")
  
@@ -299,7 +308,6 @@ Meta = function(meta)
     initClassDefaults(cnbx.yaml) 
   end
 
-  --print("default stil path "..cnbx.styles.default.path)
   return(meta)
 end
 }
