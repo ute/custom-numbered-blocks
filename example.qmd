@@ -12,7 +12,7 @@ extensions:
   custom-numbered-blocks:
     styles:
       formalia:
-        boxtype: foldbox
+        # boxtype: foldbox
         colors: [948bde, 584eab]
         boxstyle: foldbox.simple
         collapse: false
@@ -25,7 +25,7 @@ extensions:
         style: formalia
         listin: [mathstuff]
       todos: #default  
-        boxtype: foldbox
+        boxtype: faltbox
         style: default
     classes:    
       Theorem:
