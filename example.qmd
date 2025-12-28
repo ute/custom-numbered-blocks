@@ -10,23 +10,31 @@ format:
 
 extensions:
   custom-numbered-blocks:
-    blockstyles:
-      default: faltbox
-      besonders: faltbox
+    styles:
+      formalia:
+        boxtype: foldbox
+        colors: ['a101a1', 584eab]
+      besonders:
+        parent: formalia
+        collapse: false
     groups:
       thmlike:
-        blockstyle: besonders
+        style: formalia
         colors: [948bde, 584eab]
         boxstyle: foldbox.simple
+        boxtype: faltbox
         collapse: false
         listin: [mathstuff]
-      todos: default  
-    classes:
+      todos: #default  
+        boxtype: foldbox
+        style: default
+    classes:    
       Theorem:
         group: thmlike
       Corollary:
         group: thmlike
-        blockstyle: besonders
+        style: besonders
+        boxtype: plumpaquatsch
       Conjecture:
         group: thmlike
         collapse: true  

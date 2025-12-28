@@ -9,10 +9,13 @@ local colorCSSTeX_legacy = function (fmt, classDefs)
   local result
   local StyleCSSTeX = {}
   if classDefs ~= nil then
+    dev.tprint(classDefs)
     for cls, options in pairs(classDefs) do
         --quarto.log.output(cls)
       if options.colors then
           -- quarto.log.output("  --> Farben!")
+        --print("colors are "..type(options.colors))
+        --dev.tprint(options.colors)
         if fmt == "html" then
           table.insert(StyleCSSTeX, "."..cls.." {\n")
             for i, col in ipairs(options.colors) do

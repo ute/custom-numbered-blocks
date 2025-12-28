@@ -51,7 +51,7 @@ end
 
 return {
   defaultOptions = defaultOptions,
-  stilnam ="faltebbox",
+  stilnam ="foldbox for testing only",
   html = {
     headerincludes = "faltbox.css",
     -- headerincludes = "": future option to modify default = stylename.tex

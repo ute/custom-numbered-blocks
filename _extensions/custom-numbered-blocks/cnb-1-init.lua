@@ -30,6 +30,7 @@ cnbx = require "cnb-global"
 cnbx.ute="huhn"
 
 ute1 = require "cnb-utilities"
+dev = require "devutils"
 
 local deInline = ute1.deInline
 local tablecontains = ute1.tablecontains
@@ -37,40 +38,132 @@ local updateTable = ute1.updateTable
 local ifelse = ute1.ifelse
 local replaceifnil = ute1.replaceifnil
 local findFile = ute1.findFile
+local warn = ute1.warn
 
 --local replaceifempty = ute1.replaceifempty
+
+
+
+
+-- screen all entries in custom-numbered-blocks yaml for rendering styles.
+-- check if found and add to list
+
+local initBoxTypes = function (cnbyaml)
+  gatherboxtypes = function(tbl, returnval)
+    if tbl ~= nil then 
+        for k, v in pairs(tbl) do
+          if k == "boxtype" then
+             returnval[str(v)] = true
+          elseif type(v) == "table" then  gatherboxtypes(v, returnval) 
+          end
+        end
+      end
+  end
+  -- deprecate later: key blockstyles
+  -- local blksty = cnbyaml.blockstyles
+  -- local minimaldefault = {default = "faltbox"}
+  local findlua, fnamstr
+  local allboxtypes, validboxtypes = {}, {}
+  -- if blksty == nil then 
+  --   blksty = minimaldefault
+  -- elseif blksty.default == nil then
+  --   blksty.default = "faltbox"
+  -- end  
+
+ -- print("========= block styles =======")
+ -- dev.tprint(blksty)
+
+  
+
+  gatherboxtypes(cnbyaml.styles, allboxtypes)
+ -- gatherboxtypes(cnbyaml.blockstyles, allboxtypes) -- deprecate later
+  gatherboxtypes(cnbyaml.groups, allboxtypes)
+  gatherboxtypes(cnbyaml.classes, allboxtypes)
+  
+  -- ensure default box type is included
+  allboxtypes[cnbx.defaultboxtype] = true
+  -- check if default boxtype is available, otherwise it is a fatal error
+  
+  local defbx = cnbx.defaultboxtype
+  defaultlua = findFile(defbx..".lua",{"styles/","styles/"..defbx.."/"})
+  
+  if not defaultlua.found then 
+    quarto.log.error("Code for default box type "..defbx.." is not available")
+  end
+
+  -- print("boxtypes")
+  -- dev.tprint(allboxtypes)
+  -- print("=======")
+   
+  -- verify if boxtypes actually exist. otherwise replace by default
+  -- enter valid box types into global list
+  -- replace the remaining ones by default type, and issue warning
+  for k, _ in pairs(allboxtypes) do
+    fnamstr = str(k)
+    findlua = findFile(fnamstr..".lua",{"styles/","styles/"..fnamstr.."/"})
+    if not findlua.found then 
+      warn ("boxstyle "..fnamstr.." not found, replace by default ") 
+      findlua = defaultlua
+    end
+    findlua.found = nil
+    findlua.luacode = pandoc.path.split_extension(findlua.path)
+    thelua = require(findlua.luacode)
+    --  print(thelua.stilnam)
+    --   dev.tprint(thelua)
+    findlua.defaultOptions = thelua.defaultOptions
+    findlua.render = thelua[cnbx.fmt]
+    validboxtypes[k] = findlua 
+  end  
+  
+-- print("---------")
+--   dev.tprint(validboxtypes)
+-- print("---------")
+
+  cnbx.boxtypes = validboxtypes
+
+end
 
 
 --- register box styles for rendering. 
 --- analyze the yaml, check if styles can be found, include them in cnbx
 --- in all cases set up styles/default, if no custom style is given
 --- no return value, but side effect
-local initBoxStyles = function (cnbyaml)
-  local blksty = cnbyaml.blockstyles
-  local minimaldefault = {default = "faltbox"}
-  if blksty == nil then 
-    blksty = minimaldefault
-  elseif blksty.default == nil then
-    blksty.default = "faltbox"
+local initStyles = function (cnbyaml)
+  local sty = cnbyaml.styles
+  local basestyles, allstyles = {}, {}
+  local minimaldefault = {default = {boxtype = cnbx.defaultboxtype}}
+  if sty == nil then 
+    sty = minimaldefault
+  elseif sty.default == nil then
+    sty.default =  minimaldefault.default
   end  
-  if blksty then
-    -- TODO: check if default style present. Otherwise add that one as faltbox
-    for stil, fname in pairs(blksty) do
-      fnamstr = str(fname)
-      findlua = findFile(fnamstr..".lua",{"styles/","styles/"..fnamstr.."/"})
-      if findlua.found then 
-      --  print("findlua found it: "..findlua.dir.." nemlig".. findlua.path) 
-        stilpath = findlua.dir..fnamstr
-        cnbx.styles[stil] = require(stilpath)
-        cnbx.styles[stil].path = stilpath
-       else ute1.warn("file "..fnamstr..".lua".." not found")    
+
+  -- first find those without parent style, then set up child styles
+  if type(sty) == "table" then
+    for k, v in pairs(sty) do
+      v = deInline(v)
+      if v.parent == nil then -- print("no parent") 
+        basestyles[k] = v
       end
     end
+  -- fill with all known defaults  
+    for k, v in pairs (sty) do
+      v = deInline(v)
+      if v.parent ~= nil then
+        local vp = str(v.parent)
+        v = updateTable(basestyles[vp], v)
+      end
+      v.parent = nil
+      if v.boxtype == nil then v.boxtype = cnbx.defaultboxtype end
+      v.boxtype = str(v.boxtype)
+      -- dev.tprint(cnbx.boxtypes[v.boxtype])
+      v = updateTable(cnbx.boxtypes[v.boxtype].defaultOptions, v)
+      allstyles[k] = v
+    end
   end
+   
+  cnbx.styles = allstyles
 end
-
-
-
 
 --- find chapter number of current file, whether first or last file, and last file for books
 --- only sensible for books
@@ -197,8 +290,11 @@ local initClassDefaults = function (cunumbl)
   --]] 
   -- prepare information for numbering fboxes by class
   -- cnbx.knownClasses ={}
+-- dev.tprint(cnbx.boxtypes)
+-- print("--------")
   cnbx.classDefaults ={}
-  local groupDefaults = {default = cnbx.styles.default.defaultOptions} -- not needed later???
+  local groupDefaults = {default = cnbx.boxtypes[cnbx.defaultboxtype].defaultOptions} -- not needed later???
+  groupDefaults.default.boxtype = cnbx.defaultboxtype
   cnbx.counter = {unnumbered = 0} -- counter for unnumbered divs 
   -- ! unnumbered not for classes that have unnumbered as default !
   -- cnbx.counterx = {}
@@ -211,26 +307,36 @@ local initClassDefaults = function (cunumbl)
   if cunumbl.groups then
     for key, val in pairs(cunumbl.groups) do
       local ginfo = deInline(val)
-      local bst = replaceifnil(ginfo.blockstyle, "default")
-      ginfo = updateTable(cnbx.styles[bst].defaultOptions, ginfo)
+      local bst = replaceifnil(ginfo.boxtype, cnbx.defaultboxtype)
+      ginfo = updateTable(cnbx.boxtypes[bst].defaultOptions, ginfo)
       groupDefaults[key] = ginfo
    --   pout("-----group---"); pout(ginfo)
     end 
   end  
+
+  -- print("======= group defaults:---------")
+  -- dev.tprint(groupDefaults)
+  -- print("========== ")
+
+
   for key, val in pairs(cunumbl.classes) do
     local clinfo = deInline(val)
   --  pout("==== before after =======");  pout(clinfo)
     -- classinfo[key] = deInline(val)
     table.insert(cnbx.knownclasses, str(key))
     local theGroup = replaceifnil(clinfo.group, "default")
-    -- check if a blockstyle is defined for the class, and if yes, respect it
+    -- check if a style is defined for the class, and if yes, respect it
     -- if it is different from the group, only use the group for counting,
     -- do not add superflous key value pairs
-    local bst = clinfo.blockstyle
-    if bst ~= nil then if bst ~= groupDefaults[theGroup].blockstyle then
-      clinfo = updateTable(cnbx.styles[bst].defaultOptions, clinfo)
+    local bst = clinfo.style
+    if bst ~= nil then 
+     -- first update from general styles
+      if bst ~= groupDefaults[theGroup].style then
+        if cnbx.styles[bst] == nil then warn("style "..bst.." not defined")
+        else  clinfo = updateTable(cnbx.styles[bst], clinfo)  end
     end end
-    if bst==nil or bst == groupDefaults[theGroup].blockstyle then
+    -- then update from group
+    if bst==nil or bst == groupDefaults[theGroup].style then
       clinfo = updateTable(groupDefaults[theGroup], clinfo)
     end
     clinfo.label = replaceifnil(clinfo.label, str(key))
@@ -304,8 +410,18 @@ Meta = function(meta)
   
   initRenderInfo(meta)
   if cnbx.yaml then 
-    initBoxStyles(cnbx.yaml)
+    initBoxTypes(cnbx.yaml)
+    -- print("============== cnbx.boxtypes ========")
+    -- dev.tprint(cnbx.boxtypes)
+    -- print("===========")
+    initStyles(cnbx.yaml)
+    --  print("============== cnbx.styles ========")
+    --  dev.tprint(cnbx.styles)
+    --  print("===========")
     initClassDefaults(cnbx.yaml) 
+    -- print("============== cnbx.classDefaults ========")
+    -- dev.tprint(cnbx.classDefaults)
+    -- print("===========")
   end
 
   return(meta)

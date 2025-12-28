@@ -208,7 +208,7 @@ return {id = id,
       mdtitle = A._mdtitle, 
       collapse = A._collapse,
       boxstyle = A._boxstyle,
-      blockstyle = "default", -- TODO here
+      -- boxtype = "default", -- TODO here
       link = thelink
 }
   -- pout("====nun====");pout(tt)
