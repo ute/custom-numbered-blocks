@@ -31,11 +31,12 @@ local insertBoxtypesPandoc = function(doc)
    if cnbx.fmt == "pdf" then
     quarto.doc.use_latex_package("tcolorbox","many")
     for _, val in pairs(cnbx.boxtypes) do
-       includefile = val.headerincludes
+       includefile = val.render.headerincludes
        if includefile ~= nil then
-         if  FileExists(includefile) then
+          includefile = pandoc.path.normalize(val.dir.."/"..includefile)
+          if  FileExists(includefile) then
  --      print("insert preamble for ".. key .." find files here "..val.path)
-            quarto.doc.include_file("in-header", val.path..'.tex')
+            quarto.doc.include_file("in-header", includefile)
           else warn("no file "..includefile.."provided")
          end
         end   

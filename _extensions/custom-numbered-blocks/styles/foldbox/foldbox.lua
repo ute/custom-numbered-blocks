@@ -9,13 +9,13 @@ local defaultOptions = {
 
 local beginBlock_html = function(ttt)
   local Open =""
-  local bxstyle =" fbx-default closebutton"
+  local bxstyle =" fobx-default closebutton"
   local typlabelTag = ttt.typlabelTag
   if #ttt.title > 0 then typlabelTag = typlabelTag..": " end
   if ttt.collapse =="false" then Open=" open" end
   if ttt.boxstyle =="foldbox.simple" 
     then 
-      bxstyle=" fbx-simplebox fbx-default" 
+      bxstyle=" fobx-simplebox fobx-default" 
     --    Open=" open" do not force override. Chose this in yaml or individually.
     --    we would want e.g to have remarks closed by default
     end
@@ -32,10 +32,10 @@ end
 
 
 local beginBlock_pdf = function(ttt)
-  local texEnv = "fbx"
+  local texEnv = "fobx"
   local typlabelTag = ttt.typlabelTag
   if #ttt.title > 0 then typlabelTag = typlabelTag..": " end
-  if ttt.boxstyle=="foldbox.simple" then texEnv = "fbxSimple" end
+  if ttt.boxstyle=="foldbox.simple" then texEnv = "fobxSimple" end
   return {
     pandoc.RawInline("tex",'\\begin{'..texEnv..'}{'..ttt.type..'}{'..typlabelTag..'}{'),
     pandoc.RawInline("tex", ttt.title), -- change this later
@@ -44,8 +44,8 @@ local beginBlock_pdf = function(ttt)
 end  
 
 local endBlock_pdf = function(ttt)
-  local texEnv = "fbx"
-  if ttt.boxstyle=="foldbox.simple" then texEnv = "fbxSimple" end
+  local texEnv = "fobx"
+  if ttt.boxstyle=="foldbox.simple" then texEnv = "fobxSimple" end
   return(pandoc.RawInline("tex",'\\end{'..texEnv..'}\n'))
 end
 
@@ -53,13 +53,13 @@ return {
   defaultOptions = defaultOptions,
   stilnam ="foldbox for testing only",
   html = {
-    headerincludes = "faltbox.css",
+    headerincludes = "foldbox.css",
     -- headerincludes = "": future option to modify default = stylename.tex
     beginBlock = beginBlock_html,
     endBlock = endBlock_html
   },
   pdf = {
-    headerincludes = "faltbox.tex",
+    headerincludes = "foldbox.tex",
     beginBlock = beginBlock_pdf,
     endBlock = endBlock_pdf
   }
