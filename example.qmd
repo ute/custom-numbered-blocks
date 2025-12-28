@@ -13,17 +13,16 @@ extensions:
     styles:
       formalia:
         boxtype: foldbox
-        colors: ['a101a1', 584eab]
+        colors: [948bde, 584eab]
+        boxstyle: foldbox.simple
+        collapse: false
       besonders:
         parent: formalia
-        collapse: false
+        collapse: true
+        colors: [b88bde, 584eab]
     groups:
       thmlike:
         style: formalia
-        colors: [948bde, 584eab]
-        boxstyle: foldbox.simple
-        boxtype: faltbox
-        collapse: false
         listin: [mathstuff]
       todos: #default  
         boxtype: foldbox
@@ -34,7 +33,6 @@ extensions:
       Corollary:
         group: thmlike
         style: besonders
-        boxtype: plumpaquatsch
       Conjecture:
         group: thmlike
         collapse: true  

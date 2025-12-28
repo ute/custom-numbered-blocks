@@ -9,7 +9,7 @@ local colorCSSTeX_legacy = function (fmt, classDefs)
   local result
   local StyleCSSTeX = {}
   if classDefs ~= nil then
-    dev.tprint(classDefs)
+    -- dev.tprint(classDefs)
     for cls, options in pairs(classDefs) do
         --quarto.log.output(cls)
       if options.colors then

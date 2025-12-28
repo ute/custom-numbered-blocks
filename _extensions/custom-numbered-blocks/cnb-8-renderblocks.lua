@@ -21,63 +21,6 @@ local deInline = ute1.deInline
 --]]--
 
 
-local insertBoxtypesPandoc0 = function(doc)
-  -- Done: change for a list of styles
-  -- Done: decided on 26.12.25: for pdf and html use standard packages until change needed
--- insert extra css and latex with same name in same directory
-  
-  local preamblestuff = colorCSSTeX(cnbx.fmt, cnbx.classDefaults)
-  local includefile = ""
-  local luacontent = require "styles.faltbox.faltbox"
-  local lu
-  
-  if cnbx.fmt == "pdf" then
-    quarto.doc.use_latex_package("tcolorbox","many")
-    for _, val in pairs(cnbx.styles) do
-       includefile = val.headerincludes
-       if includefile ~= nil then
-         if  FileExists(includefile) then
- --      print("insert preamble for ".. key .." find files here "..val.path)
-            quarto.doc.include_file("in-header", val.path..'.tex')
-          else warn("no file "..includefile.."provided")
-         end
-        end   
-    end  
-  end
-  
-  if cnbx.fmt == "html" then
-    for key, val in pairs(cnbx.boxtypes) do
-      print("processing boxtype "..key)
-      -- dev.tprint(val)
-      print("filepath "..quarto.utils.resolve_path(val.path))
-      luacontent = dofile(quarto.utils.resolve_path("styles/foldbox/faltbox.lua"))
-      lu = luacontent
-      if lu == nil then print("--- nicht geladen") 
-      else print(type(lu).." "..#lu) 
-      end
-      -- if luacontent.stilnam ~= nil then  print("-->"..lucacontent.stilnam) end
-      includefile = lu.headerincludes
-      if includefile ~= nil then
-        print("including "..includefile)
-        if  FileExists(includefile) then
-        quarto.doc.add_html_dependency({
-           name = key,      -- version = '0.0.1',
-           stylesheets = {val.path..".css"}
-         })
-        else warn("no file "..includefile.." provided")
-        end
-      else print( 'nothing to include')  
-      end  
-  --  print("insert preamble for ".. key .." find files here "..val.path)
- --   val.render[cnbx.fmt].insertPreamble(doc, cnbx.classDefaults)
-    end  
-  end  
-
-  if preamblestuff then quarto.doc.include_text("in-header", preamblestuff) end
-  return(doc)
-end;
-
-
 local insertBoxtypesPandoc = function(doc)
   -- Done: change for a list of styles
   -- Done: decided on 26.12.25: for pdf and html use standard packages until change needed
@@ -101,16 +44,12 @@ local insertBoxtypesPandoc = function(doc)
   
   if cnbx.fmt == "html" then
     for key, val in pairs(cnbx.boxtypes) do
-      print("processing boxtype "..key.." information is")
-      dev.tprint(val)
-      -- dev.tprint(val)
-      print("filepath "..quarto.utils.resolve_path(val.path))
-      
-      -- if luacontent.stilnam ~= nil then  print("-->"..lucacontent.stilnam) end
+      --print("processing boxtype "..key.." information is")
+      --dev.tprint(val)
       includefile = val.render.headerincludes
       if includefile ~= nil then
         includefile = pandoc.path.normalize(val.dir.."/"..includefile)
-        print("including "..includefile)
+       -- print("including "..includefile)
         if  FileExists(includefile) then
         quarto.doc.add_html_dependency({
            name = key,      -- version = '0.0.1',

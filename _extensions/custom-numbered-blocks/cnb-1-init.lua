@@ -163,6 +163,7 @@ local initStyles = function (cnbyaml)
   end
    
   cnbx.styles = allstyles
+  
 end
 
 --- find chapter number of current file, whether first or last file, and last file for books
@@ -303,10 +304,14 @@ local initClassDefaults = function (cunumbl)
         return     
   end
   
--- simplified copy of yaml data: inlines to string
+-- deInline: simplified copy of yaml data: inlines to string
+-- update default values with boxtype defaults and style defaults
   if cunumbl.groups then
     for key, val in pairs(cunumbl.groups) do
       local ginfo = deInline(val)
+      if ginfo.style ~= nil then
+         ginfo = updateTable(cnbx.styles[ginfo.style], ginfo)  
+      end
       local bst = replaceifnil(ginfo.boxtype, cnbx.defaultboxtype)
       ginfo = updateTable(cnbx.boxtypes[bst].defaultOptions, ginfo)
       groupDefaults[key] = ginfo
@@ -415,9 +420,9 @@ Meta = function(meta)
     -- dev.tprint(cnbx.boxtypes)
     -- print("===========")
     initStyles(cnbx.yaml)
-    --  print("============== cnbx.styles ========")
-    --  dev.tprint(cnbx.styles)
-    --  print("===========")
+      print("============== cnbx.styles ========")
+      dev.tprint(cnbx.styles)
+      print("===========")
     initClassDefaults(cnbx.yaml) 
     -- print("============== cnbx.classDefaults ========")
     -- dev.tprint(cnbx.classDefaults)
