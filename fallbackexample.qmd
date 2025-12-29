@@ -1,0 +1,47 @@
+---
+title: "Custom-numbered-blocks Example"
+number-sections: true
+filters:
+  - custom-numbered-blocks
+format:
+  html: default
+  pdf: default
+
+extensions:
+  custom-numbered-blocks:
+    classes:    
+      TODO:
+        boxtype: simpletextbox
+        #boxtype: fallback
+        label: "To do"
+
+# crossref:
+#  chapters: true
+---
+
+::: TODO
+### simpletextbox
+
+- [x] make referenceable - this works out of the box, I was sooo clever with the design ;-)
+:::
+
+::: TODO
+### Change internal registration of Divs {#first}
+This is relatively epic
+
+- [ ] do not use div attributes, but an internal table
+  - [ ] set up the table in parallel
+    - [ ] make identifiers for all divs
+    - [ ] add to cnbx.customblocks. Catch error: duplex
+  - [ ] test by inspection
+  - [ ] change how styles use the information
+    - [x] start with fallbackexample
+    - [ ] test fallbackexample 
+:::
+
+::: TODO 
+# this is only for testing purposes {#second}
+
+For example, to catch duplex identifiers
+:::
+

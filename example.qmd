@@ -105,6 +105,17 @@ The default style for custom divs is `foldbox`: a collapsible similar to quarto'
 :::
 
 ::: TODO
+### Change internal registration of Divs
+This is relatively epic
+
+- [ ] do not use div attributes, but an internal table
+  - [ ] set up the table in parallel
+  - [ ] test
+  - [ ] change how styles use the information
+    - [ ] start with fallbackexample
+:::
+
+::: TODO
 ### Colors
 Use colors as they are defined in brand
 

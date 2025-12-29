@@ -2,7 +2,10 @@
 Example for a simple boxtype
 This boxtype encloses title and contents of the custom numbered box in a colored box
 with inner and outer margins of size 1 em to all sides.
-This boxtype supports pdf and html format
+simpletextbox supports pdf and html format
+it is also an example for what you can do with pandoc functions, 
+see the local function pandoctitle
+
 author: ute 
 date: 29/12/2025
 ]]--
@@ -22,12 +25,16 @@ postit.colors = {
 -- rendering ----------------------------------------
 
 --- generate the title line. To be used with both defined formats
+--- title is set as underlined, and emphasized; 
+--- type label and number are set as strong
 --- @param ttt table contains information for the individual rendered block
 local pandoctitle = function(ttt)
    local typlabelTag = ttt.typlabelTag
       if #ttt.title > 0 then typlabelTag = typlabelTag..": " end
-      return pandoc.Inlines(pandoc.Emph(pandoc.Strong(typlabelTag)))..
-             pandoc.Inlines(pandoc.Emph(ttt.title))
+      return pandoc.Inlines(pandoc.Underline(pandoc.Emph(
+             {pandoc.Strong(typlabelTag), pandoc.Str(ttt.title)}
+             )))
+
 end  
 
 postit.pdf = {
@@ -52,7 +59,7 @@ postit.html = {
     return 
       pandoc.Inlines(pandoc.RawInline("html", 
           '<div class=simpletextbox style="background-color:'..bgcolor..';">'))
-      ..pandoctitle(ttt) 
+      ..pandoctitle(ttt)
    end,
   endBlock = function(ttt)
    return pandoc.RawInline("html", '</div>') 
