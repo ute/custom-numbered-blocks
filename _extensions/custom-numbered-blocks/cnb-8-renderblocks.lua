@@ -58,7 +58,7 @@ local insertBoxtypesPandoc = function(doc)
          })
         else warn("no file "..includefile.." provided")
         end
-      else print( 'nothing to include')  
+     -- else print( 'nothing to include')  
       end  
   --  print("insert preamble for ".. key .." find files here "..val.path)
  --   val.render[cnbx.fmt].insertPreamble(doc, cnbx.classDefaults)
@@ -87,13 +87,10 @@ renderDiv = function(thediv)
     --print("trying to render soemthing ".. tt.boxtype)
     --dev.tprint (cnbx.boxtypes)
     --print( "%%%%%%%%%%%%%%%")
-    local rendernew = cnbx.boxtypes[tt.boxtype].render
+    local rendr = cnbx.boxtypes[tt.boxtype].render
     
-    --local blockStart = pandoc.RawInline(fmt, rendering.blockStart(tt))
-    --local blockEnd = pandoc.RawInline(fmt, rendering.blockEnd(tt))
-
-    local beginBlock = rendernew.beginBlock(tt)
-    local endBlock = rendernew.endBlock(tt)
+    local beginBlock = rendr.beginBlock(tt)
+    local endBlock = rendr.endBlock(tt)
     
     -- diagnostics
     --print(" the div " .. thediv.identifier.. " has content lrngth "..#thediv.content.. " and type of first entry is "
@@ -101,8 +98,8 @@ renderDiv = function(thediv)
     --print(" beginblock has length ".. #beginBlock)     
      --   print("inserting in plain content")
      
-    table.insert(thediv.content, 1, beginBlock)--blockStart)  
-    table.insert(thediv.content, endBlock)--blockEnd) 
+    table.insert(thediv.content, 1, beginBlock)
+    table.insert(thediv.content, endBlock)
     
    -- print("----")
   end  

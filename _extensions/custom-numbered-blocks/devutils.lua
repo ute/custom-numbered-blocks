@@ -24,4 +24,10 @@ function M.tprint (tbl, indent)
   end
 end
 
+function M.showtable (tbl, name)
+  print("========== "..name.." ===========")
+  M.tprint(tbl)
+  print("============================")
+end
+
 return M

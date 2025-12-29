@@ -59,37 +59,24 @@ local initBoxTypes = function (cnbyaml)
         end
       end
   end
-  -- deprecate later: key blockstyles
-  -- local blksty = cnbyaml.blockstyles
-  -- local minimaldefault = {default = "faltbox"}
   local findlua, fnamstr
   local allboxtypes, validboxtypes = {}, {}
-  -- if blksty == nil then 
-  --   blksty = minimaldefault
-  -- elseif blksty.default == nil then
-  --   blksty.default = "faltbox"
-  -- end  
-
- -- print("========= block styles =======")
- -- dev.tprint(blksty)
-
+  local defbx = cnbx.defaultboxtype
   
-
   gatherboxtypes(cnbyaml.styles, allboxtypes)
- -- gatherboxtypes(cnbyaml.blockstyles, allboxtypes) -- deprecate later
   gatherboxtypes(cnbyaml.groups, allboxtypes)
   gatherboxtypes(cnbyaml.classes, allboxtypes)
   
   -- ensure default box type is included
-  allboxtypes[cnbx.defaultboxtype] = true
+  allboxtypes[defbx] = true
   -- check if default boxtype is available, otherwise it is a fatal error
-  
-  local defbx = cnbx.defaultboxtype
   defaultlua = findFile(defbx..".lua",{"styles/","styles/"..defbx.."/"})
-  
   if not defaultlua.found then 
     quarto.log.error("Code for default box type "..defbx.." is not available")
   end
+
+  -- include fallback
+  allboxtypes.fallback = true
 
   -- print("boxtypes")
   -- dev.tprint(allboxtypes)
@@ -108,13 +95,20 @@ local initBoxTypes = function (cnbyaml)
     findlua.found = nil
     findlua.luacode = pandoc.path.split_extension(findlua.path)
     thelua = require(findlua.luacode)
+   -- thelua = updateTable(fallback, thelua)
     --  print(thelua.stilnam)
     --   dev.tprint(thelua)
+    if k=="fallback" then fallback = thelua.unknown end
     findlua.defaultOptions = thelua.defaultOptions
     findlua.render = thelua[cnbx.fmt]
+    -- replace missing functions by fallback version
     validboxtypes[k] = findlua 
   end  
   
+  for _, v in pairs(validboxtypes) do
+    v.render = updateTable(fallback, v.render)
+  end
+
 -- print("---------")
 --   dev.tprint(validboxtypes)
 -- print("---------")
@@ -416,17 +410,11 @@ Meta = function(meta)
   initRenderInfo(meta)
   if cnbx.yaml then 
     initBoxTypes(cnbx.yaml)
-    -- print("============== cnbx.boxtypes ========")
-    -- dev.tprint(cnbx.boxtypes)
-    -- print("===========")
+    -- dev.showtable(cnbx.boxtypes, "boxtypes")
     initStyles(cnbx.yaml)
-      -- print("============== cnbx.styles ========")
-      -- dev.tprint(cnbx.styles)
-      -- print("===========")
+    -- dev.showtable(cnbx.styles, "styles")
     initClassDefaults(cnbx.yaml) 
-    -- print("============== cnbx.classDefaults ========")
-    -- dev.tprint(cnbx.classDefaults)
-    -- print("===========")
+    -- dev.showtable(cnbx.classDefaults, "classFefaults")
   end
 
   return(meta)

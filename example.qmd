@@ -12,7 +12,7 @@ extensions:
   custom-numbered-blocks:
     styles:
       formalia:
-        # boxtype: foldbox
+        boxtype: foldbox
         colors: [948bde, 584eab]
         boxstyle: foldbox.simple
         collapse: false
@@ -137,6 +137,7 @@ In this context, by *fancy* we mean that the title of the box appears as a click
 
 
 ::: Corollary
+### fancy is fancy
 By \longref{fancy}, `foldboxes` are fancyboxes.
 :::
 
