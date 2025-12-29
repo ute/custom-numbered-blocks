@@ -1,4 +1,10 @@
--- TODO: remove dependence from path, make a utility function for this
+--[[
+Example for a simple boxtype that works with any format
+This is also used as fallback if rendering functions are missing
+
+author: ute
+date: end 12/2025
+]]--
 
 local defaultOptions = {
     numbered = "true"
@@ -8,11 +14,12 @@ local render = {
   beginBlock = function(ttt)
     local typlabelTag = ttt.typlabelTag
     if #ttt.title > 0 then typlabelTag = typlabelTag..": " end
-    return pandoc.Inlines(pandoc.Strong(typlabelTag))..
-      pandoc.Inlines(pandoc.Str(ttt.title))
+    return pandoc.Inlines(pandoc.Underline({
+      pandoc.Strong(typlabelTag),
+      pandoc.Str(ttt.title)}))
   end,
   endBlock = function(ttt)
-   return {}
+    return {}
   end
 }
 
