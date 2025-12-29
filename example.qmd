@@ -20,13 +20,17 @@ extensions:
         parent: formalia
         collapse: true
         colors: [b88bde, 584eab]
+      postit:
+        parent: formalia # will work without parent once the attributing mechanism is changed
+        boxtype: simpletextbox
+        color: yellow # not implemented yet
+ 
     groups:
       thmlike:
         style: formalia
         listin: [mathstuff]
       todos: #default  
-        boxtype: faltbox
-        style: default
+        style: postit
     classes:    
       Theorem:
         group: thmlike
@@ -95,7 +99,7 @@ The default style for custom divs is `foldbox`: a collapsible similar to quarto'
 ::: TODO
 ### Custom **styles** almost done
 - [x] create an API for user defined block styles
-- [ ] provide an example
+- [x] provide an example
 - [ ] and documentation
 - [x] secure that it also works for classes
 :::
@@ -113,8 +117,9 @@ Use colors as they are defined in brand
 ::: {.DONE #bref label="Done, may change" reflabel="Enhancement"}
 ### extended cross references that include label
 - [x] add a cross reference that includes the block type
-- [x] allow redefinition of the block type via attribute `reflabel`  
+- [x] allow redefinition of the block type via attribute `reflabel`
 - [ ] for now, the extended cross reference is called as `\longref` -- should this change? 
+- [ ] consider making crossreferences using `@label` as in plain quarto. Use the pandoc facilities for that
 :::
 
 ::: {.DONE label="Done, may change"}
