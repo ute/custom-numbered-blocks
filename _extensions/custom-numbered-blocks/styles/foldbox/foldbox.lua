@@ -19,7 +19,8 @@ local beginBlock_html = function(ttt)
     --    Open=" open" do not force override. Chose this in yaml or individually.
     --    we would want e.g to have remarks closed by default
     end
-  return {pandoc.RawInline("html", '<details class=\"'..ttt.type..bxstyle ..'\"'..Open..'><summary>'..'<strong>'..typlabelTag..'</strong>'),
+  return {
+    pandoc.RawInline("html", '<details class=\"'..ttt.type..bxstyle ..'\"'..Open..'><summary>'..'<strong>'..typlabelTag..'</strong>'),
     pandoc.RawInline("html", ttt.title), -- change this later
     pandoc.RawInline("html", '</summary><div>')
   }
@@ -50,7 +51,6 @@ end
 
 return {
   defaultOptions = defaultOptions,
-  stilnam ="foldbox for testing only",
   html = {
     headerincludes = "foldbox.css",
     -- headerincludes = "": future option to modify default = stylename.tex
