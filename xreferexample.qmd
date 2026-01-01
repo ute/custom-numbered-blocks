@@ -1,0 +1,76 @@
+---
+title: "Xrefer Example"
+filters:
+  - xrefer
+#format: native 
+number-sections: true
+crossref: 
+  chapters: true
+
+---
+
+::: {.blk}
+
+Waschi
+
+Waschi isse dassi
+:::
+
+# Heading 1
+
+This filter adds formatting to heading text.
+
+Hier kommt erst so ein Satz
+
+:::{#thm-pyt}
+Im rechtwinkligen Dreieck güldet
+$$
+  a^2 + b^2 = c^2
+$$
+:::
+
+::: {.blk}
+# first div {#blk-first}
+
+:::: {.blk}
+# nested 
+This is a nested div
+::::
+after that nested div
+:::
+
+after first div
+
+# Heading 2 über @thm-pyt
+
+and now nest in other something div
+
+::: {.rendered}
+
+ now we do some things
+
+## renderheader
+
+wir sind im rendern
+
+:::: {.blk}
+## jetzt ist auch noch ein {{Tag}} im neuen $e^2$ Jahr {#neujahr}
+
+blk div in rendered div manchmal ein {{Tag}} anfangt
+
+:::::{.blk}
+# ein neuer Tag @thm-pyt {#vorletztesdiv}
+beginnt. Voll geschachtelt
+:::::
+
+
+::::
+:::
+
+### subheading
+and now another level
+
+:::{.blk}
+# ein neuer Tag @thm-pyt {#letztesdiv}
+beginnt
+:::

@@ -176,20 +176,24 @@ end
 local chapterinfo =  function (book, fname)
   local first = "" 
   local last = "" 
-  local chapno = nil
   local info = {}
   --if book.render then
-    for _, v in pairs(book.render) do
+    for index, v in ipairs(book.render) do
       if str(v.type) == "chapter" then
         last = pandoc.path.split_extension(str(v.file))
         if first == "" then first = last end
-        if last == fname then chapno = v.number end
+        if last == fname then 
+          info.chapno = v.number 
+          info.chapindex = index  
+          --print("---> chapno = "..chapno)
+    --      dev.showtable(v, "book.render v")
+        end
       end
     end
     info.islast = (fname == last)
     info.isfirst = (fname == first)
     info.lastchapter = last
-    info.chapno = chapno
+  --  dev.showtable(info, "chapter info")
     return(info)
 end
 
@@ -416,7 +420,7 @@ Meta = function(meta)
     initClassDefaults(cnbx.yaml) 
     -- dev.showtable(cnbx.classDefaults, "classFefaults")
   end
-
+-- dev.showtable(cnbx, "cnbx")
   return(meta)
 end
 }

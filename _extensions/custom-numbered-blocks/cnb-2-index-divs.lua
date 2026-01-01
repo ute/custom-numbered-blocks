@@ -33,6 +33,8 @@ SOFTWARE.
 
 ute1 = require "cnb-utilities"
 
+dev = require "devutils"
+
 local str = pandoc.utils.stringify
 local ifelse = ute1.ifelse
 local replaceifnil = ute1.replaceifnil
@@ -44,6 +46,25 @@ local tablecontains = ute1.tablecontains
 local updateTable = ute1.updateTable
 local deInline = ute1.deInline
 ]]--
+
+--- number all custom numbered blocks to create identifiers
+
+local cnbcounter = 0
+local chapi = ""
+if cnbx.chapno ~= nil then  chapi = "cnbx-"..str(cnbx.chapno) end
+
+local function countDiv (div)
+  local autoidx = "a"
+  
+  if cnbx.is_cunumblo(div) then
+    cnbcounter = cnbcounter + 1
+    autoidx = chapi..str(cnbcounter)
+  end
+  
+  print(autoidx)
+end  
+
+
 ----------------------- oldcode, mostly -------------------------------------
 
 
@@ -64,6 +85,8 @@ local function fboxDiv_setAttributes(el, cls, prefix)
   local cnts = 0
   local idnumber = "0.0"
    
+  print("fboxDiv_seta")
+
   --  set prefix
   ela._prefix = prefix
 
@@ -127,7 +150,57 @@ end
 
 -- initial attributes without prefix and counts to allow for inner boxes
 
+
+-- merged aus divsgetid
 local function fboxDiv_mark_for_processing(div)
+  local diva=div.attributes
+  local cls = cnbx.is_cunumblo(div)
+  local ClassDef = cnbx.classDefaults[cls]
+  local id = div.identifier
+  local el1={}
+
+  print("markfor")
+  if cls then
+    diva._process_me = "true"
+    diva._fbxclass = str(cls)
+    diva._prefix = ""
+    diva._tag = ""
+    diva._collapse = str(replaceifnil(diva.collapse, ClassDef.collapse)) 
+    diva._boxstyle = str(replaceifnil(diva.boxstyle, ClassDef.boxstyle)) 
+    diva._label = str(replaceifnil(diva.label, ClassDef.label)) 
+    diva._reflabel = str(replaceifnil(diva.reflabel, ClassDef.reflabel)) 
+  -- local known = getKnownEnv(el.attr.classes)
+     
+   --if not ela._process_me then return(el) end
+   -- pout("--- processing item with id ".. replaceifempty(id, "LEER"))
+   
+  if id == nil or id =="" then  
+    -- try in next header
+    el1 = div.content[1]
+    if el1.t=="Header" then 
+    --    pout("--- looking at header with id "..el1.identifier)
+    --    pout("--- still processing item with id ".. replaceifempty(id, "LEER"))
+     -- pout("replacing id")
+      id = el1.identifier
+      div.identifier = id
+    end
+  end 
+  if id == nil or id =="" 
+    then  
+      -- pout("immer noch leer")
+      if div._autoid ~= nil then
+      id = div._autoid
+      div.identifier = id
+    end 
+    --else pout("nix autoid in ");pout(ela._autoid)
+  end
+  -- pout("resulting el:"); pout(el.attr)
+ 
+  return(div)
+end
+end
+
+local function fboxDiv_mark_for_processing0(div)
   local diva=div.attributes
   local cls = cnbx.is_cunumblo(div)
   local ClassDef = cnbx.classDefaults[cls]
@@ -144,11 +217,14 @@ local function fboxDiv_mark_for_processing(div)
   return(div)
 end
 
+
+
 local function Pandoc_prefix_count(doc)
   -- do evt later: non numeric chapternumbers
   local secno = 0
   local prefix = "" -- was "0" but this looks ugly. maybe give this as an option if need be, later
   local lprefix = ""
+  print("Pandoc")
   if cnbx.prefix then prefix = cnbx.prefix 
      elseif cnbx.ishtmlbook then prefix = cnbx.chapno end
  
@@ -231,11 +307,15 @@ In case of no prefix number I would still like to allow overriding.
       end  
     end
   end  -- for
+ 
+  dev.showtable(cnbx, "2. cnbx nach indexdiv")
+ 
   return(doc)
 end
 
 local function Meta_readxref(meta)
   local file = io.open(cnbx.xreffile,"r")
+  print("Meta")
   if file then 
     local xrfjson = file:read "*a"
     file:close()
@@ -252,12 +332,17 @@ local function Meta_readxref(meta)
     --pout(fbx.xref)
   else cnbx.xref ={}
   end  
-  return(meta)
+ 
+  return(meta) 
 end
 
 
-return{
-    Meta = Meta_readxref, 
-    Div = fboxDiv_mark_for_processing,
-    Pandoc = Pandoc_prefix_count
-}
+return({
+ --{Div = fboxDiv_mark_for_processing},
+ -- {Div = countDiv},
+ --{
+ Div = fboxDiv_mark_for_processing,  
+  Meta = Meta_readxref, 
+  Pandoc = Pandoc_prefix_count  
+ --}
+})

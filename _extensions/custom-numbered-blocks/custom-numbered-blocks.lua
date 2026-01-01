@@ -69,19 +69,10 @@ end
 return{
     require("cnb-1-init") -- Meta: set up chapter numbers and classes
     
-    --[[
-    ,{Pandoc = function(d)
-      for k, v in pairs(cnbx.stylez) do
-        pout(k..":  ".. type(v))
-      end 
-      for k, v in pairs(fbx) do
-        pout(k..":  ".. type(v))
-      end 
-      
-    end 
-    }
-    --]]--
+   ,  require("cnb2-1-numbering") 
+   
    , require("cnb-2-initxref")
+   
   --, {Meta = Meta_readxref, Div=fboxDiv_mark_for_processing,
   --   Pandoc = Pandoc_prefix_count} 
  -- , {Div=pandocdivs, Pandoc=pandocblocks}
