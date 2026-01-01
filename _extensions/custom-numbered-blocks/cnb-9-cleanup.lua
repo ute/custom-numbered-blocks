@@ -1,4 +1,6 @@
 ute1 = require "cnb-utilities"
+dev = require "devutils"
+
 
 --[[ 
 local str = pandoc.utils.stringify
@@ -24,4 +26,9 @@ end
 
 return{
  Div = Div_cleanupAttribs
+ , Pandoc = function(doc)
+  print("-------- the last ----")
+  dev.showtable(cnbx.newxref, "the new xref")
+  return(doc)
+ end
 }

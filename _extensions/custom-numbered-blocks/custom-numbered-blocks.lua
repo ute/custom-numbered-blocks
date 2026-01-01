@@ -69,7 +69,7 @@ end
 return{
     require("cnb-1-init") -- Meta: set up chapter numbers and classes
     
-   ,  require("cnb2-1-numbering") 
+   ,  require("cnb-2-indices-register") 
    
    , require("cnb-2-initxref")
    
@@ -77,12 +77,14 @@ return{
   --   Pandoc = Pandoc_prefix_count} 
  -- , {Div=pandocdivs, Pandoc=pandocblocks}
   --[[ ]]
+  , require("cnb-3-numbering")
+  
   , require("cnb-3-preparexref")
   
  -- , {Div = Divs_getid, Pandoc = Pandoc_preparexref}
   , require("cnb-4-resolvexref")
 --  , {Pandoc = Pandoc_resolvexref}
-  , require("cnb-5-processtitles")
+  , require("cnb-5-processtitles") --kann entfallen
 --  , {Div = Divs_maketitle}
 --  , {Pandoc = Pandoc_finalizexref}
   , require("cnb-6-storexref")

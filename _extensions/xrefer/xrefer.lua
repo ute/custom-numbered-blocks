@@ -6,6 +6,7 @@ local filter3 = {} -- make prefixes from blocks and put on all divs
 local filter2 = {} -- extract render div titles
 local filter5 = {} -- render div
 local filter6 = {} -- manipuliere strings
+local filter12 ={} -- identifiers and remove renderdivs
 
 local xref = {}
 
@@ -83,27 +84,68 @@ filter2.Div = function(el)
 end
 
 
+filter12.traverse = "topdown"
+function filter12.Div(el)
+  divcount = divcount+1
+  local idd = el.identifier
+  local hidd=""
+  local cls = pandoc.utils.stringify(el.classes)
+  if idd==nil then idd="" end     
+  -- make identifier if not present --
+  if idd == "" then 
+    el1 = el.content[1]
+    if el1.t=="Header" then 
+      hidd = el1.identifier
+    end
+    if hidd == "" then 
+      idd = "cnb-"..cls.."-"..divcount
+    else idd = hidd
+    end
+    el.identifier = idd
+  end
+  local title = ""
+  local pandoctitle = {}
+  local info = {}
+  if iscunumblo(el) then --cls == "blk" then
+    el1 = el.content[1]
+      if el1.t=="Header" then 
+        pandoctitle = el1.content
+        title = pandoc.utils.stringify(pandoctitle)  -- readable version without math
+        -- do not remove this in the first run? or does it work anyway, because the cites are allready resolved, and refs get resolved later?
+        table.remove(el.content, 1) -- maybe tag for later: title-from-header
+      else title = " notitle"
+      end
+    info.mdtitle = title
+    info.pandoctitle = pandoctitle
+    xref[el.identifier] = info
+  end  
+  return el
+end
+
 -- filter3 numbering
 
 local zaehlweiter = true -- increase counters also when secno is given, but non numeric.
 
-local maxlev = 4
+local numberdepth = 2
+local maxlev = numberdepth
 local counters = {}
 for i=1, maxlev do counters[i] = 0 end
 local counterstring ={}
 for i=1, maxlev do counterstring[i] = "" end
 
-local numberdepth = 2
 local prefix = ""
 local blkcount = 0
 
-
+-- fake a chapter number to start with, for use with book chapters
+-- counters[1] = 5
+-- counterstring[1] = "5"
 
 filter3.traverse = "topdown"
 filter3.Block = function(el)
   local lev
   local info
   local secno = {}
+
   if el.t == "Header" then
     lev = el.level
     secno = el.attributes.secno
@@ -116,7 +158,8 @@ filter3.Block = function(el)
           counters[lev] = counters[lev]+1     
         end
         counterstring[lev] = tostring(secno)
-      else   
+      -- elseif not hasclass(el, "unnumbered") then
+      else
         counters[lev] = counters[lev]+1
         counterstring[lev] = tostring(counters[lev])
       end    
@@ -159,17 +202,22 @@ filter5.Div = function(el)
 end  
 
 filter6.Str = function (elem)
-    if elem.text == "{{Tag}}" then
-      return pandoc.Emph {pandoc.Str "takker"}
-    else
-      return elem
-    end
+  local sayit = ""
+  local thinfo = xref['vorletztesdiv']
+  if elem.text == "{{Tag}}" then
+    if thinfo then sayit= "yes "..thinfo.number else sayit = "no" end
+    print(sayit)
+    return pandoc.Emph {pandoc.Str ("takker til "..sayit)}
+  else
+    return elem
+  end
   end
 
 return{
   filter0,
-   filter1
- , filter2
+ --  filter1
+ --, filter2
+   filter12
  , filter3
  , filter5
  , filter6

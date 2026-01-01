@@ -7,18 +7,25 @@ format:
   html: default
   pdf: default
 
-extensions:
-  custom-numbered-blocks:
-    classes:    
-      TODO:
-        #boxtype: simpletextbox
-        boxtype: fallback
-        label: "To do"
-      NixDo: default
+custom-numbered-blocks:
+  styles:  
+    postit:
+#       parent: formalia # will work without parent once the attributing mechanism is changed
+      boxtype: simpletextbox
+      color: yellow #
+  groups:
+    todos: default  
+     # style: postit    
+  classes:    
+    TODO:
+      #boxtype: simpletextbox
+      boxtype: fallback
+      label: "To do"
+      group: todos
+    NixDo: default
 
-
-# crossref:
-#  chapters: true
+crossref:
+  chapters: true
 ---
 
 ::: TODO
@@ -29,7 +36,7 @@ extensions:
 
 # First heading
 
-::: TODO
+::: {.TODO boxtype="foldbox"}
 ### Change internal registration of Divs {#first}
 This is relatively epic
 
@@ -57,7 +64,7 @@ The div with no title
 
 # second heading
 
-::: TODO
+::: {.NixDo label="Nixtun"}
 # this is only for testing purposes {#second}
 
 For example, to catch duplex identifiers
@@ -70,3 +77,4 @@ Let's see if this is possible. A future thing.
 :::
 
 
+Und jetzt weisen wir noch hin auf das Todo first: \ref{first}

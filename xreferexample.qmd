@@ -58,7 +58,7 @@ wir sind im rendern
 
 blk div in rendered div manchmal ein {{Tag}} anfangt
 
-:::::{.blk .unnumbered}
+:::::{.blk .notunnumbered}
 # ein neuer Tag @thm-pyt {#vorletztesdiv}
 beginnt. Voll geschachtelt
 :::::

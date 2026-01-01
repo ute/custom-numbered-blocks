@@ -27,6 +27,7 @@ SOFTWARE.
 
 local str = pandoc.utils.stringify
 
+-- files 
 local function FileExists(fname)
   local file = io.open(quarto.utils.resolve_path(fname),"r")
   if file ~= nil then
@@ -53,6 +54,8 @@ local function findFile(fname, directories)
   return {found = false}
 end
 
+
+-- tables
 
 local function DeInline(tbl)  
     local result ={}
@@ -109,6 +112,8 @@ local function updateTable (oldtbl, newtbl, ignorekeys)
   return(result)
 end
 
+-- strings, fx make prefix
+
 function stringtable_to_vector(tbl, sep)
   if sep == nil then sep = "" end
   local out = ""
@@ -123,6 +128,7 @@ function stringtable_to_vector(tbl, sep)
   end
   return(out)
 end
+
 
 function keyval_to_vector(tbl)
    local out = ""
@@ -140,6 +146,9 @@ function keyval_to_vector(tbl)
    end
    return(out)
 end
+
+
+-- make markdown, in particular for lists-of
 
 function str_md(theInline)
   local newstring = theInline:walk{
@@ -191,6 +200,8 @@ function str_sanimath(theInline, fmt)
 end  
 
 
+-- cunumblo pre render
+
 local tt_from_attributes_id = function(A, id)
   --local tyti =""
   --local tt = {}
@@ -217,8 +228,22 @@ end
 
 
 local warn = function(whatswrong)
-   quarto.log.output ("=== [custom-numbered-blocks] === Warning: "..whatswrong.."\n") --"..\n===============")
+   quarto.log.warning ("=== [custom-numbered-blocks] === "..whatswrong.."\n") --"..\n===============")
 end  
+
+-- pandoc classes
+
+local hasclass = function(el, class)
+  local result = false
+  for _, cls in pairs(el.classes) do
+    if cls == class then 
+      result = true
+      break
+    end  
+  end  
+  return result
+end
+
 
 --[[-- make all this global later?
 ---]]
@@ -234,7 +259,8 @@ return{
     tt_from_attributes_id = tt_from_attributes_id,
     warn = warn,
     FileExists = FileExists,
-    findFile = findFile
+    findFile = findFile,
+    hasclass = hasclass
 }
 --]]------
 ---
