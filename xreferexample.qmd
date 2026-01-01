@@ -6,7 +6,7 @@ filters:
 number-sections: true
 crossref: 
   chapters: true
-
+#format: native
 ---
 
 ::: {.blk}
@@ -41,7 +41,7 @@ after that nested div
 
 after first div
 
-# Heading 2 über @thm-pyt
+# Heading 2 über @thm-pyt 
 
 and now nest in other something div
 
@@ -49,7 +49,7 @@ and now nest in other something div
 
  now we do some things
 
-## renderheader
+## renderheader {secno=b}
 
 wir sind im rendern
 
@@ -58,7 +58,7 @@ wir sind im rendern
 
 blk div in rendered div manchmal ein {{Tag}} anfangt
 
-:::::{.blk}
+:::::{.blk .unnumbered}
 # ein neuer Tag @thm-pyt {#vorletztesdiv}
 beginnt. Voll geschachtelt
 :::::
@@ -73,4 +73,14 @@ and now another level
 :::{.blk}
 # ein neuer Tag @thm-pyt {#letztesdiv}
 beginnt
+:::
+
+
+# neues Jahr
+
+jetzt is 2028
+
+:::{.blk}
+# ein neues Jahr {#allerletztesdiv}
+2026 hat begonnen. Es ist 3 Uhr 10.
 :::

@@ -1,5 +1,6 @@
 
 -- count and number divs
+local filter0 = {}
 local filter1 = {} -- make identifiers
 local filter3 = {} -- make prefixes from blocks and put on all divs
 local filter2 = {} -- extract render div titles
@@ -8,10 +9,10 @@ local filter6 = {} -- manipuliere strings
 
 local xref = {}
 
-local iscunumblo = function(el)
+local hasclass = function(el, class)
   local result = false
   for _, cls in pairs(el.classes) do
-    if cls == "blk" then 
+    if cls == class then 
       result = true
       break
     end  
@@ -19,7 +20,19 @@ local iscunumblo = function(el)
   return result
 end
 
+
+local iscunumblo = function(el)
+   return hasclass(el, "blk")
+end
+
 local divcount = 0
+
+filter0.Header = function(el)
+  local secno = el.attributes.secno
+  if secno then
+    print("Header has attribute secno "..secno)
+  end
+end  
 
 --- filter 1: make identifier
 
@@ -72,50 +85,70 @@ end
 
 -- filter3 numbering
 
+local zaehlweiter = true -- increase counters also when secno is given, but non numeric.
+
 local maxlev = 4
 local counters = {}
 for i=1, maxlev do counters[i] = 0 end
+local counterstring ={}
+for i=1, maxlev do counterstring[i] = "" end
 
-
-local numberdepth = 1
+local numberdepth = 2
 local prefix = ""
 local blkcount = 0
+
+
 
 filter3.traverse = "topdown"
 filter3.Block = function(el)
   local lev
   local info
+  local secno = {}
   if el.t == "Header" then
     lev = el.level
+    secno = el.attributes.secno
     if lev <= math.min(numberdepth, maxlev) then 
       --print("reset, prefix is "..prefix) 
       blkcount = 0
-      counters[lev] = counters[lev]+1
+
+      if secno then 
+        if zaehlweiter then
+          counters[lev] = counters[lev]+1     
+        end
+        counterstring[lev] = tostring(secno)
+      else   
+        counters[lev] = counters[lev]+1
+        counterstring[lev] = tostring(counters[lev])
+      end    
       if lev < maxlev then for i = lev+1, maxlev, 1 do counters[i] = 0 end end
-      prefix = pandoc.utils.stringify(counters[1])
-      for i = 2, math.min(lev, numberdepth), 1 do prefix = prefix..".".. counters[i] end 
+      prefix = counterstring[1]
+      for i = 2, math.min(lev, numberdepth), 1 do prefix = prefix..".".. counterstring[i] end 
     end
   end  
   if el.t == "Div" then
     if iscunumblo(el) then
         info = xref[el.identifier]
-        blkcount = blkcount + 1
-        info.prefix = prefix
-        info.number = blkcount
+        if hasclass(el, "unnumbered") then
+          info.prefix = ""
+          info.counter = ""
+          info.number = ""
+        else
+          blkcount = blkcount + 1
+          info.prefix = prefix
+          info.counter = blkcount
+          if prefix ~="" then info.number = prefix.."."..blkcount else info.number = tostring(blkcount) end
+        end
     end
   end
   return(el)  
 end
 
 
-
 filter5.Div = function(el)
   local info = xref[el.identifier]
   local numberstr =""
   if iscunumblo(el) then
-    numberstr = info.number 
-    if info.prefix ~="" then numberstr = info.prefix .."."..numberstr end
-    numberstr = "Block "..numberstr 
+    numberstr = "Block "..info.number 
     if info.mdtitle ~= "notitle" then table.insert(el.content, 1, info.pandoctitle) 
        numberstr = numberstr..": "
     end
@@ -134,6 +167,7 @@ filter6.Str = function (elem)
   end
 
 return{
+  filter0,
    filter1
  , filter2
  , filter3
