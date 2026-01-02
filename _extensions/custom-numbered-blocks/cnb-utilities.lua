@@ -54,6 +54,19 @@ local function findFile(fname, directories)
   return {found = false}
 end
 
+-- if then else
+
+local function ifelse(condition, iftrue, iffalse)
+  if condition then return iftrue else return iffalse end
+end  
+
+local function replaceifnil(existvalue, replacevalue)
+  if existvalue ~= nil then return existvalue else return replacevalue end
+end  
+
+local function replaceifempty(existvalue, replacevalue)
+  if existvalue == nil or existvalue=="" then return replacevalue else return existvalue end
+end  
 
 -- tables
 
@@ -79,28 +92,18 @@ local function tablecontains(tbl, val)
   return false
 end  
 
-local function ifelse(condition, iftrue, iffalse)
-  if condition then return iftrue else return iffalse end
-end  
 
-local function replaceifnil(existvalue, replacevalue)
-  if existvalue ~= nil then return existvalue else return replacevalue end
-end  
-
-local function replaceifempty(existvalue, replacevalue)
-  if existvalue == nil or existvalue=="" then return replacevalue else return existvalue end
-end  
-
-
+-- make a deep copy of table and update oldtable
 local function updateTable (oldtbl, newtbl, ignorekeys)
   local result = {}
   -- copy old attributes
-  for k, v in pairs(oldtbl) do result[k] = v end
+  --for k, v in pairs(oldtbl) do result[k] = v end
+  result = deepcopy(oldtbl)
   if newtbl ~= nil then if type(newtbl) == "table" then
       if newtbl[1] == nil then -- it is an ok table with key value pairs
         for k, v in pairs(newtbl) do
           if not(tablecontains(ignorekeys, k)) then
-             result[k] = v
+             result[k] = deepcopy(v)
          end
         end
       -- special: set reflabel to label if not given in attribs
@@ -111,6 +114,37 @@ local function updateTable (oldtbl, newtbl, ignorekeys)
   end  
   return(result)
 end
+
+-- deep copy, from http://lua-users.org/wiki/CopyTable
+function deepcopy(orig)
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        copy = {}
+        for orig_key, orig_value in next, orig, nil do
+            copy[deepcopy(orig_key)] = deepcopy(orig_value)
+        end
+        setmetatable(copy, deepcopy(getmetatable(orig)))
+    else -- number, string, boolean, etc
+        copy = orig
+    end
+    return copy
+end
+
+-- remove all entries that have no counterpart in newdefaults
+local function filterTable (currentdefaults, requireddefaults)
+  result = deepcopy(currentdefaults)
+  if type(result) == "table" then
+    if type(requireddefaults) == "table" then
+      for k, _ in pairs(result) do
+        if requireddefaults[k] == nil then
+          result[k] = nil
+        end
+      end  
+    end
+  end   
+  return(result)
+end  
 
 -- strings, fx make prefix
 
@@ -253,6 +287,8 @@ return{
     replaceifnil= replaceifnil,
     replaceifempty = replaceifempty,
     updateTable = updateTable,
+    filterTable = filterTable,
+  --  deepcopy = deepcopy,
     deInline = DeInline,
     str_md = str_md,
     str_sanimath = str_sanimath,

@@ -36,7 +36,7 @@ crossref:
 
 # First heading
 
-::: {.TODO boxtype="foldbox"}
+::: {.TODO boxtype="foldbox" collapse="false" label="To Do" areflabel="ZuTun"}
 ### Change internal registration of Divs {#first}
 This is relatively epic
 
@@ -77,4 +77,4 @@ Let's see if this is possible. A future thing.
 :::
 
 
-Und jetzt weisen wir noch hin auf das Todo first: \ref{first}
+Und jetzt weisen wir noch hin auf das Todo first: \longref{first}

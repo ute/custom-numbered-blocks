@@ -44,17 +44,14 @@ numberingfilter.Block = function(el)
   local info
   local secno = {}
   local cls 
-  local ClassDef, bxty, BoxDef
-  local cntkey, cnts
-  local attribs = {}
-
+  local cntkey, cnts, ClassDef, reflabel
+  local bxty, BoxDef, newattribs, UseAttribs
+  
+  ---------- headers ---------
   if el.t == "Header" then
     lev = el.level
     secno = el.attributes.secno
     if lev <= math.min(numberdepth, maxlev) then 
-      --print("reset, prefix is "..prefix) 
-      -- reset all counters
-     -- blkcount = 0
       for k, _ in pairs (cnbx.counter) do cnbx.counter[k] = 0 end  
 
       if secno then 
@@ -73,52 +70,116 @@ numberingfilter.Block = function(el)
     end
   end  
 
+  --------- custom numbered blocks --------
   if el.t == "Div" then
     cls = cnbx.is_cunumblo(el)
     if cls then  
-      ClassDef = cnbx.classDefaults[cls]
+      -- do the counting --
+
+      ClassDef = deepcopy(cnbx.classDefaults[cls])
       cntkey = ClassDef.cntname
-      
-      dev.showtable(ClassDef,"class definitions")
-      attribs = el.attributes
-      for k, v in pairs(attribs) do
-        if string.sub(k, 1, 1) =="_" then attribs[k] = nil end
-      end
-     
-      dev.showtable(attribs, "element attributes")
-      bxty = attribs.boxtype -- will most often be nil
-      -- update with class defaults, and if there is a different boxtype, with boxtype defaults
-      attribs = ute1.updateTable(ClassDef, attribs)
-      attribs.cntname = nil
-      attribs.group = mil
-      if bxty then
-        if ClassDef.boxtype ~= bxty then
-          BoxDef = cnbx.boxtypes[bxty]
-          if BoxDef then
-            ute1.updateTable(BoxDef, attribs)
-          else
-            ute1.warn("boxtype "..bxty.." specified but not registered")
-          end    
-      end end      
-      -- print("use counter "..cntkey)
+    
       info = cnbx.newxref[el.identifier]
-      info.boxtype = attribs.boxtype
-      attribs.boxtype = nil
-      info.attribs = attribs
+
+      info.file = cnbx.processedfile -- for book crossreferences
+
+      -- info.boxtype = attribs.boxtype
+      -- TODO uncomment later
+      -- attribs.boxtype = nil
+      -- info.attribs = attribs
 
       info.cnbclass = cls
       if ute1.hasclass(el, "unnumbered") then
         info.prefix = ""
         info.counter = ""
-        info.number = ""
+        info.refnumber = ""
       else
         -- blkcount = blkcount + 1
         cnts = cnbx.counter[cntkey] +1
         cnbx.counter[cntkey] = cnts
         info.prefix = prefix
         info.counter = cnts
-        if prefix ~="" then info.number = prefix.."."..cnts else info.number = tostring(cnts) end
+        if prefix ~="" then info.refnumber = prefix.."."..cnts else info.number = tostring(cnts) end
       end
+      
+      -- getting reflabel
+      reflabel = el.attributes.reflabel
+      if reflabel == nil then
+        reflabel = ClassDef.reflabel
+      end
+      info.reflabel = reflabel
+
+  --[[
+    
+      -- debugging
+      local refset = el.attributes.reflabel
+      if refset then 
+        dev.showtable(ClassDef,"class definitions")
+        dev.showtable(el.attributes, "original element attributes")
+      end
+
+
+      newattribs = deepcopy(el.attributes)
+      -- TODO: remove comment later
+      for k, _ in pairs(newattribs) do
+        if string.sub(k, 1, 1) =="_" then newattribs[k] = nil end
+      end
+      --debugging
+      if refset then 
+        dev.showtable(newattribs, "cleaned element attributes")
+      end
+     
+      -- if box type is different from ClassDef, make new box attributes by updating Boxtype attributes with class attributes
+      -- otherwise add class attributes as attributes
+      --attribs = ute1.updateTable(ClassDef, newattribs)
+      bxty = newattribs.boxtype -- will most often be nil
+      if bxty then
+        if ClassDef.boxtype ~= bxty then
+           print("--- >  update by  box type")
+           BoxDef = deepcopy(cnbx.boxtypes[bxty].defaultOptions)
+           dev.showtable(BoxDef, "the boxtype defaults")
+           UseAttribs = ute1.filterTable(ClassDef, BoxDef)
+           dev.showtable(UseAttribs, "kept in Attributes after filtering ")
+        end
+      else UseAttribs = ClassDef  
+      end  
+      
+      -- UseAttribs = ute1.updateTable(newattribs, UseAttribs)
+      -- if refset then 
+      --   dev.showtable(UseAttribs, "merged element attributes")
+      -- end
+     
+      -- update with elementwise defined attributes
+
+      -- attribs = ute1.updateTable(newattribs, ClassDef)
+      -- if refset then 
+      --   dev.showtable(attribs, "merged element attributes")
+      -- end
+     
+
+      --[[
+      
+     
+      
+      if refset then dev.showtable(newerattribs, "element attributes after update") end
+      bxty = newerattribs.boxtype -- will most often be nil
+      -- update with class defaults, and if there is a different boxtype, with boxtype defaults
+      --newattribs = ute1.updateTable(ClassDef, attribs)
+      -- TODO later uncomment
+      --attribs.cntname = nil 
+      --attribs.group = mil
+      -- if bxty then
+      --   if ClassDef.boxtype ~= bxty then
+      --     BoxDef = ute1.updateTable(cnbx.boxtypes[bxty],{})
+      --     if BoxDef then
+      --       ute1.updateTable(BoxDef, newattribs)
+      --     else
+      --       ute1.warn("boxtype "..bxty.." specified but not registered")
+      --     end    
+      -- end end      
+      -- -- print("use counter "..cntkey)
+--]] 
+      
     end
   end
   return(el)  

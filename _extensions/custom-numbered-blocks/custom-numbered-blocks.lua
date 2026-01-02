@@ -65,6 +65,7 @@ local function pandocdivs(div)
 end
 ]]--
 
+--local testfilter = require("cnb-test1")
 
 return{
     require("cnb-1-init") -- Meta: set up chapter numbers and classes
@@ -77,7 +78,9 @@ return{
   --   Pandoc = Pandoc_prefix_count} 
  -- , {Div=pandocdivs, Pandoc=pandocblocks}
   --[[ ]]
-  , require("cnb-3-numbering")
+ , require("cnb-3-numbering")
+
+  --, require("cnb-test1") so funktioniert das nicht
   
   , require("cnb-3-preparexref")
   
@@ -94,5 +97,7 @@ return{
  -- , {Div = renderDiv,  Pandoc = insertStylesPandoc}
   , require("cnb-9-cleanup")  
  -- , {Div = Div_cleanupAttribs}
+  --, testfilter.filter1,
+  --testfilter.hallo
 }
 

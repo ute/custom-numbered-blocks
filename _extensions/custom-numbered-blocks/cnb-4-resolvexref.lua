@@ -23,9 +23,10 @@ local function resolveref(data)
       
       if foundid then
         if data[foundid] then
+          print("found "..foundid)
           local target = data[foundid]
-          local linktext = target.refnum
-          if brefid then linktext = target.reflabel.." "..target.refnum end
+          local linktext = target.refnumber 
+          if brefid then linktext = target.reflabel.." "..target.refnumber end
           local href = '#'..foundid
             if cnbx.ishtmlbook then 
               href = data[foundid].file .. '.html' .. href 
@@ -40,21 +41,11 @@ local function resolveref(data)
   }
 end
 
--- TODO: with filenames for books
+-- Done: with filenames for books
 
-function Pandoc_resolvexref(doc)
-  local xrefdata = {}
-  local xref = cnbx.xref
-  for _, xinf in pairs(xref) do
-    if xinf.id then if xinf.id ~= "" then
-      xrefdata[xinf.id] = xinf
-  end  end
-end
--- pout(xrefdata)
-  return doc:walk(resolveref(xrefdata))
-end  
------------
 
 return{
-   Pandoc = Pandoc_resolvexref
+   Pandoc = function(doc)
+    return doc:walk(resolveref(cnbx.newxref))
+   end 
 }

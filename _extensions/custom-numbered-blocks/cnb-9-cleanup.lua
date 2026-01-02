@@ -28,7 +28,7 @@ return{
  Div = Div_cleanupAttribs
  , Pandoc = function(doc)
   print("-------- the last ----")
-  dev.showtable(cnbx.newxref, "the new xref")
+ dev.showtable(cnbx.newxref["first"], "the new xref, #first entry")
   return(doc)
  end
 }
