@@ -3,6 +3,7 @@
 ]]--
 
 ute1 = require("cnb-utilities")
+local ifelse = ute1.ifelse
 dev = require("devutils")
 
 local numberingfilter={}
@@ -24,7 +25,7 @@ if cnbx.isbook then
      hcounterstring[1]= tostring(cnbx.chapno)
   else
     hcounters[1] = 0
-    hcounterstring[1] = chapno
+    hcounterstring[1] = cnbx.chapno
   end     
 end
 
@@ -39,18 +40,22 @@ local prefix = ""
 
 
 numberingfilter.traverse = "topdown"
-numberingfilter.Block = function(el)
+
+--numberingfilter.Block = function(el)
+local doCounting = function(el)  
   local lev
   local info
   local secno = {}
   local cls 
   local cntkey, cnts, ClassDef, reflabel
+  local prefixstr =""
   local bxty, BoxDef, newattribs, UseAttribs
   
   ---------- headers ---------
   if el.t == "Header" then
     lev = el.level
     secno = el.attributes.secno
+    if not secno then secno = el.attributes.numberprefix end
     if lev <= math.min(numberdepth, maxlev) then 
       for k, _ in pairs (cnbx.counter) do cnbx.counter[k] = 0 end  
 
@@ -99,7 +104,14 @@ numberingfilter.Block = function(el)
         cnbx.counter[cntkey] = cnts
         info.prefix = prefix
         info.counter = cnts
-        if prefix ~="" then info.refnumber = prefix.."."..cnts else info.number = tostring(cnts) end
+        if prefix ~="" then prefixstr = prefix.."." else prefixstr = "" end
+        info.refnumber = prefixstr..cnts 
+        -- check if a tag is given 
+        if el.attributes.tag ~= nil then 
+          info.tag = el.attributes.tag
+          if info.tag ~= "" then info.refnumber = info.tag end
+        end
+        
       end
       
       -- getting reflabel
@@ -108,7 +120,8 @@ numberingfilter.Block = function(el)
         reflabel = ClassDef.reflabel
       end
       info.reflabel = reflabel
-
+      
+    --  print("counted a cnbx "..info.reflabel.." "..info.refnumber)
   --[[
     
       -- debugging
@@ -183,6 +196,76 @@ numberingfilter.Block = function(el)
     end
   end
   return(el)  
+end
+
+
+local function resolveref(data)
+  return { 
+    RawInline = function(el)
+      local refid = el.text:match("\\ref{(.*)}")
+      local brefid = el.text:match("\\longref{(.*)}")
+      local foundid = ifelse(refid, refid, ifelse(brefid,brefid, nil))
+      
+      if foundid then
+        if data[foundid] then
+          
+          local target = data[foundid]
+          local linktext = target.refnumber 
+          if brefid then linktext = target.reflabel.." "..target.refnumber end
+          local href = '#'..foundid
+            if cnbx.ishtmlbook then 
+              href = data[foundid].file .. '.html' .. href 
+            end  
+            -- print("found "..foundid.." href "..href.." linktext ".. linktext)  
+            return pandoc.Link(linktext, href)
+        else
+          quarto.log.warning("unknown reference ",foundid, " <=============  inserted ?? instead")
+          return({pandoc.Strong("??"),"->[",foundid,"]"}) --,"]<-",pandoc.Strong("??")})
+        end  
+      end
+    end    
+  }
+end
+
+local readxref = function()
+  print("reading the xref")
+end  
+-- numberingfilter.Meta = function(meta)
+local writexref = function()
+  print("writing the xref")
+  if cnbx.isbook then
+  --local xref = cnbx.newxref
+  local xrjson = quarto.json.encode(cnbx.newxref)
+  local file = io.open(cnbx.xreffile,"w")
+  if file ~= nil then 
+    file:write(xrjson) 
+    file:close()
+  end
+  --[[
+  if cnbx.islastfile then 
+  --  pout(cnbx.processedfile.." -- nu aufräum! aber zack ---") 
+    for k, v in pairs(xref) do
+      if not v.new then 
+  --      print("killed reference "..k)
+  --      pout(v)
+        xref[k] = nil
+      end   
+    end
+  --  pout("-------- überlebende")
+  --  pout(xref)
+  end  
+
+  ]]-- not necessary, xref us bit ysed kater
+  end
+end
+
+numberingfilter.Pandoc = function(doc)
+  readxref()
+  doc:walk {Block = doCounting}
+  writexref()
+  -- doc:walk {RawInline = resolveref}
+  return doc:walk(resolveref(cnbx.newxref))
+  
 end
 
 return( numberingfilter )

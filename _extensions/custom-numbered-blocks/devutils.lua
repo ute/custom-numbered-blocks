@@ -26,7 +26,8 @@ end
 
 function M.showtable (tbl, name)
   print("========== "..name.." ===========")
-  M.tprint(tbl)
+  if tbl ~= nil then if type(tbl) == 'table' then M.tprint(tbl)
+  else print("table not found") end end
   print("============================")
 end
 

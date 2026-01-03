@@ -5,24 +5,46 @@ filters:
   - custom-numbered-blocks
 format:
   html: default
-  pdf: default
+  #pdf: default 
+  #native: default
 
 custom-numbered-blocks:
   styles:  
     postit:
-#       parent: formalia # will work without parent once the attributing mechanism is changed
       boxtype: simpletextbox
-      color: yellow #
+      color: yellow 
+    mixmax:
+      boxtype: foldbox
+      colors: [ffffff,aaaaaa] 
+    quatsch:  
+      parent: postit
+      color: blue
+      numbered: false
+    quietsch:  
+      color: blue  
+    # default may not have a parent!  
   groups:
-    todos: default  
-     # style: postit    
+    todos: # default  
+      numbered: false
+      style: postit 
+      boxtype: fallback 
+    mathstuff: default
+    BLOWDZINN:
+      numbered: false
+      style: postit
+      color: red
+      zinn: bloed    
   classes:    
     TODO:
-      #boxtype: simpletextbox
-      boxtype: fallback
+      style: postit
+      #boxtype: simpletextbox\
+      # numbered: true
+      boxtype: foldblock
       label: "To do"
       group: todos
     NixDo: default
+    Theorem:
+      group: mathstuff
 
 crossref:
   chapters: true
@@ -36,7 +58,7 @@ crossref:
 
 # First heading
 
-::: {.TODO boxtype="foldbox" collapse="false" label="To Do" areflabel="ZuTun"}
+::: {.TODO boxtype="foldbox" collapse="false" label="To Do" reflabel="ZuTun" tag= "x" style="mixmax"}
 ### Change internal registration of Divs {#first}
 This is relatively epic
 

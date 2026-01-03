@@ -25,10 +25,16 @@ function Div_cleanupAttribs (el)
 end
 
 return{
- Div = Div_cleanupAttribs
- , Pandoc = function(doc)
+  
+ Pandoc = function(doc)
   print("-------- the last ----")
- dev.showtable(cnbx.newxref["first"], "the new xref, #first entry")
-  return(doc)
+ if cnbx.newxref["first"] then dev.showtable(cnbx.newxref["first"], "the new xref, #first entry") 
+ else dev.showtable(cnbx.newxref["fancy"], "the fancy")
+
+ end
+--  dev.showtable(cnbx.boxtypes, "all box types")
+--  dev.showtable(cnbx.classDefaults, "all classes")
+--  dev.showtable(cnbx.styles, "all styles")
+ return(doc)
  end
 }

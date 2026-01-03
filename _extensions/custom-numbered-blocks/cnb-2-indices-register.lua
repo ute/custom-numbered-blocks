@@ -56,7 +56,7 @@ function registerdivs.Div(el)
           title = pandoc.utils.stringify(pandoctitle)  -- readable version without math
           -- do not remove this in the first run? or does it work anyway, because the cites are allready resolved, and refs get resolved later?
   --TODO here remove comment
-          --       table.remove(el.content, 1) -- maybe tag for later: title-from-header
+          table.remove(el.content, 1) -- maybe tag for later: title-from-header
         else title = ""
         end
       info.mdtitle = title

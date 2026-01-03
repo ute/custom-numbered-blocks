@@ -8,7 +8,7 @@ date: end 12/2025
 
 local defaultOptions = {
     numbered = "true"
-  }
+}
 
 local render = {
   beginBlock = function(ttt)

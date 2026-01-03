@@ -125,130 +125,139 @@ end
 local initStyles = function (cnbyaml)
   local sty = cnbyaml.styles
   local basestyles, allstyles = {}, {}
-  local minimaldefault = {default = {boxtype = cnbx.defaultboxtype}}
-  if sty == nil then 
-    sty = minimaldefault
-  elseif sty.default == nil then
-    sty.default =  minimaldefault.default
-  end  
+  local minimaldefault = {boxtype = cnbx.defaultboxtype}
+  local vv, vp
+  local styOpt
 
   -- first find those without parent style, then set up child styles
-  if type(sty) == "table" then
+  if sty == nil then 
+    basestyles = {default = minimaldefault}
+  else
+    if type(sty) == "table" then
     for k, v in pairs(sty) do
-      v = deInline(v)
-      if v.parent == nil then -- print("no parent") 
-        basestyles[k] = v
+      vv = deInline(v)
+      if vv.parent == nil then -- print("no parent") 
+        basestyles[k] = vv
       end
     end
-  -- fill with all known defaults  
-    for k, v in pairs (sty) do
-      v = deInline(v)
-      if v.parent ~= nil then
-        local vp = str(v.parent)
-        v = updateTable(basestyles[vp], v)
-      end
-      v.parent = nil
-      if v.boxtype == nil then v.boxtype = cnbx.defaultboxtype end
-      v.boxtype = str(v.boxtype)
-      -- dev.tprint(cnbx.boxtypes[v.boxtype])
-      v = updateTable(cnbx.boxtypes[v.boxtype].defaultOptions, v)
-      allstyles[k] = v
+    if basestyles.default == nil then
+      basestyles.default =  minimaldefault
     end
+    -- next round: fill with defaults
+    for k, v in pairs(sty) do
+      vv = deInline(v)
+      if vv.parent ~= nil then
+        vp = basestyles[vv.parent]
+        basestyles[k] = updateTable(vp, vv)
+        basestyles[k].parent = nil
+      end
+    end  
+  end
+  
+  -- assure there is a boxtype in all styles
+  for _, v in pairs(basestyles) do
+    if v.boxtype == nil then v.boxtype = cnbx.defaultboxtype end
+  end
+
+  --dev.showtable(basestyles, "all base styles")
+
+  -- ensure that options are compatible with boxtype, 
+  -- and sort into boxtype and options. 
+  -- Then update with default 
+
+  for k, v in pairs(basestyles) do
+    --dev.showtable(v, k)
+    allstyles[k] = {boxtype = v.boxtype}
+    styOpt = deepcopy(v)
+    styOpt.boxtype = nil
+    local boxOpt = cnbx.boxtypes[v.boxtype].defaultOptions
+    styOpt = ute1.filterTable(styOpt, boxOpt)
+    styOpt = ute1.updateTable(boxOpt, styOpt)
+    if styOpt.numbered ~= nil then 
+      allstyles[k].numbered = styOpt.numbered
+      styOpt.numbered = nil
+    end  
+    allstyles[k].options = styOpt
+  end
   end
    
   cnbx.styles = allstyles
-  
 end
 
---- find chapter number of current file, whether first or last file, and last file for books
---- only sensible for books
---- @param book table yaml entries from quarto
---- @param fname string currently rendered file
---- @return table with keyed entries
----   isfirst, islast: logical
----   lastchapter: name of last chapter
----   chapno: string (at least if ishtmlbook),
----   unnumbered: boolean - initial state of section / chapter
---- if the user has given a chapno yaml entry, then unnumbered = false
---- !!! for pdf, the rendering workflow is very different! ---
---- also find out if lastfile of a book
---- find first and last file of a book, and chapter number of that file 
-local chapterinfo =  function (book, fname)
-  local first = "" 
-  local last = "" 
-  local info = {}
-  --if book.render then
-    for index, v in ipairs(book.render) do
-      if str(v.type) == "chapter" then
-        last = pandoc.path.split_extension(str(v.file))
-        if first == "" then first = last end
-        if last == fname then 
-          info.chapno = v.number 
-          info.chapindex = index  
-          --print("---> chapno = "..chapno)
-    --      dev.showtable(v, "book.render v")
-        end
-      end
-    end
-    info.islast = (fname == last)
-    info.isfirst = (fname == first)
-    info.lastchapter = last
-  --  dev.showtable(info, "chapter info")
-    return(info)
-end
 
---- find chapter information in meta table
---- sideeffects: add the following to cnbx:
----     isbook: logical
----     ishtmlbook: logical
----     processedfile: string, filename without extension
----     isfirstfile, islastfile : logical, for htmlbooks
----     xreffile: filename for json file to store crossref information
----     prefix: common prefix for all numbers instead of chapter or section number (if any)
----     chapno: chapter number, if any
---- @param meta table document meta information
-local initRenderInfo = function (meta)
-  local processedfile = pandoc.path.split_extension(PANDOC_STATE.output_file)
-  cnbx.isbook = meta.book ~= nil
-  cnbx.ishtmlbook = meta.book ~= nil and not quarto.doc.is_format("pdf")
-  cnbx.processedfile = processedfile
-  -- cnbx.output_file = PANDOC_STATE.output_file -- with extension
+local groups ={}
+
+local initGroupDefaults = function(cnbyaml)
+  local grps = cnbyaml.groups
+  local groups0 = {}
+  local vv
+  local grpOpt
   
-  cnbx.prefix=""
-  if (cnbx.numberlevel ==1) and  meta.numberprefix 
-       then cnbx.prefix = str(meta.numberprefix) end
- 
- -- print(" now in "..processedfile.." later becomes ".. str(cnbx.output_file))
-  cnbx.isfirstfile = not cnbx.ishtmlbook
-  cnbx.islastfile = not cnbx.ishtmlbook
-  if cnbx.isbook then 
-    local chinfo = chapterinfo(meta.book, processedfile)
-    if cnbx.ishtmlbook then
-      cnbx.xreffile= "._htmlbook_xref.json"
-    else 
-      cnbx.xreffile= "._pdfbook_xref.json"
-      -- cnbx.xreffile= "._"..chinfo.lastchapter.."_xref.json"
-    end  
-    cnbx.isfirstfile = chinfo.isfirst 
-    cnbx.islastfile  = chinfo.islast 
-    
-    cnbx.unnumbered = false
-    -- user set chapter number overrides information from meta
-    if meta.chapno then  
-      cnbx.chapno = str(meta.chapno)
-    else
-      if chinfo.chapno ~= nil then
-        cnbx.chapno = str(chinfo.chapno)
-      else  
-        cnbx.chapno = ""
-        cnbx.unnumbered = true
+  -- first find those without parent style, then set up child styles
+  if grps ~= nil then 
+    if type(grps) == "table" then
+      for k, v in pairs(grps) do
+        vv = deInline(v)
+        groups0[k] = vv
       end
     end
-  else -- not a book. 
---    cnbx.xreffile ="._"..processedfile.."_xref.json"
-    cnbx.chapno = ""
-    cnbx.unnumbered = true
+    for _, v in pairs(groups0) do
+      if v.style == nil then v.style = "default" end
+    end
   end
+  
+  -- ensure that options are compatible with boxtype, 
+  -- and sort into boxtype and options. 
+  -- Then update with default 
+
+  for k, v in pairs(groups0) do
+    --dev.showtable(v, k)
+    local stil = cnbx.styles[v.style]
+    local stylOpt = stil.options
+    --dev.showtable(stil,"style")
+    grpOpt = deepcopy(v)
+    grpOpt.style = nil
+    local numberd = replaceifnil(grpOpt.numbered, stil.numbered)
+    --print("is numbered: "..numberd)
+    -- TODO: listin
+    groups[k] = {numbered = numberd, listin = grpOpt.listin}
+    grpOpt.numbered = nil
+    grpOpt.listin = nil
+    local bxt = grpOpt.boxtype
+    if bxt then 
+      local boxOpt = cnbx.boxtypes[btx]  
+      if bxt ~= stil.boxtype then-- may conflict with style, overrides style
+        --print("has boxtype "..bxt)
+        if boxOpt ~= nil then 
+          stylOpt = ute1.filterTable(stylOpt, boxOpt)
+          stylOpt = ute1.updateTable(boxOpt, stylOpt)
+        else 
+          stylOpt = nil  
+        end  
+        groups[k].style = nil
+        groups[k].boxtype = bxt
+      end
+    else 
+      groups[k].boxtype = cnbx.styles[v.style].boxtype
+    --  print("makkeboxtyp")
+    end
+    -- update style options for group from remaining options
+    if stylOpt ~= nil then
+      grpOpt = ute1.filterTable(grpOpt, stylOpt)
+      grpOpt = ute1.updateTable(stylOpt, grpOpt)
+    end  
+    grpOpt.boxtype=nil
+    groups[k].options = grpOpt
+  end  
+  --dev.showtable(groups, "all groups style only")
+  
+-- muligvis pjat
+      
+  if groups.default == nil then 
+    groups.default = deepcopy(cnbx.styles.default)
+  end
+
+  cnbx.groupDefaults = groups
 end
 
 
@@ -264,6 +273,20 @@ local makeKnownClassDetector = function (knownclasses)
   end
 end  
 
+
+-- move option numbered from options to main
+local movenumbered = function(tble)
+  if type(tble) ~= "table" then print("oehmpf")
+  return(tble) end
+  if tble.numbered == nil then
+    if tble.options.numbered ~= nil then
+      tble.numbered = tble.options.numbered
+      tble.options.numbered = nil
+    else tble.numbered = true
+    end
+  end
+  return(tble)
+end
 
 --- Initialize known custom numbered block classes, and their defaults
 --- needs to be adapted later to styles
@@ -287,13 +310,13 @@ local initClassDefaults = function (cunumbl)
     cnbx.number_within_sections = false
   end 
   --]] 
-  -- prepare information for numbering fboxes by class
-  -- cnbx.knownClasses ={}
--- dev.tprint(cnbx.boxtypes)
--- print("--------")
+
   cnbx.classDefaults ={}
-  local groupDefaults = {default = cnbx.boxtypes[cnbx.defaultboxtype].defaultOptions} -- not needed later???
-  groupDefaults.default.boxtype = cnbx.defaultboxtype
+  local groupDefaults= cnbx.groupDefaults -- saves a little bit
+  --dev.showtable(groupDefaults,"Groupdefaults")
+  --dev.showtable(defaultGroup, "defaultgruppe")
+
+  
   cnbx.counter = {unnumbered = 0} -- counter for unnumbered divs 
   -- ! unnumbered not for classes that have unnumbered as default !
   -- cnbx.counterx = {}
@@ -304,26 +327,14 @@ local initClassDefaults = function (cunumbl)
   
 -- deInline: simplified copy of yaml data: inlines to string
 -- update default values with boxtype defaults and style defaults
-  if cunumbl.groups then
-    for key, val in pairs(cunumbl.groups) do
-      local ginfo = deInline(val)
-      if ginfo.style ~= nil then
-         ginfo = updateTable(cnbx.styles[ginfo.style], ginfo)  
-      end
-      local bst = replaceifnil(ginfo.boxtype, cnbx.defaultboxtype)
-      ginfo = updateTable(cnbx.boxtypes[bst].defaultOptions, ginfo)
-      groupDefaults[key] = ginfo
-   --   pout("-----group---"); pout(ginfo)
-    end 
-  end  
-
-  -- print("======= group defaults:---------")
-  -- dev.tprint(groupDefaults)
-  -- print("========== ")
-
+  
 
   for key, val in pairs(cunumbl.classes) do
+    -- print("class key "..key)
+
     local clinfo = deInline(val)
+    -- print("0 class info numbered "..replaceifnil(clinfo.numbered,"not given"))
+    
   --  pout("==== before after =======");  pout(clinfo)
     -- classinfo[key] = deInline(val)
     table.insert(cnbx.knownclasses, str(key))
@@ -331,19 +342,109 @@ local initClassDefaults = function (cunumbl)
     -- check if a style is defined for the class, and if yes, respect it
     -- if it is different from the group, only use the group for counting,
     -- do not add superflous key value pairs
+    local groupDef = deepcopy(groupDefaults[theGroup])
+    -- print("0 group info numbered "..replaceifnil(groupDef.numbered,"not given"))
+    
+    -- first update class from group, then from style if given, then from boxtype if given.
+    local ggroup = clinfo.group
+    local gstyle = clinfo.style
+    local gboxtype = clinfo. boxtype
+    local gropt, stylopt, boxopt
+    --if key == "TODO" then 
+      --dev.showtable(clinfo, "original class info")
+    
+    -- divide into keepers and options
+    if ggroup then
+      gropt = cnbx.groupDefaults[ggroup]
+      --dev.showtable(gropt, "group defaults")
+      clinfo = ute1.updateTable(gropt, clinfo)
+    end
+    
+    --dev.showtable(clinfo, " class info update by group", {})
+
+    if gstyle then
+      stylopt = cnbx.styles[gstyle]
+      --dev.showtable(stylopt, "style defaults")
+      if stylopt.boxtype then if stylopt.boxtype ~= clinfo.boxtype then stylopt.boxtype = nil end end
+      clinfo = ute1.updateTable(stylopt, clinfo, {"options"})
+          end
+    --dev.showtable(clinfo, " class info update by group and style", {})
+
+    if gboxtype then
+      boxopt = cnbx.boxtypes[gboxtype].defaultOptions
+      --dev.showtable(boxopt, "box defaults")
+      clinfo.options = ute1.filterTable(clinfo.options, boxopt)
+      clinfo.options = ute1.updateTable(boxopt, clinfo.options)
+      if not clinfo.numbered then clinfo.numbered = clinfo.options.numbered end
+      clinfo.options.numbered = nil
+    end
+    --dev.showtable(clinfo, " class info update by group and style and boxtype", {})
+
+  --end
+--[[
+    if gboxtype then 
+      local boxOpt = cnbx.boxtypes[btx]  
+      if bxt ~= stil.boxtype then-- may conflict with style, overrides style
+        print("has boxtype "..bxt)
+        if boxOpt ~= nil then 
+          stylOpt = ute1.filterTable(stylOpt, boxOpt)
+          stylOpt = ute1.updateTable(boxOpt, stylOpt)
+        else 
+          stylOpt = nil  
+        end  
+        groups[k].style = nil
+        groups[k].boxtype = bxt
+      end
+    else 
+      groups[k].boxtype = cnbx.styles[v.style].boxtype
+    --  print("makkeboxtyp")
+    end
+    -- update style options for group from remaining options
+    if stylOpt ~= nil then
+      grpOpt = ute1.filterTable(grpOpt, stylOpt)
+      grpOpt = ute1.updateTable(stylOpt, grpOpt)
+    end  
+    grpOpt.boxtype=nil
+]]--
+    -- if ggroup then
+    --   local ggrpDef = deepcopy(groupDefaults[ggroup])
+    --   updateTable(clinfo) 
+    -- end  
+
+    --dev.showtable(clinfo, "virgin clinfo "..key)
     local bst = clinfo.style
     if bst ~= nil then 
+     -- print("bst = "..bst)
      -- first update from general styles
-      if bst ~= groupDefaults[theGroup].style then
+      if bst ~= groupDef.style then
         if cnbx.styles[bst] == nil then warn("style "..bst.." not defined")
         else  clinfo = updateTable(cnbx.styles[bst], clinfo)  end
     end end
     -- then update from group
-    if bst==nil or bst == groupDefaults[theGroup].style then
-      clinfo = updateTable(groupDefaults[theGroup], clinfo)
+    if bst==nil or bst == groupDef.style then
+      clinfo = updateTable(groupDef, clinfo)
     end
+    --dev.showtable(clinfo, "clinfo "..key.." updated by group defaults")
+    
+   --rint("1 class info numbered "..replaceifnil(clinfo.numbered,"not given"))
+    -- now check boxtype ==
+    local bxty = clinfo.boxtype
+    if bxty ~= nil then if bxty ~= groupDef.boxtype then
+       if bxty~= cnbx.styles[clinfo.style].boxtype then
+        clinfo.style = nil
+      -- print("===> update class info "..key.." according to box type "..bxty)
+      local boxDef = deepcopy(cnbx.boxtypes[bxty].defaultOptions)
+      -- dev.showtable(boxDef, "the box defaults")
+      --dev.showtable(clinfo, "the clinfo before "..key)
+      clinfo.options = ute1.filterTable(clinfo.options, boxDef)--, {"group","label","boxtype","numbered"})--, "style"})
+      clinfo.options = updateTable(boxDef, clinfo.options)
+      -- old style not working anymore if new boxtype
+      --dev.showtable(clinfo, "clinfo after")
+    end end end
+
     clinfo.label = replaceifnil(clinfo.label, str(key))
     clinfo.reflabel = replaceifnil(clinfo.reflabel, clinfo.label)
+    
     -- assign counter --  
     clinfo.cntname = replaceifnil(clinfo.group, str(key))
     cnbx.counter[clinfo.cntname] = 0 -- sets the counter up if non existing
@@ -403,22 +504,15 @@ Meta = function(meta)
   
   cnbx.yaml = cunumblo_yaml(meta)
  -- print("1. Init Meta")
- 
- -- get numbering depth
-  cnbx.numberlevel = 0
-  if meta.crossref then
-    if meta.crossref.chapters then 
-      cnbx.numberlevel = 1 end
-  end
-  
-  initRenderInfo(meta)
   if cnbx.yaml then 
     initBoxTypes(cnbx.yaml)
-    -- dev.showtable(cnbx.boxtypes, "boxtypes")
+  --   dev.showtable(cnbx.boxtypes, "boxtypes")
     initStyles(cnbx.yaml)
-    -- dev.showtable(cnbx.styles, "styles")
+   --dev.showtable(cnbx.styles, "styles")
+    initGroupDefaults(cnbx.yaml)
+   -- dev.showtable(cnbx.groupDefaults, "groups") 
     initClassDefaults(cnbx.yaml) 
-    -- dev.showtable(cnbx.classDefaults, "classFefaults")
+   --  dev.showtable(cnbx.classDefaults, "classFefaults")
   end
 -- dev.showtable(cnbx, "cnbx")
   return(meta)

@@ -115,11 +115,38 @@ local function updateTable (oldtbl, newtbl, ignorekeys)
   return(result)
 end
 
--- deep copy, from http://lua-users.org/wiki/CopyTable
+local function vupdateTable (oldtbl, newtbl, ignorekeys)
+  local result = {}
+  -- copy old attributes
+  --for k, v in pairs(oldtbl) do result[k] = v end
+  result = deepcopy(oldtbl)
+  print("vupti")
+  dev.showtable(result, "kopie von oldi")
+  print("type der neuen table "..type(newtbl))
+  if newtbl ~= nil then if type(newtbl) == "table" then
+      if newtbl[1] == nil then -- it is an ok table with key value pairs
+        for k, v in pairs(newtbl) do
+            print("üpdating "..k)
+          if not(tablecontains(ignorekeys, k)) then
+            print("üpdating really "..k)
+             result[k] = deepcopy(v)
+         end
+        end
+      -- special: set reflabel to label if not given in attribs
+--        if newattribs["reflabel"] == nil then result.reflabel = result.label end 
+      -- TODO: do this elsewhere
+      end  
+    end
+  end  
+  return(result)
+end
+
+-- deep copy, improved from http://lua-users.org/wiki/CopyTable
 function deepcopy(orig)
     local orig_type = type(orig)
     local copy
-    if orig_type == 'table' then
+    if orig == nil then copy ={}
+    elseif orig_type == 'table' then
         copy = {}
         for orig_key, orig_value in next, orig, nil do
             copy[deepcopy(orig_key)] = deepcopy(orig_value)
@@ -131,14 +158,17 @@ function deepcopy(orig)
     return copy
 end
 
--- remove all entries that have no counterpart in newdefaults
-local function filterTable (currentdefaults, requireddefaults)
+-- remove all entries that have no counterpart in requireddefaults
+local function filterTable (currentdefaults, requireddefaults, preservekeys)
   result = deepcopy(currentdefaults)
+ -- dev.showtable(preservekeys, "ignore keys")
   if type(result) == "table" then
     if type(requireddefaults) == "table" then
       for k, _ in pairs(result) do
-        if requireddefaults[k] == nil then
-          result[k] = nil
+        if not(tablecontains(preservekeys, k)) then
+            if requireddefaults[k] == nil then
+             result[k] = nil
+            end     
         end
       end  
     end
@@ -146,6 +176,21 @@ local function filterTable (currentdefaults, requireddefaults)
   return(result)
 end  
 
+-- this function is to separate render options from bookkeeping options
+
+local function splitTable( original, keepkeys)
+  local result = {keep={}, rest={}}
+  local cval
+  for val, key in pairs(original) do
+    cval = deepcopy(val)
+    if tablecontains(keepkeys, key) then
+      result.keep[key] = cval
+    else    
+      result.rest[key] = cval
+    end   
+  end  
+  return result
+end
 -- strings, fx make prefix
 
 function stringtable_to_vector(tbl, sep)
@@ -287,7 +332,9 @@ return{
     replaceifnil= replaceifnil,
     replaceifempty = replaceifempty,
     updateTable = updateTable,
+    vupdateTable = vupdateTable,
     filterTable = filterTable,
+    splitTable = splitTable,
   --  deepcopy = deepcopy,
     deInline = DeInline,
     str_md = str_md,

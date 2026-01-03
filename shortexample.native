@@ -1,0 +1,462 @@
+Pandoc
+  Meta
+    { unMeta =
+        fromList
+          [ ( "crossref"
+            , MetaMap (fromList [ ( "chapters" , MetaBool True ) ])
+            )
+          , ( "custom-numbered-blocks"
+            , MetaMap
+                (fromList
+                   [ ( "classes"
+                     , MetaMap
+                         (fromList
+                            [ ( "NixDo"
+                              , MetaInlines [ Str "default" ]
+                              )
+                            , ( "TODO"
+                              , MetaMap
+                                  (fromList
+                                     [ ( "boxtype"
+                                       , MetaInlines [ Str "fallback" ]
+                                       )
+                                     , ( "group"
+                                       , MetaInlines [ Str "todos" ]
+                                       )
+                                     , ( "label"
+                                       , MetaInlines
+                                           [ Str "To"
+                                           , Space
+                                           , Str "do"
+                                           ]
+                                       )
+                                     ])
+                              )
+                            , ( "Theorem"
+                              , MetaMap
+                                  (fromList
+                                     [ ( "group"
+                                       , MetaInlines [ Str "mathstuff" ]
+                                       )
+                                     ])
+                              )
+                            ])
+                     )
+                   , ( "groups"
+                     , MetaMap
+                         (fromList
+                            [ ( "mathstuff"
+                              , MetaInlines [ Str "default" ]
+                              )
+                            , ( "todos"
+                              , MetaMap
+                                  (fromList
+                                     [ ( "numbered" , MetaBool False )
+                                     , ( "style"
+                                       , MetaInlines [ Str "postit" ]
+                                       )
+                                     ])
+                              )
+                            ])
+                     )
+                   , ( "styles"
+                     , MetaMap
+                         (fromList
+                            [ ( "postit"
+                              , MetaMap
+                                  (fromList
+                                     [ ( "boxtype"
+                                       , MetaInlines
+                                           [ Str "simpletextbox" ]
+                                       )
+                                     , ( "color"
+                                       , MetaInlines [ Str "yellow" ]
+                                       )
+                                     ])
+                              )
+                            ])
+                     )
+                   ])
+            )
+          , ( "title"
+            , MetaInlines
+                [ Str "Custom-numbered-blocks" , Space , Str "Example" ]
+            )
+          ]
+    }
+  [ Div
+      ( "" , [ "TODO" ] , [] )
+      [ Header
+          3
+          ( "simpletextbox" , [] , [ ( "number" , "0.0.1" ) ] )
+          [ Str "0.0.1" , Space , Str "simpletextbox" ]
+      , BulletList
+          [ [ Plain
+                [ Str "\9746"
+                , Space
+                , Str "make"
+                , Space
+                , Str "referenceable"
+                , Space
+                , Str "-"
+                , Space
+                , Str "this"
+                , Space
+                , Str "works"
+                , Space
+                , Str "out"
+                , Space
+                , Str "of"
+                , Space
+                , Str "the"
+                , Space
+                , Str "box,"
+                , Space
+                , Str "I"
+                , Space
+                , Str "was"
+                , Space
+                , Str "sooo"
+                , Space
+                , Str "clever"
+                , Space
+                , Str "with"
+                , Space
+                , Str "the"
+                , Space
+                , Str "design"
+                , Space
+                , Str ";-)"
+                ]
+            ]
+          ]
+      ]
+  , Header
+      1
+      ( "first-heading" , [] , [ ( "number" , "1" ) ] )
+      [ Str "1" , Str ". " , Str "First" , Space , Str "heading" ]
+  , Div
+      ( ""
+      , [ "TODO" ]
+      , [ ( "boxtype" , "foldbox" )
+        , ( "collapse" , "false" )
+        , ( "label" , "To Do" )
+        , ( "areflabel" , "ZuTun" )
+        , ( "tag" , "x" )
+        ]
+      )
+      [ Header
+          3
+          ( "first" , [] , [ ( "number" , "1.0.1" ) ] )
+          [ Str "1.0.1"
+          , Space
+          , Str "Change"
+          , Space
+          , Str "internal"
+          , Space
+          , Str "registration"
+          , Space
+          , Str "of"
+          , Space
+          , Str "Divs"
+          ]
+      , Para
+          [ Str "This"
+          , Space
+          , Str "is"
+          , Space
+          , Str "relatively"
+          , Space
+          , Str "epic"
+          ]
+      , BulletList
+          [ [ Plain
+                [ Str "\9744"
+                , Space
+                , Str "do"
+                , Space
+                , Str "not"
+                , Space
+                , Str "use"
+                , Space
+                , Str "div"
+                , Space
+                , Str "attributes,"
+                , Space
+                , Str "but"
+                , Space
+                , Str "an"
+                , Space
+                , Str "internal"
+                , Space
+                , Str "table"
+                ]
+            , BulletList
+                [ [ Plain
+                      [ Str "\9744"
+                      , Space
+                      , Str "set"
+                      , Space
+                      , Str "up"
+                      , Space
+                      , Str "the"
+                      , Space
+                      , Str "table"
+                      , Space
+                      , Str "in"
+                      , Space
+                      , Str "parallel"
+                      ]
+                  , BulletList
+                      [ [ Plain
+                            [ Str "\9744"
+                            , Space
+                            , Str "make"
+                            , Space
+                            , Str "identifiers"
+                            , Space
+                            , Str "for"
+                            , Space
+                            , Str "all"
+                            , Space
+                            , Str "divs"
+                            ]
+                        ]
+                      , [ Plain
+                            [ Str "\9744"
+                            , Space
+                            , Str "add"
+                            , Space
+                            , Str "to"
+                            , Space
+                            , Str "cnbx.customblocks."
+                            , Space
+                            , Str "Catch"
+                            , Space
+                            , Str "error:"
+                            , Space
+                            , Str "duplex"
+                            ]
+                        ]
+                      ]
+                  ]
+                , [ Plain
+                      [ Str "\9744"
+                      , Space
+                      , Str "test"
+                      , Space
+                      , Str "by"
+                      , Space
+                      , Str "inspection"
+                      ]
+                  ]
+                , [ Plain
+                      [ Str "\9744"
+                      , Space
+                      , Str "change"
+                      , Space
+                      , Str "how"
+                      , Space
+                      , Str "styles"
+                      , Space
+                      , Str "use"
+                      , Space
+                      , Str "the"
+                      , Space
+                      , Str "information"
+                      ]
+                  , BulletList
+                      [ [ Plain
+                            [ Str "\9746"
+                            , Space
+                            , Str "start"
+                            , Space
+                            , Str "with"
+                            , Space
+                            , Str "fallbackexample"
+                            ]
+                        ]
+                      , [ Plain
+                            [ Str "\9744"
+                            , Space
+                            , Str "test"
+                            , Space
+                            , Str "fallbackexample"
+                            ]
+                        ]
+                      ]
+                  ]
+                , [ Plain
+                      [ Str "\9744"
+                      , Space
+                      , Str "check"
+                      , Space
+                      , Str "if"
+                      , Space
+                      , Str "lists-of"
+                      , Space
+                      , Str "still"
+                      , Space
+                      , Str "are"
+                      , Space
+                      , Str "working."
+                      , Space
+                      , Str "Now"
+                      , Space
+                      , Str "use"
+                      , Space
+                      , Str "mdtitle"
+                      , Space
+                      , Str "-"
+                      , Space
+                      , Str "maybe"
+                      , Space
+                      , Str "I"
+                      , Space
+                      , Str "already"
+                      , Space
+                      , Str "do"
+                      , Space
+                      , Str "this."
+                      ]
+                  ]
+                ]
+            ]
+          ]
+      ]
+  , Div
+      ( "" , [ "DONE" ] , [ ( "title" , "not ywt done" ) ] )
+      [ Para [ Str "All" , Space , Str "is" , Space , Str "done" ]
+      ]
+  , Div
+      ( "" , [ "TODO" ] , [] )
+      [ Para
+          [ Str "The"
+          , Space
+          , Str "div"
+          , Space
+          , Str "with"
+          , Space
+          , Str "no"
+          , Space
+          , Str "title"
+          ]
+      ]
+  , Header
+      1
+      ( "second-heading" , [] , [ ( "number" , "2" ) ] )
+      [ Str "2"
+      , Str ". "
+      , Str "second"
+      , Space
+      , Str "heading"
+      ]
+  , Div
+      ( "" , [ "NixDo" ] , [ ( "label" , "Nixtun" ) ] )
+      [ Header
+          1
+          ( "second" , [] , [ ( "number" , "3" ) ] )
+          [ Str "3"
+          , Str ". "
+          , Str "this"
+          , Space
+          , Str "is"
+          , Space
+          , Str "only"
+          , Space
+          , Str "for"
+          , Space
+          , Str "testing"
+          , Space
+          , Str "purposes"
+          ]
+      , Para
+          [ Str "For"
+          , Space
+          , Str "example,"
+          , Space
+          , Str "to"
+          , Space
+          , Str "catch"
+          , Space
+          , Str "duplex"
+          , Space
+          , Str "identifiers"
+          ]
+      ]
+  , Div
+      ( "" , [ "TODO" ] , [] )
+      [ Header
+          1
+          ( "crossreferencing-using-pandoc"
+          , []
+          , [ ( "number" , "4" ) ]
+          )
+          [ Str "4"
+          , Str ". "
+          , Str "crossreferencing"
+          , Space
+          , Str "using"
+          , Space
+          , Str "pandoc"
+          ]
+      , Para
+          [ Str "An"
+          , Space
+          , Str "epic"
+          , Space
+          , Str "one,"
+          , Space
+          , Str "to"
+          , Space
+          , Str "enable"
+          , Space
+          , Str "independence"
+          , Space
+          , Str "of"
+          , Space
+          , Str "formats."
+          , SoftBreak
+          , Str "Let\8217s"
+          , Space
+          , Str "see"
+          , Space
+          , Str "if"
+          , Space
+          , Str "this"
+          , Space
+          , Str "is"
+          , Space
+          , Str "possible."
+          , Space
+          , Str "A"
+          , Space
+          , Str "future"
+          , Space
+          , Str "thing."
+          ]
+      ]
+  , Para
+      [ Str "Und"
+      , Space
+      , Str "jetzt"
+      , Space
+      , Str "weisen"
+      , Space
+      , Str "wir"
+      , Space
+      , Str "noch"
+      , Space
+      , Str "hin"
+      , Space
+      , Str "auf"
+      , Space
+      , Str "das"
+      , Space
+      , Str "Todo"
+      , Space
+      , Str "first:"
+      , Space
+      , RawInline (Format "tex") "\\longref{first}"
+      ]
+  ]
