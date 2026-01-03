@@ -70,21 +70,23 @@ end
 return{
     require("cnb-1-init-definitions") -- Meta: set up chapter numbers and classes
     , require("cnb-1-init-chapter") -- Meta: set up chapter numbers and classes   
-    , require("cnb-2-indices-register") 
+    , require("cnb-2-register-divs") 
     , require("cnb-3-crossref")
 
   ----, require("cnb-test1") so funktioniert das nicht
  
   , require("cnb-4-prepare-render")
-  
--- -- , {Div = Divs_getid, Pandoc = Pandoc_preparexref}
---  --, require("cnb-4-resolvexref")
+--  , require("cnb-5-renderblocks")  
+  --  , require("cnb-6-listof")  
+
+---- , {Div = Divs_getid, Pandoc = Pandoc_preparexref}
+----, require("cnb-4-resolvexref")
 ----  , {Pandoc = Pandoc_resolvexref}
  ---- , require("cnb-5-processtitles") --kann entfallen
 
  ---- , require("cnb-6-storexref") included in crossref
---  , require("cnb-7-listof")  
---  , require("cnb-8-renderblocks")  
+----  , require("cnb-7-listof")  
+----  , require("cnb-8-renderblocks")  
  , require("cnb-9-cleanup")  
   --, testfilter.filter1,
   --testfilter.hallo
