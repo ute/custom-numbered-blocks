@@ -87,7 +87,6 @@ local doCounting = function(el)
       info = cnbx.newxref[el.identifier]
 
       info.file = cnbx.processedfile -- for book crossreferences
-
       -- info.boxtype = attribs.boxtype
       -- TODO uncomment later
       -- attribs.boxtype = nil
@@ -114,12 +113,18 @@ local doCounting = function(el)
         
       end
       
-      -- getting reflabel
+      -- getting reflabel and label
       reflabel = el.attributes.reflabel
       if reflabel == nil then
         reflabel = ClassDef.reflabel
       end
       info.reflabel = reflabel
+      
+      label = el.attributes.label
+      if label == nil then
+        label = ClassDef.label
+      end
+      info.label = label
       
     --  print("counted a cnbx "..info.reflabel.." "..info.refnumber)
   --[[
