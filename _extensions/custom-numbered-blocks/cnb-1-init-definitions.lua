@@ -49,7 +49,7 @@ local warn = ute1.warn
 -- check if found and add to list
 
 local initBoxTypes = function (cnbyaml)
-  gatherboxtypes = function(tbl, returnval)
+  agatherboxtypes = function(tbl, returnval)
     if tbl ~= nil then 
         for k, v in pairs(tbl) do
           if k == "boxtype" then
@@ -63,9 +63,13 @@ local initBoxTypes = function (cnbyaml)
   local allboxtypes, validboxtypes = {}, {}
   local defbx = cnbx.defaultboxtype
   
-  gatherboxtypes(cnbyaml.styles, allboxtypes)
-  gatherboxtypes(cnbyaml.groups, allboxtypes)
-  gatherboxtypes(cnbyaml.classes, allboxtypes)
+  gatherentries(cnbyaml.styles, allboxtypes, "boxtype")
+  gatherentries(cnbyaml.groups, allboxtypes, "boxtype")
+  gatherentries(cnbyaml.classes, allboxtypes, "boxtype")
+  
+  -- gatherboxtypes(cnbyaml.styles, allboxtypes)
+  -- gatherboxtypes(cnbyaml.groups, allboxtypes)
+  -- gatherboxtypes(cnbyaml.classes, allboxtypes)
   
   -- ensure default box type is included
   allboxtypes[defbx] = true

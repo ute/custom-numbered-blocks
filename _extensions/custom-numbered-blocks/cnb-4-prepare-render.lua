@@ -8,7 +8,7 @@ ute1 = require("cnb-utilities")
 local filterAttributes = function(el)
   local id = el.identifier
   if id == "first" then
-    local info = cnbx.newxref[id]  
+    local info = cnbx.xref[id]  
     if info == nil then
         print("Div with identifier "..id.." is not a cunumblo")
     else

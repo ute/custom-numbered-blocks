@@ -28,11 +28,11 @@ return{
   
  Pandoc = function(doc)
   print("-------- the last ----")
- if cnbx.newxref["first"] then dev.showtable(cnbx.newxref["first"], "the new xref, #first entry") 
- else dev.showtable(cnbx.newxref["fancy"], "the fancy")
+ if cnbx.xref["first"] then dev.showtable(cnbx.xref["first"], "the new xref, #first entry") 
+ else dev.showtable(cnbx.xref["fancy"], "the fancy")
 
  end
---  dev.showtable(cnbx.boxtypes, "all box types")
+  dev.showtable(cnbx.boxtypes, "all box types")
 --  dev.showtable(cnbx.classDefaults, "all classes")
 --  dev.showtable(cnbx.styles, "all styles")
  return(doc)

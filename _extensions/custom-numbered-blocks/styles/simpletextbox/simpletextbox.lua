@@ -13,7 +13,7 @@ date: 29/12/2025
 local postit = {}
 
 postit.defaultOptions = {
-    numbered = "true",
+   -- numbered = "true",
     color = "lightgreen"
   }
 

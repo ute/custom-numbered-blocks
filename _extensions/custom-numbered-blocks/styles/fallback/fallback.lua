@@ -7,7 +7,7 @@ date: end 12/2025
 ]]--
 
 local defaultOptions = {
-    numbered = "true"
+  --  numbered = "true"
 }
 
 local render = {

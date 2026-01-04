@@ -1,7 +1,7 @@
 -- TODO: remove dependence from path, make a utility function for this
 
 local defaultOptions = {
-    numbered = "true",
+   -- numbered = "true",
     boxstyle = "foldbox.default", -- this is an extra option of this very box style
     collapse = "true",
     colors   = {"c0c0c0","808080"} 

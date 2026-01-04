@@ -17,8 +17,8 @@ dev = require "devutils"
 cnbx = require "cnb-global"
 -- local str = pandoc.utils.stringify
 
-cnbx.newxref={}
-local xref = cnbx.newxref
+cnbx.xref={}
+local xref = cnbx.xref
 
 local divcount = 0
 

@@ -92,6 +92,36 @@ local function tablecontains(tbl, val)
   return false
 end  
 
+--- recursively gather entries with a given key from a table
+--- make this global because it is recursive
+gatherentries = function(tbl, returnval, key)
+    if tbl ~= nil then 
+        for k, v in pairs(tbl) do
+          if k == key then
+             returnval[str(v)] = true
+          elseif type(v) == "table" then  gatherentries(v, returnval, key) 
+          end
+        end
+      end
+  end
+
+--- get names of elements in a table, not nested
+keynames = function(tbl)
+  result = {}
+  for k, _ in pairs(tbl) do
+      table.insert(result, k)
+  end
+  return result
+end
+
+--- deepcopy elements from table
+subtable = function(table, selkeys)
+  result = {}
+  for _,v in ipairs(selkeys) do
+    result[v] = deepcopy(table[v])
+  end
+  return result
+end
 
 -- make a deep copy of table and update oldtable
 local function updateTable (oldtbl, newtbl, ignorekeys)

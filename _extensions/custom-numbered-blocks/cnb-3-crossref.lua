@@ -84,7 +84,7 @@ local doCounting = function(el)
       ClassDef = deepcopy(cnbx.classDefaults[cls])
       cntkey = ClassDef.cntname
     
-      info = cnbx.newxref[el.identifier]
+      info = cnbx.xref[el.identifier]
 
       info.file = cnbx.processedfile -- for book crossreferences
       -- info.boxtype = attribs.boxtype
@@ -239,8 +239,8 @@ end
 local writexref = function()
   print("writing the xref")
   if cnbx.isbook then
-  --local xref = cnbx.newxref
-  local xrjson = quarto.json.encode(cnbx.newxref)
+  --local xref = cnbx.xref
+  local xrjson = quarto.json.encode(cnbx.xref)
   local file = io.open(cnbx.xreffile,"w")
   if file ~= nil then 
     file:write(xrjson) 
@@ -269,7 +269,7 @@ numberingfilter.Pandoc = function(doc)
   doc:walk {Block = doCounting}
   writexref()
   -- doc:walk {RawInline = resolveref}
-  return doc:walk(resolveref(cnbx.newxref))
+  return doc:walk(resolveref(cnbx.xref))
   
 end
 
