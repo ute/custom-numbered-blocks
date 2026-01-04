@@ -59,9 +59,9 @@ local initBoxTypes = function (cnbyaml)
         end
       end
   end
-  local findlua, fnamstr, fallbackcopy
+  local findlua, fnamstr
   local allboxtypes, validboxtypes = {}, {}
-  local defbx = cnbx.styles.default.boxtype
+  local defbx = cnbx.defaultboxtype
   
   gatherentries(cnbyaml.styles, allboxtypes, "boxtype")
   gatherentries(cnbyaml.groups, allboxtypes, "boxtype")
@@ -71,22 +71,22 @@ local initBoxTypes = function (cnbyaml)
   -- gatherboxtypes(cnbyaml.groups, allboxtypes)
   -- gatherboxtypes(cnbyaml.classes, allboxtypes)
   
-  -- ensure default box type is included in the collection of box types
+  -- ensure default box type is included
   allboxtypes[defbx] = true
-
-  defaultlua = findFile(defbx..".lua",{"styles/","styles/"..defbx.."/"})
-  
-  -- this belongs to checking styles, or just to general sanity checks. 
   -- check if default boxtype is available, otherwise it is a fatal error
-  -- it can only happen if the styles have been tampered, or the defaults.
+  defaultlua = findFile(defbx..".lua",{"styles/","styles/"..defbx.."/"})
   if not defaultlua.found then 
     quarto.log.error("Code for default box type "..defbx.." is not available")
   end
 
   -- include fallback
   allboxtypes.fallback = true
-  
-  -- verify if boxtypes actually exist. otherwise replace by fallback
+
+  -- print("boxtypes")
+  -- dev.tprint(allboxtypes)
+  -- print("=======")
+   
+  -- verify if boxtypes actually exist. otherwise replace by default
   -- enter valid box types into global list
   -- replace the remaining ones by default type, and issue warning
   for k, _ in pairs(allboxtypes) do
@@ -95,7 +95,6 @@ local initBoxTypes = function (cnbyaml)
     if not findlua.found then 
       warn ("boxstyle "..fnamstr.." not found, replace by default ") 
       findlua = defaultlua
-      allboxtypes[k] = false -- if this is of interest later
     end
     findlua.found = nil
     findlua.luacode = pandoc.path.split_extension(findlua.path)
@@ -103,17 +102,15 @@ local initBoxTypes = function (cnbyaml)
    -- thelua = updateTable(fallback, thelua)
     --  print(thelua.stilnam)
     --   dev.tprint(thelua)
+    if k=="fallback" then fallback = thelua.unknown end
     findlua.defaultOptions = thelua.defaultOptions
     findlua.render = thelua[cnbx.fmt]
+    -- replace missing functions by fallback version
     validboxtypes[k] = findlua 
   end  
   
-  dev.showtable(allboxtypes, "all box types wanted")
-  
-  -- replace missing functions by fallback version
   for _, v in pairs(validboxtypes) do
-    fallbackcopy = deepcopy(validboxtypes["fallback"].render)
-    v.render = updateTable(fallbackcopy, v.render)
+    v.render = updateTable(fallback, v.render)
   end
 
 -- print("---------")
@@ -132,13 +129,13 @@ end
 local initStyles = function (cnbyaml)
   local sty = cnbyaml.styles
   local basestyles, allstyles = {}, {}
-  --local minimaldefault = cnbx.styles.default --{boxtype = cnbx.defaultboxtype}
+  local minimaldefault = {boxtype = cnbx.defaultboxtype}
   local vv, vp
   local styOpt
 
   -- first find those without parent style, then set up child styles
   if sty == nil then 
-    basestyles = {default = cnbx.styles.default}
+    basestyles = {default = minimaldefault}
   else
     if type(sty) == "table" then
     for k, v in pairs(sty) do
@@ -148,8 +145,7 @@ local initStyles = function (cnbyaml)
       end
     end
     if basestyles.default == nil then
-      basestyles.default =  cnbx.styles.default
-    else cnbx.styles.default = basestyles.default
+      basestyles.default =  minimaldefault
     end
     -- next round: fill with defaults
     for k, v in pairs(sty) do
@@ -162,9 +158,9 @@ local initStyles = function (cnbyaml)
     end  
   end
   
-  -- ensure there is a boxtype in all styles
+  -- assure there is a boxtype in all styles
   for _, v in pairs(basestyles) do
-    if v.boxtype == nil then v.boxtype = cnbx.styles.default.boxtype end
+    if v.boxtype == nil then v.boxtype = cnbx.defaultboxtype end
   end
 
   --dev.showtable(basestyles, "all base styles")
@@ -511,18 +507,8 @@ return{
 Meta = function(meta)
   
   cnbx.yaml = cunumblo_yaml(meta)
-
-  -- print("1. Init Meta")
+ -- print("1. Init Meta")
   if cnbx.yaml then 
- -- reset default style if given 
-    if cnbx.yaml.styles then 
-      local userdefault = deInline(cnbx.yaml.styles.default)
-      if userdefault then
-      -- replace default style by user defined
-        cnbx.styles.default = updateTable(cnbx.styles.default, userdefault) 
-      end
-    end
-    -- dev.showtable(cnbx.styles.default, "default style")
     initBoxTypes(cnbx.yaml)
   --   dev.showtable(cnbx.boxtypes, "boxtypes")
     initStyles(cnbx.yaml)

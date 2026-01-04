@@ -10,6 +10,9 @@ format:
 
 custom-numbered-blocks:
   styles:  
+    default:
+      boxtype: fallback
+      colors: [ffffff,aaaaaa] 
     postit:
       boxtype: simpletextbox
       color: yellow 

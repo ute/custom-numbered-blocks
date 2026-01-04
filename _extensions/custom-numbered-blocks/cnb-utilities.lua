@@ -123,17 +123,18 @@ subtable = function(table, selkeys)
   return result
 end
 
--- make a deep copy of table and update oldtable
+-- make a shallow copy of table and update oldtable.
+-- if necessary make deep copy before the call
 local function updateTable (oldtbl, newtbl, ignorekeys)
-  local result = {}
+  local result = oldtbl--{}
   -- copy old attributes
   --for k, v in pairs(oldtbl) do result[k] = v end
-  result = deepcopy(oldtbl)
+  -- result = deepcopy(oldtbl)
   if newtbl ~= nil then if type(newtbl) == "table" then
       if newtbl[1] == nil then -- it is an ok table with key value pairs
         for k, v in pairs(newtbl) do
           if not(tablecontains(ignorekeys, k)) then
-             result[k] = deepcopy(v)
+             result[k] = v--deepcopy(v)
          end
         end
       -- special: set reflabel to label if not given in attribs
