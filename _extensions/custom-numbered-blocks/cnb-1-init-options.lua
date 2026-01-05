@@ -108,7 +108,7 @@ local initBoxTypes = function (cnbyaml)
     v.render = updateTable(fallbackcopy, v.render)
   end
 
-  -- dev.showtable(validboxtypes)
+  --dev.showtable(validboxtypes, "the box types")
 
   cnbx.boxtypes = validboxtypes
 
@@ -131,7 +131,8 @@ local initStyles = function (cnbyaml)
 
   -- first find those without parent style, then set up child styles
   if sty == nil then 
-    basestyles = {default = cnbx.styles.default}
+    basestyles = {default = deepcopy(cnbx.styles.default)}
+   -- print("no styles defined")
   else
     -- dev.showtable(sty, "styles yaml")
     if type(sty) == "table" then
@@ -155,16 +156,16 @@ local initStyles = function (cnbyaml)
       end
     end  
   end
-  
+end 
   -- ensure there is a boxtype in all styles
   for _, v in pairs(basestyles) do
     if v.boxtype == nil then v.boxtype = cnbx.styles.default.boxtype end
   end
- -- dev.showtable(basestyles, "all base styles")
+  -- dev.showtable(basestyles, "all base styles")
 
   allstyles = deepcopy(basestyles)
 
-  end
+  
   cnbx.styles = allstyles
 end
 
@@ -376,7 +377,7 @@ Meta = function(meta)
     initBoxTypes(cnbx.yaml)
   --  dev.showtable(cnbx.boxtypes, "boxtypes")
     initStyles(cnbx.yaml)
-    -- dev.showtable(cnbx.styles, "styles")
+  --  dev.showtable(cnbx.styles, "styles")
     initGroupDefaults(cnbx.yaml)
     --dev.showtable(cnbx.groupDefaults, "groups") 
     initClassDefaults(cnbx.yaml) 

@@ -1,0 +1,10 @@
+---
+title: Mini example
+filters:
+    - custom-numbered-blocks
+custom-numbered-blocks:
+    classes:
+        Example: default
+---
+
+This is a test.

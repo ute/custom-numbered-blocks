@@ -70,6 +70,7 @@ end
 return{
     require("cnb-1-init-yaml")
     , require("cnb-1-init-options") -- Meta: set up classes, groups etc
+   --[[
     , require("cnb-1-init-chapters") -- Meta: set up chapter numbers and classes   
     , require("cnb-1-init-xref")
     , require("cnb-2-register-divs") 
@@ -92,5 +93,6 @@ return{
  , require("cnb-9-cleanup")  
   --, testfilter.filter1,
   --testfilter.hallo
+  ]]--
 }
 
