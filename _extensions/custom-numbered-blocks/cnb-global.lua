@@ -1,5 +1,5 @@
 local cnbx={ -- global table, holds information for processing fboxes
-   xreffile = "._xref.json" -- default name, set to lastfile in initial meta analysis
+   xreffile = "test._xref.json" -- default name, set to lastfile in initial meta analysis
    , -- todo drop this, it is only needed for books
    styles = {default = {numbered = true, boxtype = "foldbox"}},
    boxtypes = {},

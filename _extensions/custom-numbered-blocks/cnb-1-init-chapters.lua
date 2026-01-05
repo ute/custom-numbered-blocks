@@ -104,6 +104,10 @@ local initRenderInfo = function (meta)
  -- print(" now in "..processedfile.." later becomes ".. str(cnbx.output_file))
   cnbx.isfirstfile = not cnbx.ishtmlbook
   cnbx.islastfile = not cnbx.ishtmlbook
+  --
+   -- for testing only
+   cnbx.xreffile= ".test_xref.json"
+  ---
   if cnbx.isbook then 
     local chinfo = chapterinfo(meta.book, processedfile)
     if cnbx.ishtmlbook then

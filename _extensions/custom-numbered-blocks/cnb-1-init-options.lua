@@ -357,6 +357,7 @@ local initClassDefaults = function (cunumbl)
 end
 
 
+
 return{
 Meta = function(meta)
   
@@ -380,6 +381,8 @@ Meta = function(meta)
     --dev.showtable(cnbx.groupDefaults, "groups") 
     initClassDefaults(cnbx.yaml) 
     -- dev.showtable(cnbx.classDefaults, "classDefaults")
+
+
   end
 -- dev.showtable(cnbx, "cnbx")
   return(meta)

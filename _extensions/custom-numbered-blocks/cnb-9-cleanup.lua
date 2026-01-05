@@ -34,7 +34,7 @@ return{
  end
  -- dev.showtable(cnbx.boxtypes, "all box types")
 --  dev.showtable(cnbx.classDefaults, "all classes")
- dev.showtable(cnbx.styles, "all styles")
+ -- dev.showtable(cnbx.styles, "all styles")
  return(doc)
  end
 }

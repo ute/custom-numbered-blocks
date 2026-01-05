@@ -67,13 +67,13 @@ Hier kommt nothing: \longref{nuttin}
 Do not allow `div` elements to change boxtype or colours. This is due to the implementations.
 
 ::: {.TODO collapse=true}
-### Change internal registration of Divs {#first}
+### Change internal registration of Divs {#firsta}
 This is relatively epic
 :::
 
 
 ::: {.TODO boxtype="foldbox" collapse="false" label="To Do" reflabel="ZuTun" tag= "x" style="mixmax"}
-### Change internal registration of Divs {#firsta}
+### Change internal registration of Divs {#first}
 This is relatively epic
 
 - [ ] do not use div attributes, but an internal table

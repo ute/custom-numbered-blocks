@@ -17,8 +17,10 @@ dev = require "devutils"
 cnbx = require "cnb-global"
 -- local str = pandoc.utils.stringify
 
-cnbx.xref={}
-local xref = cnbx.xref
+--cnbx.xref={}
+
+    
+
 
 local divcount = 0
 
@@ -31,6 +33,9 @@ function registerdivs.Div(el)
   local hidd=""
   -- local cls = pandoc.utils.stringify(el.classes)
   local cls = cnbx.is_cunumblo(el)
+  local xref = cnbx.xref
+  print("xref is "..type(xref))
+  print("cnbx.xref is "..type(cnbx.xref))
   if cls then
     divcount = divcount+1
     if idd==nil then idd="" end     
