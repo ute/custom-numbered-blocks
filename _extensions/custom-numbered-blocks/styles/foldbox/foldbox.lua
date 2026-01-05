@@ -15,11 +15,10 @@ end
 
 
 local beginBlock_html = function(ttt)
-  local Open =""
+  local Open
   local bxstyle =" fobx-default closebutton"
-  --local typlabelTag = ttt.typlabelTag
-  --if #ttt.title > 0 then typlabelTag = typlabelTag..": " end
-  if ttt.options.collapse =="false" then Open=" open" end
+  if ttt.options.collapse=="true" then Open="" else Open = " open" end
+  -- print("collapse for id "..ttt.id.." is "..tostring(ttt.options.collapse).." open is "..Open)
   if ttt.options.boxstyle =="foldbox.simple" 
     then 
       bxstyle=" fobx-simplebox fobx-default" 

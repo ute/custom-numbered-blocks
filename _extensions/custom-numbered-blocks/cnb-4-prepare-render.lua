@@ -21,10 +21,9 @@ local filterAttributes = function(el)
   
   local info = cnbx.xref[id]  
   if info == nil then
-      print("Div with identifier "..id.." is not a cunumblo")
+  --    print("Div with identifier "..id.." is not a cunumblo")
       return(el)
   end
-
   
   -- decision: do not allow changing style or boxtype. 
   -- this can be achieved by grouping instead on a per element base
@@ -59,9 +58,8 @@ local filterAttributes = function(el)
   
 -- too late here, needs to come with crossref
 
-  dev.showtable(norattribs, "no render attributes for "..id)
+  --dev.showtable(norattribs, "no render attributes for "..id)
   -- make sure to adjust reflabel to label, if label is given but not reflabel
-
 
   -- ignore boxtype, style, color and colors. They cannot be changed per element  
   ignoreargs = ""
@@ -86,16 +84,12 @@ local filterAttributes = function(el)
   --dev.showtable(clopt,"class options") 
   --dev.showtable(rattribs, "rattribs")
   --dev.showtable(norattribs, "norattribs")
-
- 
-  -- dev.showtable(defaultattribs, "kgv attribs")
-  -- update with individual attributes
+-- update with individual attributes
 
   elementattribs = deepcopy(clopt)
   elementattribs = uti.updateTable(elementattribs, rattribs)
   -- dev.showtable(defaultattribs, "final options")
   
-  -- stackoverflow info = uti.updateTable(info, norattribs)
   --[[
   no-render attributes are already set with crossreferencing
   for k, v in pairs(norattribs) do
@@ -107,7 +101,6 @@ local filterAttributes = function(el)
   info.boxtype = bty
   info.renderoptions = subtable(elementattribs, keynames(cnbx.boxtypes[bty].defaultOptions))
   
-  --print("---fertig---")
   --end  -- if first
 
 end  

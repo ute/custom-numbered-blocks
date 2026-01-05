@@ -6,20 +6,12 @@ if title is given by heading in div, remove this heading because
 it otherwise would conflict with numbering
 ]]--
 
---ute1 = require "cnb-utilities"
---local hasclass = ute1.hasclass
 
 local registerdivs = {}
 
 dev = require "devutils"
-
-
 cnbx = require "cnb-global"
--- local str = pandoc.utils.stringify
-
---cnbx.xref={}
-
-    
+   
 
 
 local divcount = 0
@@ -34,8 +26,7 @@ function registerdivs.Div(el)
   -- local cls = pandoc.utils.stringify(el.classes)
   local cls = cnbx.is_cunumblo(el)
   local xref = cnbx.xref
-  print("xref is "..type(xref))
-  print("cnbx.xref is "..type(cnbx.xref))
+  
   if cls then
     divcount = divcount+1
     if idd==nil then idd="" end     

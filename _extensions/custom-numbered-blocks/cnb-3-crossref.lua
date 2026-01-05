@@ -51,6 +51,7 @@ local doCounting = function(el)
   local cls 
   local cntkey, cnts, ClassDef, reflabel
   local prefixstr =""
+  local notnumbered
   --local bxty, BoxDef, newattribs, UseAttribs
   
   ---------- headers ---------
@@ -90,13 +91,11 @@ local doCounting = function(el)
       info = cnbx.xref[el.identifier]
 
       info.file = cnbx.processedfile -- for book crossreferences
-      -- info.boxtype = attribs.boxtype
-      -- TODO uncomment later
-      -- attribs.boxtype = nil
-      -- info.attribs = attribs
-
+      
       info.cnbclass = cls
-      if uti.hasclass(el, "unnumbered") then
+
+      notnumbered = uti.hasclass(el, "unnumbered") or not ClassDef.numbered
+      if notnumbered then
         info.prefix = ""
         info.counter = ""
         info.refnumber = ""
@@ -205,12 +204,12 @@ end
 
 numberingfilter.Pandoc = function(doc)
 --  readxref()
-  dev.showtable(cnbx.groupDefaults, "group defaults")
-  dev.showtable(cnbx.xref, "xref")
+  --dev.showtable(cnbx.groupDefaults, "group defaults")
+  --dev.showtable(cnbx.xref, "xref")
   doc:walk {Block = doCounting}
   -- doc:walk {RawInline = resolveref}
-  dev.showtable(cnbx.xref, "xref")
-  writexref(cnbx.xreffile)
+  --dev.showtable(cnbx.xref, "xref")
+  if cnbx.isbook then writexref(cnbx.xreffile) end
   return doc:walk(resolveref(cnbx.xref))
 end
 

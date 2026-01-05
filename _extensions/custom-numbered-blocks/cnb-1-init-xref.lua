@@ -24,9 +24,9 @@ end
 
 return{
   Meta = function(met)
-    local xrefs
+    local xrefs = {}
     -- cnbx.xreffile = "testing.json"
-    xrefs = readxref(cnbx.xreffile)
+    if cnbx.isbook then xrefs = readxref(cnbx.xreffile) end
     cnbx.xref = xrefs
     -- print("xrefs are "..type(cnbx.xref))
     return(met)

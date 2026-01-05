@@ -1,13 +1,11 @@
 -- TODO split into formats and render, eventually
 
-uti = require "cnb-utilities"
-local ifelse = uti.ifelse
-
 cnbx = require "cnb-global"
 colut = require "cnb-colors"
 
-local str = pandoc.utils.stringify
-local tt_from_attributes_id = uti.tt_from_attributes_id
+uti = require "cnb-utilities"
+local ifelse = uti.ifelse
+
 local FileExists = uti.FileExists
 local warning = uti.warning
 local colorCSSTeX = colut.colorCSSTeX_legacy
@@ -73,109 +71,53 @@ local insertBoxtypesPandoc = function(doc)
   return(doc)
 end;
 
+-- for renderoptions: everything to string, because yaml and attributes are inconsistent
 
-oldrenderDiv = function(thediv) 
-  -- Done: change for individual style   
-  local A = thediv.attributes
-  local tt = {}
-  if A._fbxclass ~= nil then
-    
-    collapsstr = str(A._collapse)
-    tt = tt_from_attributes_id(A, thediv.identifier)
-    
-    local fmt=cnbx.fmt
-    if fmt=="pdf" then fmt = "tex" end;
-    
-    tt.boxtype = cnbx.classDefaults[tt.type].boxtype
-    
-    --print("trying to render soemthing ".. tt.boxtype)
-    --dev.tprint (cnbx.boxtypes)
-    --print( "%%%%%%%%%%%%%%%")
-    local rendr = cnbx.boxtypes[tt.boxtype].render
-    
-    local beginBlock = rendr.beginBlock(tt)
-    local endBlock = rendr.endBlock(tt)
-    
-    -- diagnostics
-    --print(" the div " .. thediv.identifier.. " has content lrngth "..#thediv.content.. " and type of first entry is "
-    --     .. str(thediv.content[1].t))
-    --print(" beginblock has length ".. #beginBlock)     
-     --   print("inserting in plain content")
-     
-    table.insert(thediv.content, 1, beginBlock)
-    table.insert(thediv.content, endBlock)
-    
-   -- print("----")
+tostringtable = function(tbl)
+  local result = {}
+  local vv
+  for k, v in pairs(tbl) do
+    if type(v) == "table" 
+      then vv = tostringtable(v)
+      else vv = tostring(v)
+      end  
+    result[k] = vv
   end  
-  return(thediv)
-end -- function renderDiv
+  return result
+end
 
 renderDiv = function(thediv) 
-  -- Done: change for individual style   
- -- local A = thediv.attributes
-  local tt
-  local blinfo
-  local bty
-  local rendr
-  local id
+  local tt, blinfo, bty, rendr, id, roptions
   
-  -- if A._fbxclass ~= nil then -- has been tagged as cunumblo
   if cnbx.is_cunumblo(thediv) then
     id = thediv.identifier
       blinfo = cnbx.xref[id]
-    
+   
+    roptions = tostringtable(blinfo.renderoptions)  
 -- dev.showtable(blinfo, "the blinfo of "..id)
 -- dev.showtable(cnbx.xref[id], "the xref of "..id)
 
-
-    tt = {id = id,
+tt = {id = id,
       type = blinfo.cnbclass, 
       tag = blinfo.refnumber,
       title = pandoc.Inlines(blinfo.pandoctitle), 
       typlabel = blinfo.label,
       typlabelTag = blinfo.label .. ifelse(blinfo.refnumber == "",""," "..blinfo.refnumber),
       mdtitle = blinfo.mdtitle, 
-      options = blinfo.renderoptions,
-      -- boxtype = "default", -- TODO here
+      options = roptions,
       link = thelink
     } 
-   
     -- dev.showtable(tt, "tt for "..thediv.identifier)
    
     bty = cnbx.classDefaults[blinfo.cnbclass].boxtype
-    print("render "..tt.id.." as ".. bty)
+--    print("render "..tt.id.." as ".. bty)
     rendr = cnbx.boxtypes[bty].render
     local beginBlock = rendr.beginBlock(tt)
     local endBlock = rendr.endBlock(tt)
-    
-    -- collapsstr = str(A._collapse)
-
-    --[[
-    tt = tt_from_attributes_id(A, thediv.identifier)
-    
-    -- local fmt=cnbx.fmt
-    -- if fmt=="pdf" then fmt = "tex" end;
-    
-    tt.boxtype = cnbx.classDefaults[tt.type].boxtype
-    
-    --print("trying to render soemthing ".. tt.boxtype)
-    --dev.tprint (cnbx.boxtypes)
-    --print( "%%%%%%%%%%%%%%%")
-    local rendr = cnbx.boxtypes[tt.boxtype].render
-    
-    local beginBlock = rendr.beginBlock(tt)
-    local endBlock = rendr.endBlock(tt)
-    
-    -- diagnostics
-    --print(" the div " .. thediv.identifier.. " has content lrngth "..#thediv.content.. " and type of first entry is "
-    --     .. str(thediv.content[1].t))
-    --print(" beginblock has length ".. #beginBlock)     
-     --   print("inserting in plain content")
-   ]]--  
+  
     table.insert(thediv.content, 1, beginBlock)
     table.insert(thediv.content, endBlock)
-    
-   
+  
   end  
   return(thediv)
 end -- function renderDiv
