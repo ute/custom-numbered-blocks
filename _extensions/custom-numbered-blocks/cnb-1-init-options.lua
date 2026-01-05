@@ -191,7 +191,7 @@ local initGroupDefaults = function(cnbyaml)
     for k, v in pairs(groups) do
       if type(v) ~= "table" then
         if str(v) == "default" then 
-          print(k.." is default") 
+          -- print(k.." is default") 
           v = {style = "default", numbered = true}
           groups[k] = v
         end

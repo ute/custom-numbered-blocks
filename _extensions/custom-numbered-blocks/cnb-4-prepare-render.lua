@@ -1,5 +1,6 @@
 --[[
-  adjust attributes
+  process div attributes
+  filter out proper render options
 ]]--
 
 require("cnb-global")

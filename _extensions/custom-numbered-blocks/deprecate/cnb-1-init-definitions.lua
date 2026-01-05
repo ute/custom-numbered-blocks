@@ -198,7 +198,7 @@ local groups ={}
 local initGroupDefaults = function(cnbyaml)
   local grps = cnbyaml.groups
   local groups0 = {}
-  local vv
+  local vv, btx
   local grpOpt
   
   -- first find those without parent style, then set up child styles

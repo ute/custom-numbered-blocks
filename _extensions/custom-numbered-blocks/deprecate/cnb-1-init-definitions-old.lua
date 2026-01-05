@@ -194,7 +194,7 @@ local groups ={}
 local initGroupDefaults = function(cnbyaml)
   local grps = cnbyaml.groups
   local groups0 = {}
-  local vv
+  local vv, btx
   local grpOpt
   
   -- first find those without parent style, then set up child styles
@@ -227,7 +227,7 @@ local initGroupDefaults = function(cnbyaml)
     groups[k] = {numbered = numberd, listin = grpOpt.listin}
     grpOpt.numbered = nil
     grpOpt.listin = nil
-    local bxt = grpOpt.boxtype
+    bxt = grpOpt.boxtype
     if bxt then 
       local boxOpt = cnbx.boxtypes[btx]  
       if bxt ~= stil.boxtype then-- may conflict with style, overrides style

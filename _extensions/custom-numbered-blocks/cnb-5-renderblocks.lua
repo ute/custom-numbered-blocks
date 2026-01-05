@@ -56,7 +56,7 @@ local insertBoxtypesPandoc = function(doc)
            name = key,      -- version = '0.0.1',
            stylesheets = {includefile}
          })
-        else warn("no file "..includefile.." provided")
+        else warning("no file "..includefile.." provided")
         end
      -- else print( 'nothing to include')  
       end  

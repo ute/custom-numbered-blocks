@@ -223,11 +223,11 @@ local function resolveref(data)
             if cnbx.ishtmlbook then 
               href = data[foundid].file .. '.html' .. href 
             end  
-            -- print("found "..foundid.." href "..href.." linktext ".. linktext)  
+           -- print("found "..foundid.." href "..href.." linktext ".. linktext)  
             return pandoc.Link(linktext, href)
         else
-          warning("unknown reference ",foundid, " <=============  inserted ?? instead")
-          return({pandoc.Strong("??"),"->[",foundid,"]"}) --,"]<-",pandoc.Strong("??")})
+          warning("unknown reference "..foundid.. " <=============  inserted ?? instead")
+          return pandoc.Inlines({pandoc.Strong(pandoc.Str("??")), pandoc.Str("->["..foundid.."]") }) --,"]<-",pandoc.Strong("??")})
         end  
       end
     end    
