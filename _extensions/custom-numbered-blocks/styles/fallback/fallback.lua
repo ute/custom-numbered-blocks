@@ -14,9 +14,10 @@ local render = {
   beginBlock = function(ttt)
     local typlabelTag = ttt.typlabelTag
     if #ttt.title > 0 then typlabelTag = typlabelTag..": " end
+    print("block starts "..typlabelTag..pandoc.utils.stringify(ttt.title))
+    print("ttt.title has typ"..pandoc.utils.type(ttt.title))
     return pandoc.Inlines(pandoc.Underline({
-      pandoc.Strong(typlabelTag),
-      pandoc.Str(ttt.title)}))
+      pandoc.Strong(typlabelTag)}..ttt.title))
   end,
   endBlock = function(ttt)
     return {}

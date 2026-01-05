@@ -17,7 +17,7 @@ local filterAttributes = function(el)
 
   
   -- TODO this is only looking at "first" example, for debugging. Remove if-then later
-  if id == "first" then
+  --if id == "first" then
   
   local info = cnbx.xref[id]  
   if info == nil then
@@ -25,16 +25,7 @@ local filterAttributes = function(el)
       return(el)
   end
 
-  print("\n--filter attributes of div "..id)
-  -- for k, v in pairs(el.attributes) do
-  --   print(k..": "..pandoc.utils.stringify(v))
-  -- end  
-
-  --local myattributes = uti.deInline(el.attributes)
-  --print("type of my attributes "..type(myattributes))
-  -- local bty = el.attributes.boxtype
-  -- local sty = el.attributes.style 
-
+  
   -- decision: do not allow changing style or boxtype. 
   -- this can be achieved by grouping instead on a per element base
   -- classes are coherent in their options.
@@ -59,13 +50,19 @@ local filterAttributes = function(el)
   norattribs = {}
   local norendero = {"label", "reflabel", "tag", "style", "boxtype"}
   for k, v in pairs(el.attributes) do
-    if not tablecontains(norendero, k) then
+    if tablecontains(norendero, k) then
         -- print(k..": "..pandoc.utils.stringify(v))
-        rattribs[k] = v
-    else norattribs[k] = v
+        norattribs[k] = v
+    else rattribs[k] = v
     end
   end  
   
+-- too late here, needs to come with crossref
+
+  dev.showtable(norattribs, "no render attributes for "..id)
+  -- make sure to adjust reflabel to label, if label is given but not reflabel
+
+
   -- ignore boxtype, style, color and colors. They cannot be changed per element  
   ignoreargs = ""
   local quotek = ""
@@ -90,40 +87,7 @@ local filterAttributes = function(el)
   --dev.showtable(rattribs, "rattribs")
   --dev.showtable(norattribs, "norattribs")
 
-
-  --[[ deprecated: boxtype will always be given through class
-  -- find boxtype; this determines what arguments to keep
-  if btxopt == nil then
-    if stopt == nil then 
-        bty = clopt.boxtype
-    else bty = stopt.boxtype
-    end
-  else -- bty given, may devalidate style
-    if stopt ~= nil then
-      if bty ~= stopt.boxtype then 
-        stopt = nil 
-        warning("contradiction between style argument and box type") 
-      end
-    end
-  end
-  --]]
-  
-   --[[ deprecate, class defaults are fine
-  local bty = clopt.boxtype
-  bxtopt = cnbx.boxtypes[bty]
-
-  -- get updated default attributes
-  elementattribs = deepcopy(bxtopt.defaultOptions)
-  
  
-  if clopt.boxtype == bty then 
-      elementattribs = uti.updateTable(elementattribs, clopt.options)
-  end
-  if stopt then 
-    defaultattribs = uti.updateTable(defaultattribs, stopt.options)
-  end 
-  --]]
-
   -- dev.showtable(defaultattribs, "kgv attribs")
   -- update with individual attributes
 
@@ -131,25 +95,20 @@ local filterAttributes = function(el)
   elementattribs = uti.updateTable(elementattribs, rattribs)
   -- dev.showtable(defaultattribs, "final options")
   
-  --[[
--- zur kontrolle. Müsste so in xref stehen
-  for k,_ in pairs(norendero) do
-    norclassdef[k] = clopt[k]
-  end
-  norattribs = uti.updateTable(norclassdef, norattribs)
-  -- dev.showtable(norattribs, "final other attributes")
---]]
   -- stackoverflow info = uti.updateTable(info, norattribs)
+  --[[
+  no-render attributes are already set with crossreferencing
   for k, v in pairs(norattribs) do
     info[k] = v
   end
+  ]]--
 
   local bty = elementattribs.boxtype
   info.boxtype = bty
   info.renderoptions = subtable(elementattribs, keynames(cnbx.boxtypes[bty].defaultOptions))
   
-  print("---fertig---")
-  end  -- if first
+  --print("---fertig---")
+  --end  -- if first
 
 end  
 

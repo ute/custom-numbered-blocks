@@ -10,15 +10,15 @@ format:
 
 custom-numbered-blocks:
   styles:  
-    # default:
-    #   boxtype: fallback
+    default:
+      boxtype: foldbox #fallback
     #   colors: [ffffff,aaaaaa] 
     postit:
       boxtype: simpletextbox
-      color: yellow 
+      color: green 
     mixmax:
       boxtype: foldbox
-      colors: [ffffff,aaaaaa] 
+      colors: [aaaaaa, '040404'] 
     quatsch:  
       parent: postit
       color: blue
@@ -29,6 +29,7 @@ custom-numbered-blocks:
   groups:
     todos: # default  
       numbered: false
+      #style: mixmax 
    #   style: postit 
    #   boxtype: fallback 
     mathstuff: default
@@ -40,7 +41,7 @@ custom-numbered-blocks:
   classes:    
     TODO:
    #   style: postit
-   #   boxtype: foldbox
+    #  boxtype: fallback
       collapse: false
       # numbered: true
       #boxtype: foldblock
@@ -59,6 +60,7 @@ crossref:
 
 - [x] make referenceable - this works out of the box, I was sooo clever with the design ;-)
 :::
+Strange enough, it seems I do not need the hand made ankers in pdf anymore?
 
 Hier kommt nothing: \longref{nuttin}
 
@@ -66,14 +68,14 @@ Hier kommt nothing: \longref{nuttin}
 
 Do not allow `div` elements to change boxtype or colours. This is due to the implementations.
 
-::: {.TODO collapse=true}
+::: {.NixDo collapse=true}
 ### Change internal registration of Divs {#firsta}
 This is relatively epic
 :::
 
 
-::: {.TODO boxtype="foldbox" collapse="false" label="To Do" reflabel="ZuTun" tag= "x" style="mixmax"}
-### Change internal registration of Divs {#first}
+::: {.TODO boxtype="foldbox" collapse="false" label="ZuTun" tag= "x" style="mixmax" #foerst }
+### Change internal registration of Divs
 This is relatively epic
 
 - [ ] do not use div attributes, but an internal table
@@ -106,11 +108,13 @@ The div with no title
 For example, to catch duplex identifiers
 :::
 
-::: TODO 
+::: {.TODO .unnumbered}
 # crossreferencing using pandoc
 An epic one, to enable independence of formats.
 Let's see if this is possible. A future thing.
 :::
 
 
-Und jetzt weisen wir noch hin auf das Todo first: \longref{first}
+Und jetzt weisen wir noch hin auf das Todo first: \longref{foerst}
+
+And now cnb-4-TODO: \longref{cnb-4-TODO}

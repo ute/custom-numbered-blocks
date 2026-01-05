@@ -78,7 +78,7 @@ return{
   ----, require("cnb-test1") so funktioniert das nicht
  
   , require("cnb-4-prepare-render")
---  , require("cnb-5-renderblocks")  
+  , require("cnb-5-renderblocks")  
   --  , require("cnb-6-listof")  
 
 ---- , {Div = Divs_getid, Pandoc = Pandoc_preparexref}

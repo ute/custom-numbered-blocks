@@ -1,6 +1,8 @@
 -- TODO split into formats and render, eventually
 
 uti = require "cnb-utilities"
+local ifelse = uti.ifelse
+
 cnbx = require "cnb-global"
 colut = require "cnb-colors"
 
@@ -11,7 +13,7 @@ local warning = uti.warning
 local colorCSSTeX = colut.colorCSSTeX_legacy
 
 --[[
-local ifelse = uti.ifelse
+
 local replaceifnil = uti.replaceifnil
 local replaceifempty = uti.replaceifempty
 local str_md = uti.str_md
@@ -66,11 +68,13 @@ local insertBoxtypesPandoc = function(doc)
   end  
 
   if preamblestuff then quarto.doc.include_text("in-header", preamblestuff) end
+  -- dev.showtable(cnbx.xref["first"],"hier sind wir in step 5")
+  
   return(doc)
 end;
 
 
-renderDiv = function(thediv) 
+oldrenderDiv = function(thediv) 
   -- Done: change for individual style   
   local A = thediv.attributes
   local tt = {}
@@ -102,6 +106,76 @@ renderDiv = function(thediv)
     table.insert(thediv.content, endBlock)
     
    -- print("----")
+  end  
+  return(thediv)
+end -- function renderDiv
+
+renderDiv = function(thediv) 
+  -- Done: change for individual style   
+ -- local A = thediv.attributes
+  local tt
+  local blinfo
+  local bty
+  local rendr
+  local id
+  
+  -- if A._fbxclass ~= nil then -- has been tagged as cunumblo
+  if cnbx.is_cunumblo(thediv) then
+    id = thediv.identifier
+      blinfo = cnbx.xref[id]
+    
+-- dev.showtable(blinfo, "the blinfo of "..id)
+-- dev.showtable(cnbx.xref[id], "the xref of "..id)
+
+
+    tt = {id = id,
+      type = blinfo.cnbclass, 
+      tag = blinfo.refnumber,
+      title = pandoc.Inlines(blinfo.pandoctitle), 
+      typlabel = blinfo.label,
+      typlabelTag = blinfo.label .. ifelse(blinfo.refnumber == "",""," "..blinfo.refnumber),
+      mdtitle = blinfo.mdtitle, 
+      options = blinfo.renderoptions,
+      -- boxtype = "default", -- TODO here
+      link = thelink
+    } 
+   
+    -- dev.showtable(tt, "tt for "..thediv.identifier)
+   
+    bty = cnbx.classDefaults[blinfo.cnbclass].boxtype
+    print("render "..tt.id.." as ".. bty)
+    rendr = cnbx.boxtypes[bty].render
+    local beginBlock = rendr.beginBlock(tt)
+    local endBlock = rendr.endBlock(tt)
+    
+    -- collapsstr = str(A._collapse)
+
+    --[[
+    tt = tt_from_attributes_id(A, thediv.identifier)
+    
+    -- local fmt=cnbx.fmt
+    -- if fmt=="pdf" then fmt = "tex" end;
+    
+    tt.boxtype = cnbx.classDefaults[tt.type].boxtype
+    
+    --print("trying to render soemthing ".. tt.boxtype)
+    --dev.tprint (cnbx.boxtypes)
+    --print( "%%%%%%%%%%%%%%%")
+    local rendr = cnbx.boxtypes[tt.boxtype].render
+    
+    local beginBlock = rendr.beginBlock(tt)
+    local endBlock = rendr.endBlock(tt)
+    
+    -- diagnostics
+    --print(" the div " .. thediv.identifier.. " has content lrngth "..#thediv.content.. " and type of first entry is "
+    --     .. str(thediv.content[1].t))
+    --print(" beginblock has length ".. #beginBlock)     
+     --   print("inserting in plain content")
+   ]]--  
+    table.insert(thediv.content, 1, beginBlock)
+    table.insert(thediv.content, endBlock)
+    
+   
   end  
   return(thediv)
 end -- function renderDiv

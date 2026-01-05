@@ -117,89 +117,21 @@ local doCounting = function(el)
       end
       
       -- getting reflabel and label
-      reflabel = el.attributes.reflabel
-      if reflabel == nil then
-        reflabel = ClassDef.reflabel
-      end
-      info.reflabel = reflabel
-      
       label = el.attributes.label
       if label == nil then
         label = ClassDef.label
       end
       info.label = label
       
+      reflabel = el.attributes.reflabel
+      if reflabel == nil then
+        reflabel = info.label
+      end
+      info.reflabel = reflabel
+      
+      
     --  print("counted a cnbx "..info.reflabel.." "..info.refnumber)
-  --[[
-    
-      -- debugging
-      local refset = el.attributes.reflabel
-      if refset then 
-        dev.showtable(ClassDef,"class definitions")
-        dev.showtable(el.attributes, "original element attributes")
-      end
-
-
-      newattribs = deepcopy(el.attributes)
-      -- TODO: remove comment later
-      for k, _ in pairs(newattribs) do
-        if string.sub(k, 1, 1) =="_" then newattribs[k] = nil end
-      end
-      --debugging
-      if refset then 
-        dev.showtable(newattribs, "cleaned element attributes")
-      end
-     
-      -- if box type is different from ClassDef, make new box attributes by updating Boxtype attributes with class attributes
-      -- otherwise add class attributes as attributes
-      --attribs = uti.updateTable(ClassDef, newattribs)
-      bxty = newattribs.boxtype -- will most often be nil
-      if bxty then
-        if ClassDef.boxtype ~= bxty then
-           print("--- >  update by  box type")
-           BoxDef = deepcopy(cnbx.boxtypes[bxty].defaultOptions)
-           dev.showtable(BoxDef, "the boxtype defaults")
-           UseAttribs = uti.filterTable(ClassDef, BoxDef)
-           dev.showtable(UseAttribs, "kept in Attributes after filtering ")
-        end
-      else UseAttribs = ClassDef  
-      end  
-      
-      -- UseAttribs = uti.updateTable(newattribs, UseAttribs)
-      -- if refset then 
-      --   dev.showtable(UseAttribs, "merged element attributes")
-      -- end
-     
-      -- update with elementwise defined attributes
-
-      -- attribs = uti.updateTable(newattribs, ClassDef)
-      -- if refset then 
-      --   dev.showtable(attribs, "merged element attributes")
-      -- end
-     
-
-      --[[
-      
-     
-      
-      if refset then dev.showtable(newerattribs, "element attributes after update") end
-      bxty = newerattribs.boxtype -- will most often be nil
-      -- update with class defaults, and if there is a different boxtype, with boxtype defaults
-      --newattribs = uti.updateTable(ClassDef, attribs)
-      -- TODO later uncomment
-      --attribs.cntname = nil 
-      --attribs.group = mil
-      -- if bxty then
-      --   if ClassDef.boxtype ~= bxty then
-      --     BoxDef = uti.updateTable(cnbx.boxtypes[bxty],{})
-      --     if BoxDef then
-      --       uti.updateTable(BoxDef, newattribs)
-      --     else
-      --       uti.warn("boxtype "..bxty.." specified but not registered")
-      --     end    
-      -- end end      
-      -- -- print("use counter "..cntkey)
---]] 
+  
       
     end
   end
@@ -238,7 +170,6 @@ end
 local writexref = function(filename)
   --print("writing the xref "..filename)
   -- if cnbx.isbook then
-  --local xref = cnbx.xref
   local strippedxref ={} -- this is necessary because quarto.json cannot handle pandoc Inlines   
   
   for k, v in pairs(cnbx.xref) do
@@ -274,6 +205,7 @@ end
 
 numberingfilter.Pandoc = function(doc)
 --  readxref()
+  dev.showtable(cnbx.groupDefaults, "group defaults")
   dev.showtable(cnbx.xref, "xref")
   doc:walk {Block = doCounting}
   -- doc:walk {RawInline = resolveref}
