@@ -22,17 +22,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ]]--
 
+--[[
+
+initialize storage for box types, styles, groups, block classes.
+
+]]--
+
+
 -- shortcuts
 local str = pandoc.utils.stringify
 
 cnbx = require "cnb-global"
 
-cnbx.ute="huhn"
-
 ute1 = require "cnb-utilities"
 dev = require "devutils"
 
-local deInline = ute1.deInline
 local tablecontains = ute1.tablecontains
 local updateTable = ute1.updateTable
 local ifelse = ute1.ifelse
@@ -43,22 +47,13 @@ local warn = ute1.warn
 --local replaceifempty = ute1.replaceifempty
 
 
+---------- handling box types ------------
 
 
 -- screen all entries in custom-numbered-blocks yaml for rendering styles.
 -- check if found and add to list
-
+-- uses global function gatherentries from cnb-utilities
 local initBoxTypes = function (cnbyaml)
-  agatherboxtypes = function(tbl, returnval)
-    if tbl ~= nil then 
-        for k, v in pairs(tbl) do
-          if k == "boxtype" then
-             returnval[str(v)] = true
-          elseif type(v) == "table" then  gatherboxtypes(v, returnval) 
-          end
-        end
-      end
-  end
   local findlua, fnamstr, fallbackcopy
   local allboxtypes, validboxtypes = {}, {}
   local defbx = cnbx.styles.default.boxtype
@@ -67,11 +62,7 @@ local initBoxTypes = function (cnbyaml)
   gatherentries(cnbyaml.groups, allboxtypes, "boxtype")
   gatherentries(cnbyaml.classes, allboxtypes, "boxtype")
   
-  -- gatherboxtypes(cnbyaml.styles, allboxtypes)
-  -- gatherboxtypes(cnbyaml.groups, allboxtypes)
-  -- gatherboxtypes(cnbyaml.classes, allboxtypes)
-  
-  -- ensure default box type is included in the collection of box types
+    -- ensure default box type is included in the collection of box types
   allboxtypes[defbx] = true
 
   defaultlua = findFile(defbx..".lua",{"styles/","styles/"..defbx.."/"})
@@ -83,7 +74,7 @@ local initBoxTypes = function (cnbyaml)
     quarto.log.error("Code for default box type "..defbx.." is not available")
   end
 
-  -- include fallback
+  -- include fallback style
   allboxtypes.fallback = true
   
   -- verify if boxtypes actually exist. otherwise replace by fallback
@@ -93,7 +84,7 @@ local initBoxTypes = function (cnbyaml)
     fnamstr = str(k)
     findlua = findFile(fnamstr..".lua",{"styles/","styles/"..fnamstr.."/"})
     if not findlua.found then 
-      warn ("boxstyle "..fnamstr.." not found, replace by default ") 
+      warn ("code for boxtype "..fnamstr.." not found, replace by default ") 
       findlua = defaultlua
       allboxtypes[k] = false -- if this is of interest later
     end
@@ -108,24 +99,25 @@ local initBoxTypes = function (cnbyaml)
     validboxtypes[k] = findlua 
   end  
   
-  dev.showtable(allboxtypes, "all box types wanted")
+  -- dev.showtable(allboxtypes, "all box types wanted")
   
-  -- replace missing functions by fallback version
+  -- replace missing functions in contributed box type code by fallback version
   for _, v in pairs(validboxtypes) do
     fallbackcopy = deepcopy(validboxtypes["fallback"].render)
     v.render = updateTable(fallbackcopy, v.render)
   end
 
--- print("---------")
---   dev.tprint(validboxtypes)
--- print("---------")
+  -- dev.showtable(validboxtypes)
 
   cnbx.boxtypes = validboxtypes
 
 end
 
 
---- register box styles for rendering. 
+---------- handling styles ------------
+
+
+--- register block styles for rendering. 
 --- analyze the yaml, check if styles can be found, include them in cnbx
 --- in all cases set up styles/default, if no custom style is given
 --- no return value, but side effect
@@ -134,15 +126,16 @@ local initStyles = function (cnbyaml)
   local basestyles, allstyles = {}, {}
   --local minimaldefault = cnbx.styles.default --{boxtype = cnbx.defaultboxtype}
   local vv, vp
-  local styOpt
+  --local styOpt
 
   -- first find those without parent style, then set up child styles
   if sty == nil then 
     basestyles = {default = cnbx.styles.default}
   else
+    -- dev.showtable(sty, "styles yaml")
     if type(sty) == "table" then
     for k, v in pairs(sty) do
-      vv = deInline(v)
+      vv = v --deInline(v)
       if vv.parent == nil then -- print("no parent") 
         basestyles[k] = vv
       end
@@ -153,7 +146,7 @@ local initStyles = function (cnbyaml)
     end
     -- next round: fill with defaults
     for k, v in pairs(sty) do
-      vv = deInline(v)
+      vv = v --deInline(v)
       if vv.parent ~= nil then
         vp = basestyles[vv.parent]
         basestyles[k] = updateTable(vp, vv)
@@ -166,107 +159,51 @@ local initStyles = function (cnbyaml)
   for _, v in pairs(basestyles) do
     if v.boxtype == nil then v.boxtype = cnbx.styles.default.boxtype end
   end
+ -- dev.showtable(basestyles, "all base styles")
 
-  --dev.showtable(basestyles, "all base styles")
+  allstyles = deepcopy(basestyles)
 
-  -- ensure that options are compatible with boxtype, 
-  -- and sort into boxtype and options. 
-  -- Then update with default 
-
-  for k, v in pairs(basestyles) do
-    --dev.showtable(v, k)
-    allstyles[k] = {boxtype = v.boxtype}
-    styOpt = deepcopy(v)
-    styOpt.boxtype = nil
-    local boxOpt = cnbx.boxtypes[v.boxtype].defaultOptions
-    styOpt = ute1.filterTable(styOpt, boxOpt)
-    styOpt = ute1.updateTable(boxOpt, styOpt)
-    if styOpt.numbered ~= nil then 
-      allstyles[k].numbered = styOpt.numbered
-      styOpt.numbered = nil
-    end  
-    allstyles[k].options = styOpt
   end
-  end
-   
   cnbx.styles = allstyles
 end
 
 
-local groups ={}
+---------- handling groups ------------
+
+local groups = {}
 
 local initGroupDefaults = function(cnbyaml)
   local grps = cnbyaml.groups
-  local groups0 = {}
-  local vv
-  local grpOpt
+  --local vv
+  --local grpOpt
   
   -- first find those without parent style, then set up child styles
+  -- expand groups that are just defined as default
   if grps ~= nil then 
     if type(grps) == "table" then
       for k, v in pairs(grps) do
-        vv = deInline(v)
-        groups0[k] = vv
+        groups[k] = deepcopy(v)
       end
     end
-    for _, v in pairs(groups0) do
-      if v.style == nil then v.style = "default" end
+    
+    -- make sure that all groups are welldefined, expand "default"
+    for k, v in pairs(groups) do
+      if type(v) ~= "table" then
+        if str(v) == "default" then 
+          print(k.." is default") 
+          v = {style = "default", numbered = true}
+          groups[k] = v
+        end
+      elseif v.style == nil then v.style = "default" 
+      end
     end
   end
   
-  -- ensure that options are compatible with boxtype, 
-  -- and sort into boxtype and options. 
-  -- Then update with default 
-
-  for k, v in pairs(groups0) do
-    --dev.showtable(v, k)
-    local stil = cnbx.styles[v.style]
-    local stylOpt = stil.options
-    --dev.showtable(stil,"style")
-    grpOpt = deepcopy(v)
-    grpOpt.style = nil
-    local numberd = replaceifnil(grpOpt.numbered, stil.numbered)
-    --print("is numbered: "..numberd)
-    -- TODO: listin
-    groups[k] = {numbered = numberd, listin = grpOpt.listin}
-    grpOpt.numbered = nil
-    grpOpt.listin = nil
-    local bxt = grpOpt.boxtype
-    if bxt then 
-      local boxOpt = cnbx.boxtypes[btx]  
-      if bxt ~= stil.boxtype then-- may conflict with style, overrides style
-        --print("has boxtype "..bxt)
-        if boxOpt ~= nil then 
-          stylOpt = ute1.filterTable(stylOpt, boxOpt)
-          stylOpt = ute1.updateTable(boxOpt, stylOpt)
-        else 
-          stylOpt = nil  
-        end  
-        groups[k].style = nil
-        groups[k].boxtype = bxt
-      end
-    else 
-      groups[k].boxtype = cnbx.styles[v.style].boxtype
-    --  print("makkeboxtyp")
-    end
-    -- update style options for group from remaining options
-    if stylOpt ~= nil then
-      grpOpt = ute1.filterTable(grpOpt, stylOpt)
-      grpOpt = ute1.updateTable(stylOpt, grpOpt)
-    end  
-    grpOpt.boxtype=nil
-    groups[k].options = grpOpt
-  end  
-  --dev.showtable(groups, "all groups style only")
-  
--- muligvis pjat
-      
-  if groups.default == nil then 
-    groups.default = deepcopy(cnbx.styles.default)
-  end
-
-  cnbx.groupDefaults = groups
+  cnbx.groupDefaults = groups  
 end
+
+
+------------- classes -------------
 
 
 --- "function factory" that detects if a pandoc Div has one of the classes given
@@ -281,20 +218,6 @@ local makeKnownClassDetector = function (knownclasses)
   end
 end  
 
-
--- move option numbered from options to main
-local movenumbered = function(tble)
-  if type(tble) ~= "table" then print("oehmpf")
-  return(tble) end
-  if tble.numbered == nil then
-    if tble.options.numbered ~= nil then
-      tble.numbered = tble.options.numbered
-      tble.options.numbered = nil
-    else tble.numbered = true
-    end
-  end
-  return(tble)
-end
 
 --- Initialize known custom numbered block classes, and their defaults
 --- needs to be adapted later to styles
@@ -320,7 +243,7 @@ local initClassDefaults = function (cunumbl)
   --]] 
 
   cnbx.classDefaults ={}
-  local groupDefaults= cnbx.groupDefaults -- saves a little bit
+  -- local groupDefaults= cnbx.groupDefaults -- saves a little bit
   --dev.showtable(groupDefaults,"Groupdefaults")
   --dev.showtable(defaultGroup, "defaultgruppe")
 
@@ -333,132 +256,80 @@ local initClassDefaults = function (cunumbl)
         return     
   end
   
--- deInline: simplified copy of yaml data: inlines to string
 -- update default values with boxtype defaults and style defaults
-  
+   local clinfo = {}
 
   for key, val in pairs(cunumbl.classes) do
     -- print("class key "..key)
 
-    local clinfo = deInline(val)
+    clinfo = deepcopy(val) --deInline(val)
     -- print("0 class info numbered "..replaceifnil(clinfo.numbered,"not given"))
     
   --  pout("==== before after =======");  pout(clinfo)
     -- classinfo[key] = deInline(val)
     table.insert(cnbx.knownclasses, str(key))
-    local theGroup = replaceifnil(clinfo.group, "default")
+     
+    -- check if class is set to " default". If yes, set to an empty table to be filled with defaults
+    if type (clinfo) ~= "table" then 
+      if str(clinfo) == "default" then clinfo = {style = "default", numbered = true} else
+        warn("definition of class "..key..' should be a table or the string "default"')
+      end  
+    end
+
     -- check if a style is defined for the class, and if yes, respect it
     -- if it is different from the group, only use the group for counting,
     -- do not add superflous key value pairs
-    local groupDef = deepcopy(groupDefaults[theGroup])
-    -- print("0 group info numbered "..replaceifnil(groupDef.numbered,"not given"))
-    
     -- first update class from group, then from style if given, then from boxtype if given.
-    local ggroup = clinfo.group
-    local gstyle = clinfo.style
-    local gboxtype = clinfo. boxtype
+   
+    -- dev.showtable(clinfo, "virgin clinfo "..key)
+   
     local gropt, stylopt, boxopt
     --if key == "TODO" then 
       --dev.showtable(clinfo, "original class info")
     
-    -- divide into keepers and options
-    if ggroup then
-      gropt = cnbx.groupDefaults[ggroup]
-      --dev.showtable(gropt, "group defaults")
-      clinfo = ute1.updateTable(gropt, clinfo)
+    local ggroup = clinfo.group
+    if ggroup ~= nil then
+      gropt = deepcopy(cnbx.groupDefaults[ggroup])
+      clinfo = updateTable(gropt, clinfo)
     end
     
-    --dev.showtable(clinfo, " class info update by group", {})
-
-    if gstyle then
-      stylopt = cnbx.styles[gstyle]
-      --dev.showtable(stylopt, "style defaults")
-      if stylopt.boxtype then if stylopt.boxtype ~= clinfo.boxtype then stylopt.boxtype = nil end end
-      clinfo = ute1.updateTable(stylopt, clinfo, {"options"})
-          end
-    --dev.showtable(clinfo, " class info update by group and style", {})
-
-    if gboxtype then
-      boxopt = cnbx.boxtypes[gboxtype].defaultOptions
-      --dev.showtable(boxopt, "box defaults")
-      clinfo.options = ute1.filterTable(clinfo.options, boxopt)
-      clinfo.options = ute1.updateTable(boxopt, clinfo.options)
-      if not clinfo.numbered then clinfo.numbered = clinfo.options.numbered end
-      clinfo.options.numbered = nil
+ --   dev.showtable(clinfo, " class info update by group", {})
+    local gstyle = clinfo.style
+    if gstyle ~= nil  then
+      stylopt = deepcopy(cnbx.styles[gstyle])
+      clinfo = updateTable(stylopt, clinfo)
     end
-    --dev.showtable(clinfo, " class info update by group and style and boxtype", {})
-
-  --end
---[[
-    if gboxtype then 
-      local boxOpt = cnbx.boxtypes[btx]  
-      if bxt ~= stil.boxtype then-- may conflict with style, overrides style
-        print("has boxtype "..bxt)
-        if boxOpt ~= nil then 
-          stylOpt = ute1.filterTable(stylOpt, boxOpt)
-          stylOpt = ute1.updateTable(boxOpt, stylOpt)
-        else 
-          stylOpt = nil  
-        end  
-        groups[k].style = nil
-        groups[k].boxtype = bxt
-      end
-    else 
-      groups[k].boxtype = cnbx.styles[v.style].boxtype
-    --  print("makkeboxtyp")
-    end
-    -- update style options for group from remaining options
-    if stylOpt ~= nil then
-      grpOpt = ute1.filterTable(grpOpt, stylOpt)
-      grpOpt = ute1.updateTable(stylOpt, grpOpt)
-    end  
-    grpOpt.boxtype=nil
-]]--
-    -- if ggroup then
-    --   local ggrpDef = deepcopy(groupDefaults[ggroup])
-    --   updateTable(clinfo) 
-    -- end  
-
-    --dev.showtable(clinfo, "virgin clinfo "..key)
-    local bst = clinfo.style
-    if bst ~= nil then 
-     -- print("bst = "..bst)
-     -- first update from general styles
-      if bst ~= groupDef.style then
-        if cnbx.styles[bst] == nil then warn("style "..bst.." not defined")
-        else  clinfo = updateTable(cnbx.styles[bst], clinfo)  end
-    end end
-    -- then update from group
-    if bst==nil or bst == groupDef.style then
-      clinfo = updateTable(groupDef, clinfo)
-    end
-    --dev.showtable(clinfo, "clinfo "..key.." updated by group defaults")
+ --   dev.showtable(clinfo, " class info update by group and style", {})
     
-   --rint("1 class info numbered "..replaceifnil(clinfo.numbered,"not given"))
-    -- now check boxtype ==
-    local bxty = clinfo.boxtype
-    if bxty ~= nil then if bxty ~= groupDef.boxtype then
-       if bxty~= cnbx.styles[clinfo.style].boxtype then
-        clinfo.style = nil
-      -- print("===> update class info "..key.." according to box type "..bxty)
-      local boxDef = deepcopy(cnbx.boxtypes[bxty].defaultOptions)
-      -- dev.showtable(boxDef, "the box defaults")
-      --dev.showtable(clinfo, "the clinfo before "..key)
-      clinfo.options = ute1.filterTable(clinfo.options, boxDef)--, {"group","label","boxtype","numbered"})--, "style"})
-      clinfo.options = updateTable(boxDef, clinfo.options)
-      -- old style not working anymore if new boxtype
-      --dev.showtable(clinfo, "clinfo after")
-    end end end
-
+    local gboxtype = clinfo.boxtype
+    if gboxtype  ~= nil then
+      boxopt = deepcopy(cnbx.boxtypes[gboxtype].defaultOptions)
+      clinfo = updateTable(boxopt, clinfo)
+     end
+   
     clinfo.label = replaceifnil(clinfo.label, str(key))
     clinfo.reflabel = replaceifnil(clinfo.reflabel, clinfo.label)
     
     -- assign counter --  
     clinfo.cntname = replaceifnil(clinfo.group, str(key))
     cnbx.counter[clinfo.cntname] = 0 -- sets the counter up if non existing
+    
+  --dev.showtable(clinfo, "updated clinfo "..key)
+  
+-- now remove all unnecessary entries 
+    local keepkeys = {"cntname","numbered", "label", "reflabel", "group", "boxtype"}
+    local boxoptionkeys = keynames(cnbx.boxtypes[clinfo.boxtype].defaultOptions)
+    for _,v in pairs(boxoptionkeys) do table.insert(keepkeys, v) end
+   -- print(" keep "..table.concat(keepkeys, " , "))
+    clinfo = subtable(clinfo, keepkeys)
+    -- dev.showtable(clinfo, " final clinfo")
+    
     cnbx.classDefaults[key] = clinfo
- -- pout("---class----");  pout(clinfo)
   end 
+    
+------ end of making class defaults ---
+
+
   cnbx.is_cunumblo = makeKnownClassDetector(cnbx.knownclasses)
 -- gather lists-of and make filenames by going through all classes
   for _, val in pairs(cnbx.classDefaults) do
@@ -475,62 +346,35 @@ local initClassDefaults = function (cunumbl)
     val.contents = ifelse(cnbx.isfirstfile, "\\providecommand{\\Pageref}[1]{\\hfill p.\\pageref{#1}}", "")
   -- listin approach does not require knownclass, since listin is in classdefaults
   end
- -- pout(cnbx.lists)
-  --]]
+ 
 -- document can give the chapter number for books in yaml header 
 -- this becomes the counter Prefix
 end
 
 
---- extract custom-numbered-block yaml from meta, according to Michael Canouils new policies
---- https://mickael.canouil.fr/posts/2025-11-06-quarto-extensions-lua/
---- still allowing the old syntax, with 1st level custom-numbered-blocks key
---- @param meta table document meta information
---- @return table cnby: part of meta that belongs to custom-numbered-blocks 
-function cunumblo_yaml(meta)
-  local cnby = meta["custom-numbered-blocks"]
-  if not cnby then
-    local extensions_yaml = meta.extensions
-    if extensions_yaml then
-      cnby = extensions_yaml["custom-numbered-blocks"] 
-    else
-      cnby = nil
-    end
-  end  
-  if not cnby then
-      quarto.log.warning("== @%!& == Warning == &!%@ ==\n missing cunumblo key in yaml")
-      return{}
-    else 
-      return cnby
-    end
-end
-
-
-
 return{
 Meta = function(meta)
   
-  cnbx.yaml = cunumblo_yaml(meta)
-
-  -- print("1. Init Meta")
+ -- print("1. Init Meta")
   if cnbx.yaml then 
+   -- dev.showtable(cnbx.yaml, " yaml table")
  -- reset default style if given 
     if cnbx.yaml.styles then 
-      local userdefault = deInline(cnbx.yaml.styles.default)
+      local userdefault = cnbx.yaml.styles.default
       if userdefault then
       -- replace default style by user defined
         cnbx.styles.default = updateTable(cnbx.styles.default, userdefault) 
       end
     end
-    -- dev.showtable(cnbx.styles.default, "default style")
+   --  dev.showtable(cnbx.styles.default, "default style")
     initBoxTypes(cnbx.yaml)
-  --   dev.showtable(cnbx.boxtypes, "boxtypes")
+  --  dev.showtable(cnbx.boxtypes, "boxtypes")
     initStyles(cnbx.yaml)
-   --dev.showtable(cnbx.styles, "styles")
+    -- dev.showtable(cnbx.styles, "styles")
     initGroupDefaults(cnbx.yaml)
-   -- dev.showtable(cnbx.groupDefaults, "groups") 
+    --dev.showtable(cnbx.groupDefaults, "groups") 
     initClassDefaults(cnbx.yaml) 
-   --  dev.showtable(cnbx.classDefaults, "classFefaults")
+    -- dev.showtable(cnbx.classDefaults, "classDefaults")
   end
 -- dev.showtable(cnbx, "cnbx")
   return(meta)

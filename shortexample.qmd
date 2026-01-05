@@ -30,7 +30,7 @@ custom-numbered-blocks:
     todos: # default  
       numbered: false
       style: postit 
-      boxtype: fallback 
+   #   boxtype: fallback 
     mathstuff: default
     BLOWDZINN:
       numbered: false
@@ -42,7 +42,7 @@ custom-numbered-blocks:
       style: postit
       #boxtype: simpletextbox\
       # numbered: true
-      boxtype: foldblock
+      #boxtype: foldblock
       label: "To do"
       group: todos
     NixDo: default

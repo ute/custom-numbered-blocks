@@ -1,0 +1,18 @@
+---
+format: native
+filters:
+  - devstuff
+
+# custom-numbered-blocks:
+#    styles:
+#       default:
+#         color: 0909190
+#         boxtype: "fallback"
+#       postit: [color="yellow", boxtype="simpletextbox"]
+#       test:
+#         - color : green
+#         - nothin : real
+
+---   
+
+Text

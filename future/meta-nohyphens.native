@@ -1,0 +1,61 @@
+Pandoc
+  Meta
+    { unMeta =
+        fromList
+          [ ( "custom-numbered-blocks"
+            , MetaMap
+                (fromList
+                   [ ( "styles"
+                     , MetaMap
+                         (fromList
+                            [ ( "default"
+                              , MetaMap
+                                  (fromList
+                                     [ ( "boxtype"
+                                       , MetaInlines [ Str "fallback" ]
+                                       )
+                                     , ( "color"
+                                       , MetaInlines [ Str "909190" ]
+                                       )
+                                     ])
+                              )
+                            , ( "postit"
+                              , MetaList
+                                  [ MetaInlines
+                                      [ Str "color="
+                                      , Quoted
+                                          DoubleQuote [ Str "yellow" ]
+                                      ]
+                                  , MetaInlines
+                                      [ Str "boxtype="
+                                      , Quoted
+                                          DoubleQuote
+                                          [ Str "simpletextbox" ]
+                                      ]
+                                  ]
+                              )
+                            , ( "test"
+                              , MetaList
+                                  [ MetaInlines
+                                      [ Str "color"
+                                      , Space
+                                      , Str "="
+                                      , Space
+                                      , Str "green"
+                                      ]
+                                  , MetaInlines
+                                      [ Str "nothin"
+                                      , Space
+                                      , Str "="
+                                      , Space
+                                      , Str "real"
+                                      ]
+                                  ]
+                              )
+                            ])
+                     )
+                   ])
+            )
+          ]
+    }
+  [ Para [ Str "Text" ] ]
