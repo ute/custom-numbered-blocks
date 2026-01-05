@@ -34,17 +34,17 @@ local str = pandoc.utils.stringify
 
 cnbx = require "cnb-global"
 
-ute1 = require "cnb-utilities"
+uti = require "cnb-utilities"
 dev = require "devutils"
 
-local tablecontains = ute1.tablecontains
-local updateTable = ute1.updateTable
-local ifelse = ute1.ifelse
-local replaceifnil = ute1.replaceifnil
-local findFile = ute1.findFile
-local warn = ute1.warn
+local tablecontains = uti.tablecontains
+local updateTable = uti.updateTable
+local ifelse = uti.ifelse
+local replaceifnil = uti.replaceifnil
+local findFile = uti.findFile
+local warning = uti.warning
 
---local replaceifempty = ute1.replaceifempty
+--local replaceifempty = uti.replaceifempty
 
 
 ---------- handling box types ------------
@@ -84,7 +84,7 @@ local initBoxTypes = function (cnbyaml)
     fnamstr = str(k)
     findlua = findFile(fnamstr..".lua",{"styles/","styles/"..fnamstr.."/"})
     if not findlua.found then 
-      warn ("code for boxtype "..fnamstr.." not found, replace by default ") 
+      warning ("code for boxtype "..fnamstr.." not found, replace by default ") 
       findlua = defaultlua
       allboxtypes[k] = false -- if this is of interest later
     end
@@ -95,6 +95,7 @@ local initBoxTypes = function (cnbyaml)
     --  print(thelua.stilnam)
     --   dev.tprint(thelua)
     findlua.defaultOptions = thelua.defaultOptions
+    -- findlua.optionkeys = keynames(thelua.defaultOptions) better to construct this on the fly, otherwise it may get overwritten
     findlua.render = thelua[cnbx.fmt]
     validboxtypes[k] = findlua 
   end  
@@ -148,7 +149,7 @@ local initStyles = function (cnbyaml)
     for k, v in pairs(sty) do
       vv = v --deInline(v)
       if vv.parent ~= nil then
-        vp = basestyles[vv.parent]
+        vp = deepcopy(basestyles[vv.parent])
         basestyles[k] = updateTable(vp, vv)
         basestyles[k].parent = nil
       end
@@ -252,7 +253,7 @@ local initClassDefaults = function (cunumbl)
   -- ! unnumbered not for classes that have unnumbered as default !
   -- cnbx.counterx = {}
   if cunumbl.classes == nil then
-        quarto.log.warning("== @%!& == Warning == &!%@ ==\n wrong format for fboxes yaml: classes needed")
+        warning("@%!& == &!%@ ==\n wrong format for fboxes yaml: classes needed")
         return     
   end
   
@@ -272,7 +273,7 @@ local initClassDefaults = function (cunumbl)
     -- check if class is set to " default". If yes, set to an empty table to be filled with defaults
     if type (clinfo) ~= "table" then 
       if str(clinfo) == "default" then clinfo = {style = "default", numbered = true} else
-        warn("definition of class "..key..' should be a table or the string "default"')
+        warning("definition of class "..key..' should be a table or the string "default"')
       end  
     end
 
@@ -299,14 +300,18 @@ local initClassDefaults = function (cunumbl)
       stylopt = deepcopy(cnbx.styles[gstyle])
       clinfo = updateTable(stylopt, clinfo)
     end
- --   dev.showtable(clinfo, " class info update by group and style", {})
+    -- dev.showtable(clinfo, " class info "..key.. " update by group and style")
     
     local gboxtype = clinfo.boxtype
+    -- there has to be a boxtype, otherwise
     if gboxtype  ~= nil then
       boxopt = deepcopy(cnbx.boxtypes[gboxtype].defaultOptions)
       clinfo = updateTable(boxopt, clinfo)
-     end
-   
+    else warning("class "..key.." has no boxtype. Please file an issue on gh :-)")
+    end
+
+    -- dev.showtable(clinfo, " class info "..key.. " update by boxtype")
+  
     clinfo.label = replaceifnil(clinfo.label, str(key))
     clinfo.reflabel = replaceifnil(clinfo.reflabel, clinfo.label)
     
@@ -318,8 +323,8 @@ local initClassDefaults = function (cunumbl)
   
 -- now remove all unnecessary entries 
     local keepkeys = {"cntname","numbered", "label", "reflabel", "group", "boxtype"}
-    local boxoptionkeys = keynames(cnbx.boxtypes[clinfo.boxtype].defaultOptions)
-    for _,v in pairs(boxoptionkeys) do table.insert(keepkeys, v) end
+    local optionkeys = keynames(cnbx.boxtypes[clinfo.boxtype].defaultOptions)
+    for _,v in pairs(optionkeys) do table.insert(keepkeys, v) end
    -- print(" keep "..table.concat(keepkeys, " , "))
     clinfo = subtable(clinfo, keepkeys)
     -- dev.showtable(clinfo, " final clinfo")

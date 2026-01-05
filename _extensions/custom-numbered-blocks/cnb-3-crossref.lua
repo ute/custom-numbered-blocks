@@ -2,8 +2,10 @@
   number cunumblos and create prefixes, and gather attributes
 ]]--
 
-ute1 = require("cnb-utilities")
-local ifelse = ute1.ifelse
+uti = require("cnb-utilities")
+local ifelse = uti.ifelse
+local warning = uti.warning
+
 dev = require("devutils")
 
 local numberingfilter={}
@@ -49,7 +51,7 @@ local doCounting = function(el)
   local cls 
   local cntkey, cnts, ClassDef, reflabel
   local prefixstr =""
-  local bxty, BoxDef, newattribs, UseAttribs
+  --local bxty, BoxDef, newattribs, UseAttribs
   
   ---------- headers ---------
   if el.t == "Header" then
@@ -93,7 +95,7 @@ local doCounting = function(el)
       -- info.attribs = attribs
 
       info.cnbclass = cls
-      if ute1.hasclass(el, "unnumbered") then
+      if uti.hasclass(el, "unnumbered") then
         info.prefix = ""
         info.counter = ""
         info.refnumber = ""
@@ -149,27 +151,27 @@ local doCounting = function(el)
      
       -- if box type is different from ClassDef, make new box attributes by updating Boxtype attributes with class attributes
       -- otherwise add class attributes as attributes
-      --attribs = ute1.updateTable(ClassDef, newattribs)
+      --attribs = uti.updateTable(ClassDef, newattribs)
       bxty = newattribs.boxtype -- will most often be nil
       if bxty then
         if ClassDef.boxtype ~= bxty then
            print("--- >  update by  box type")
            BoxDef = deepcopy(cnbx.boxtypes[bxty].defaultOptions)
            dev.showtable(BoxDef, "the boxtype defaults")
-           UseAttribs = ute1.filterTable(ClassDef, BoxDef)
+           UseAttribs = uti.filterTable(ClassDef, BoxDef)
            dev.showtable(UseAttribs, "kept in Attributes after filtering ")
         end
       else UseAttribs = ClassDef  
       end  
       
-      -- UseAttribs = ute1.updateTable(newattribs, UseAttribs)
+      -- UseAttribs = uti.updateTable(newattribs, UseAttribs)
       -- if refset then 
       --   dev.showtable(UseAttribs, "merged element attributes")
       -- end
      
       -- update with elementwise defined attributes
 
-      -- attribs = ute1.updateTable(newattribs, ClassDef)
+      -- attribs = uti.updateTable(newattribs, ClassDef)
       -- if refset then 
       --   dev.showtable(attribs, "merged element attributes")
       -- end
@@ -182,17 +184,17 @@ local doCounting = function(el)
       if refset then dev.showtable(newerattribs, "element attributes after update") end
       bxty = newerattribs.boxtype -- will most often be nil
       -- update with class defaults, and if there is a different boxtype, with boxtype defaults
-      --newattribs = ute1.updateTable(ClassDef, attribs)
+      --newattribs = uti.updateTable(ClassDef, attribs)
       -- TODO later uncomment
       --attribs.cntname = nil 
       --attribs.group = mil
       -- if bxty then
       --   if ClassDef.boxtype ~= bxty then
-      --     BoxDef = ute1.updateTable(cnbx.boxtypes[bxty],{})
+      --     BoxDef = uti.updateTable(cnbx.boxtypes[bxty],{})
       --     if BoxDef then
-      --       ute1.updateTable(BoxDef, newattribs)
+      --       uti.updateTable(BoxDef, newattribs)
       --     else
-      --       ute1.warn("boxtype "..bxty.." specified but not registered")
+      --       uti.warn("boxtype "..bxty.." specified but not registered")
       --     end    
       -- end end      
       -- -- print("use counter "..cntkey)
@@ -224,7 +226,7 @@ local function resolveref(data)
             -- print("found "..foundid.." href "..href.." linktext ".. linktext)  
             return pandoc.Link(linktext, href)
         else
-          quarto.log.warning("unknown reference ",foundid, " <=============  inserted ?? instead")
+          warning("unknown reference ",foundid, " <=============  inserted ?? instead")
           return({pandoc.Strong("??"),"->[",foundid,"]"}) --,"]<-",pandoc.Strong("??")})
         end  
       end

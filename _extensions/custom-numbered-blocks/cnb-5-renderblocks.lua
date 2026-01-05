@@ -1,23 +1,23 @@
 -- TODO split into formats and render, eventually
 
-ute1 = require "cnb-utilities"
+uti = require "cnb-utilities"
 cnbx = require "cnb-global"
 colut = require "cnb-colors"
 
 local str = pandoc.utils.stringify
-local tt_from_attributes_id = ute1.tt_from_attributes_id
-local FileExists = ute1.FileExists
-local warn = ute1.warn
+local tt_from_attributes_id = uti.tt_from_attributes_id
+local FileExists = uti.FileExists
+local warning = uti.warning
 local colorCSSTeX = colut.colorCSSTeX_legacy
 
 --[[
-local ifelse = ute1.ifelse
-local replaceifnil = ute1.replaceifnil
-local replaceifempty = ute1.replaceifempty
-local str_md = ute1.str_md
-local tablecontains = ute1.tablecontains
-local updateTable = ute1.updateTable
-local deInline = ute1.deInline
+local ifelse = uti.ifelse
+local replaceifnil = uti.replaceifnil
+local replaceifempty = uti.replaceifempty
+local str_md = uti.str_md
+local tablecontains = uti.tablecontains
+local updateTable = uti.updateTable
+local deInline = uti.deInline
 --]]--
 
 
@@ -37,7 +37,7 @@ local insertBoxtypesPandoc = function(doc)
           if  FileExists(includefile) then
  --      print("insert preamble for ".. key .." find files here "..val.path)
             quarto.doc.include_file("in-header", includefile)
-          else warn("no file "..includefile.."provided")
+          else warning("no file "..includefile.."provided")
          end
         end   
     end  

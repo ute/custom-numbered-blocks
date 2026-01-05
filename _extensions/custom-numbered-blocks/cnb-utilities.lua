@@ -337,7 +337,7 @@ return {id = id,
 end
 
 
-local warn = function(whatswrong)
+local warning = function(whatswrong)
    quarto.log.warning ("=== [custom-numbered-blocks] === "..whatswrong.."\n") --"..\n===============")
 end  
 
@@ -371,7 +371,7 @@ return{
     str_md = str_md,
     str_sanimath = str_sanimath,
     tt_from_attributes_id = tt_from_attributes_id,
-    warn = warn,
+    warning = warning,
     FileExists = FileExists,
     findFile = findFile,
     hasclass = hasclass

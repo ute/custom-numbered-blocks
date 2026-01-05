@@ -10,9 +10,9 @@ format:
 
 custom-numbered-blocks:
   styles:  
-    default:
-      boxtype: fallback
-      colors: [ffffff,aaaaaa] 
+    # default:
+    #   boxtype: fallback
+    #   colors: [ffffff,aaaaaa] 
     postit:
       boxtype: simpletextbox
       color: yellow 
@@ -24,12 +24,12 @@ custom-numbered-blocks:
       color: blue
       numbered: false
     quietsch:  
-      color: blue  
+      color: quietschgruen
     # default may not have a parent!  
   groups:
     todos: # default  
       numbered: false
-      style: postit 
+   #   style: postit 
    #   boxtype: fallback 
     mathstuff: default
     BLOWDZINN:
@@ -39,8 +39,9 @@ custom-numbered-blocks:
       zinn: bloed    
   classes:    
     TODO:
-      style: postit
-      #boxtype: simpletextbox\
+   #   style: postit
+   #   boxtype: foldbox
+      collapse: false
       # numbered: true
       #boxtype: foldblock
       label: "To do"
@@ -61,8 +62,16 @@ crossref:
 
 # First heading
 
-::: {.TODO boxtype="foldbox" collapse="false" label="To Do" reflabel="ZuTun" tag= "x" style="mixmax"}
+Do not allow `div` elements to change boxtype or colours. This is due to the implementations.
+
+::: {.TODO collapse=true}
 ### Change internal registration of Divs {#first}
+This is relatively epic
+:::
+
+
+::: {.TODO boxtype="foldbox" collapse="false" label="To Do" reflabel="ZuTun" tag= "x" style="mixmax"}
+### Change internal registration of Divs {#firsta}
 This is relatively epic
 
 - [ ] do not use div attributes, but an internal table
