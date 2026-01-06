@@ -10,10 +10,9 @@ it otherwise would conflict with numbering
 local registerdivs = {}
 
 dev = require "devutils"
+uti = require "cnb-utilities"
 cnbx = require "cnb-global"
    
-
-
 local divcount = 0
 
 --- number all custom numbered blocks to create identifiers
@@ -49,7 +48,8 @@ function registerdivs.Div(el)
       el1 = el.content[1]
         if el1.t=="Header" then 
           pandoctitle = el1.content
-          title = pandoc.utils.stringify(pandoctitle)  -- readable version without math
+          title = str_md(pandoctitle)
+        --  title = pandoc.utils.stringify(pandoctitle)  -- readable version without math
           -- do not remove this in the first run? or does it work anyway, because the cites are allready resolved, and refs get resolved later?
   --TODO here remove comment
           table.remove(el.content, 1) -- maybe tag for later: title-from-header

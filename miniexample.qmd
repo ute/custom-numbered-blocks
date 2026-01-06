@@ -14,8 +14,14 @@ custom-numbered-blocks:
 
 This is a test.
 
+::: {#thm-quatsch}
+## Putagoras
+
+$a^2+b^2=c^2$
+:::
+
 ::: Example
-# my first example
+# my first example \ref{thm-quatsch}
 
 This is an example
 :::
@@ -27,7 +33,7 @@ This is top, not an example
 :::
 
 ::: {.Example listin="important"}
-# my *important* example $a^2+b^2$
+# my *important* example $a^2+b^2$ that refers to @thm-quatsch
 
 This is an eminent example
 :::
