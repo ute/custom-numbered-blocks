@@ -21,23 +21,12 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ]]--
--- pre-pre-release
+-- pre-release
 -- 
 -- partial rewrite, complete later
 
--- nice rename function learned from shafayetShafee :-)
---local str = pandoc.utils.stringify
---local pout = quarto.log.output
-
 -- important quasi global variables
 
-
--- TODO encapsulate stylez into a doc thing or so
--- maybe later allow various versions concurrently. 
--- this could probably be problematic because of option clashes in rendered header?
---    encapsulate options in a list 
-
---- TODO: better encapsulation (luxury :-P)
 
 cnbx = require "cnb-global"
 util = require "cnb-utilities"
@@ -47,52 +36,18 @@ if cnbx.fmt == "unsupported" then
   return
 end  
 
---print(cnbx.ute)
-
-
--- debugging stuff
---[[
-
-local function pandocblocks(doc)
-  for k,v in pairs(doc.blocks) do
-    pout(v.t)
-  end
-end
-
-local function pandocdivs(div)
-  pout(div.t.." - "..div.identifier)
-  pout(div.attributes)
-end
-]]--
-
---local testfilter = require("cnb-test1")
-
 return{
     require("cnb-1-init-yaml")
-    , require("cnb-1-init-options") -- Meta: set up classes, groups etc
-   --[[
-    , require("cnb-1-init-chapters") -- Meta: set up chapter numbers and classes   
-    , require("cnb-1-init-xref")
-    , require("cnb-2-register-divs") 
-    , require("cnb-3-crossref")
-
-  ----, require("cnb-test1") so funktioniert das nicht
- 
+  , require("cnb-1-init-options") -- Meta: set up classes, groups etc
+  , require("cnb-1-init-chapters") -- Meta: set up chapter numbers and classes   
+  , require("cnb-1-init-xref")
+  , require("cnb-2-register-divs") 
+  , require("cnb-3-crossref")
   , require("cnb-4-prepare-render")
   , require("cnb-5-renderblocks")  
   --  , require("cnb-6-listof")  
 
----- , {Div = Divs_getid, Pandoc = Pandoc_preparexref}
-----, require("cnb-4-resolvexref")
-----  , {Pandoc = Pandoc_resolvexref}
- ---- , require("cnb-5-processtitles") --kann entfallen
-
- ---- , require("cnb-6-storexref") included in crossref
-----  , require("cnb-7-listof")  
-----  , require("cnb-8-renderblocks")  
- , require("cnb-9-cleanup")  
-  --, testfilter.filter1,
-  --testfilter.hallo
-  ]]--
+  , require("cnb-9-cleanup")  
+  
 }
 

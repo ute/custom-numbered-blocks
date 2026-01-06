@@ -3,8 +3,18 @@ title: Mini example
 filters:
     - custom-numbered-blocks
 custom-numbered-blocks:
+    styles:
+        default:
+            boxtype: simpletextbox
     classes:
         Example: default
 ---
 
 This is a test.
+
+::: Example
+# my first example
+
+This is an example
+:::
+

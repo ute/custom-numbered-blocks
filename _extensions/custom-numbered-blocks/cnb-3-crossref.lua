@@ -16,23 +16,33 @@ local zaehlweiter = true -- increase counters also when secno is given, but non 
 local numberdepth = 2
 local maxlev = numberdepth
 local hcounters = {}
-for i=1, maxlev do hcounters[i] = 0 end
 local hcounterstring ={}
-for i=1, maxlev do hcounterstring[i] = "" end
 
-if cnbx.isbook then
+local baselevel = 0
+
+local prefix = ""
+
+local initcounters = function(chapno)
+  for i=1, maxlev do hcounters[i] = 0 end
+  for i=1, maxlev do hcounterstring[i] = "" end
+  if cnbx.isbook then
   -- check if chapno is numeric
-  if tonumber(cnbx.chapno) then
-     hcounters[1] = tonumber(cnbx.chapno)
-     hcounterstring[1]= tostring(cnbx.chapno)
-  else
-    hcounters[1] = 0
-    hcounterstring[1] = cnbx.chapno
-  end     
+    print("the chapter number is "..chapno)
+    baselevel = 1
+    prefix = tostring(chapno)
+    if tonumber(cnbx.chapno) then
+      hcounters[1] = tonumber(chapno)
+      hcounterstring[1]= tostring(chapno)
+    else
+      hcounters[1] = 0
+      hcounterstring[1] = chapno
+    end     
+  end
 end
 
 
-local prefix = ""
+
+
 
 -- local blkcount = 0
 
@@ -56,7 +66,8 @@ local doCounting = function(el)
   
   ---------- headers ---------
   if el.t == "Header" then
-    lev = el.level
+    lev = el.level -- + baselevel
+    if lev > baselevel then
     secno = el.attributes.secno
     if not secno then secno = el.attributes.numberprefix end
     if lev <= math.min(numberdepth, maxlev) then 
@@ -76,7 +87,7 @@ local doCounting = function(el)
       prefix = hcounterstring[1]
       for i = 2, math.min(lev, numberdepth), 1 do prefix = prefix..".".. hcounterstring[i] end 
     end
-  end  
+  end end 
 
   --------- custom numbered blocks --------
   if el.t == "Div" then
@@ -157,9 +168,10 @@ local function resolveref(data)
             end  
            -- print("found "..foundid.." href "..href.." linktext ".. linktext)  
             return pandoc.Link(linktext, href)
-        else
-          warning("unknown reference "..foundid.. " <=============  inserted ?? instead")
-          return pandoc.Inlines({pandoc.Strong(pandoc.Str("??")), pandoc.Str("->["..foundid.."]") }) --,"]<-",pandoc.Strong("??")})
+        -- else
+          -- leave untouched to allow for equation references
+          -- warning("unknown reference "..foundid.. " <=============  inserted ?? instead")
+         -- return pandoc.Inlines({pandoc.Strong(pandoc.Str("??")), pandoc.Str("->["..foundid.."]") }) --,"]<-",pandoc.Strong("??")})
         end  
       end
     end    
@@ -172,10 +184,16 @@ local writexref = function(filename)
   local strippedxref ={} -- this is necessary because quarto.json cannot handle pandoc Inlines   
   
   for k, v in pairs(cnbx.xref) do
-    strippedxref[k] = {reflabel = v.reflabel, refnumber = v.refnumber, file = v.file, mdtitle = v.mdtitle}
+    strippedxref[k] = {
+         reflabel = v.reflabel, 
+         refnumber = tostring(v.refnumber), 
+         file = v.file, 
+         md = v.mdtitle}
     strippedxref.pandoctitle = nil
   end
 
+  dev.showtable(strippedxref, "I want to store this")
+  
   local xrjson = quarto.json.encode(strippedxref)
   local file = io.open(filename,"w")
   
@@ -205,7 +223,8 @@ end
 numberingfilter.Pandoc = function(doc)
 --  readxref()
   --dev.showtable(cnbx.groupDefaults, "group defaults")
-  --dev.showtable(cnbx.xref, "xref")
+  --dev.showtable(cnbxref, "xref")
+  initcounters(cnbx.chapno)
   doc:walk {Block = doCounting}
   -- doc:walk {RawInline = resolveref}
   --dev.showtable(cnbx.xref, "xref")

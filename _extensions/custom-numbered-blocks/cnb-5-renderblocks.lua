@@ -94,7 +94,7 @@ renderDiv = function(thediv)
       blinfo = cnbx.xref[id]
    
     roptions = tostringtable(blinfo.renderoptions)  
--- dev.showtable(blinfo, "the blinfo of "..id)
+--  dev.showtable(blinfo, "the blinfo of "..id)
 -- dev.showtable(cnbx.xref[id], "the xref of "..id)
 
 tt = {id = id,
@@ -104,10 +104,10 @@ tt = {id = id,
       typlabel = blinfo.label,
       typlabelTag = blinfo.label .. ifelse(blinfo.refnumber == "",""," "..blinfo.refnumber),
       mdtitle = blinfo.mdtitle, 
-      options = roptions,
-      link = thelink
+      options = roptions
+     -- link = thelink
     } 
-    -- dev.showtable(tt, "tt for "..thediv.identifier)
+  -- dev.showtable(tt, "tt for "..thediv.identifier)
    
     bty = cnbx.classDefaults[blinfo.cnbclass].boxtype
 --    print("render "..tt.id.." as ".. bty)
