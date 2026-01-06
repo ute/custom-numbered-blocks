@@ -3,14 +3,17 @@ title: Mini example
 filters:
     - custom-numbered-blocks
 custom-numbered-blocks:
-#    styles:
-#        default:
-#            boxtype: simpletextbox
-#            color: yellow
-    classes:
-        Example: 
-          listin: [allex]
-          boxtype: simpletextbox
+  styles:
+    postit:
+      boxtype: simpletextbox
+      color: "#d4dee4"
+  classes:
+    Example: 
+      listin: [allex]
+      style: postit
+      # boxtype: foldbox
+      # colors: ["#b0b987", "#a0a000"]
+      
 ---
 
 This is a test.

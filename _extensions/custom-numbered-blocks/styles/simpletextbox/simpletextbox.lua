@@ -14,7 +14,8 @@ local postit = {}
 
 postit.defaultOptions = {
    -- numbered = "true",
-    color = "lightgreen"
+    color = "#D2E787",
+    colors={"#9AE787"}
   }
 
 --[[ for future extension to named colors

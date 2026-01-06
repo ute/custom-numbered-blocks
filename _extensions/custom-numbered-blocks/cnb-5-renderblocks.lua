@@ -29,7 +29,7 @@ local insertBoxtypesPandoc = function(doc)
 -- insert extra css and latex with same name in same directory
   
   local preamblestuff = colorCSSTeX(cnbx.fmt, cnbx.classDefaults)
-  
+    
    if cnbx.fmt == "pdf" then
     quarto.doc.use_latex_package("tcolorbox","many")
     for _, val in pairs(cnbx.boxtypes) do

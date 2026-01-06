@@ -5,25 +5,50 @@
 --- 
 --- make color information. TODO: this as util, and change the color mechanism
 
+--- for legacy mode: remove leading # from colors 
+--- 
+--- 
+
+local dev=require("devutils")
+
+
+local legacycolor = function(cols)
+  result={}
+  for col, colst in pairs(cols) do
+    colst = tostring(colst)
+    if string.sub(colst, 1, 1) =="#" then
+      result[col] = string.sub(colst, 2)
+    else result[col] = colst  
+    end
+  end
+  return(result)
+end
+
 local colorCSSTeX_legacy = function (fmt, classDefs)
-  local result
+  local result, thecolors
   local StyleCSSTeX = {}
   if classDefs ~= nil then
-    -- dev.tprint(classDefs)
     for cls, options in pairs(classDefs) do
         --quarto.log.output(cls)
-      if options.colors then
-          -- quarto.log.output("  --> Farben!")
-        --print("colors are "..type(options.colors))
-        --dev.tprint(options.colors)
+       thecolors = options.colors
+        dev.showtable(options,"the classDefs options")
+        print("los gehts"..pandoc.utils.stringify(options.colors))
+     
+       if options.color~=nil then 
+         if  thecolors == nil then thecolors = {options.color}  
+        end end
+       if thecolors then   thecolors = legacycolor(thecolors)
+        
+       -- dev.tprint(options.colors)
+    
         if fmt == "html" then
           table.insert(StyleCSSTeX, "."..cls.." {\n")
-            for i, col in ipairs(options.colors) do
+            for i, col in ipairs(thecolors) do
                table.insert(StyleCSSTeX, "  --color"..i..": #"..col..";\n") 
            end    
           table.insert(StyleCSSTeX, "}\n")
         elseif fmt == "pdf" then
-          for i, col in ipairs(options.colors) do
+          for i, col in ipairs(thecolors) do
            table.insert(StyleCSSTeX, "\\definecolor{"..cls.."-color"..i.."}{HTML}{"..col.."}\n")
           end  
         end  
@@ -31,6 +56,7 @@ local colorCSSTeX_legacy = function (fmt, classDefs)
     end  
   end
   result = pandoc.utils.stringify(StyleCSSTeX)
+  print(result)
   if fmt == "html" then result = "<style>\n"..result.."</style>" end
   if fmt == "pdf" then result="%%==== colors from yaml ===%\n"..result.."%=============%\n" end
   return(result)
