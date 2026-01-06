@@ -50,7 +50,7 @@ local filterAttributes = function(el)
   local norendero = {"label", "reflabel", "tag", "style", "boxtype", "listin"}
   for k, v in pairs(el.attributes) do
     if tablecontains(norendero, k) then
-        print(k..": "..pandoc.utils.stringify(v))
+       -- print(k..": "..pandoc.utils.stringify(v))
         norattribs[k] = v
     else rattribs[k] = v
     end

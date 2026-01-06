@@ -93,7 +93,7 @@ end
 local initRenderInfo = function (meta)
   local processedfile = pandoc.path.split_extension(PANDOC_STATE.output_file)
   cnbx.isbook = meta.book ~= nil
-  cnbx.ishtmlbook = meta.book ~= nil and not quarto.doc.is_format("pdf")
+  cnbx.ishtmlbook = cnbx.isbook and not quarto.doc.is_format("pdf")
   cnbx.processedfile = processedfile
   -- cnbx.output_file = PANDOC_STATE.output_file -- with extension
   

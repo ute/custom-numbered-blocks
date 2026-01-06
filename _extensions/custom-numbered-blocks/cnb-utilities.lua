@@ -389,7 +389,7 @@ end
 local tt_from_blinfo = function(blinfo)
   local roptions = tostringtable(blinfo.renderoptions)  
   local thelink = "#"..blinfo.id
-  if cnbx.ishtmlbook and blinfo.file~=nil then thelink = blinfo.file..".qmd"..thelink end
+  if cnbx.isbook and blinfo.file~=nil then thelink = blinfo.file..".qmd"..thelink end
   tt = {id = blinfo.id,
       type = blinfo.cnbclass, 
       tag = blinfo.refnumber,
