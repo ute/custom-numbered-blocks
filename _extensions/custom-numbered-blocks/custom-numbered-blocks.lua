@@ -32,7 +32,7 @@ cnbx = require "cnb-global"
 util = require "cnb-utilities"
 
 if cnbx.fmt == "unsupported" then
-  util.warn ("format "..FORMAT.." not supported")
+  util.warning ("format "..FORMAT.." not supported")
   return
 end  
 

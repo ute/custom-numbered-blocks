@@ -64,7 +64,7 @@ local function Pandoc_makeListof(doc)
       if file then 
         file:write(lst.contents) 
         file:close()
-      else warning("cannot write to file "..lst.file)  
+      else uti.warning("cannot write to file "..lst.file)  
       end  
     end  
   end

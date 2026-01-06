@@ -3,7 +3,7 @@ Example for a simple boxtype that works with any format
 This is also used as fallback if rendering functions are missing
 
 author: ute
-date: end 12/2025
+date: start 1/2026
 ]]--
 
 
@@ -11,14 +11,21 @@ local defaultOptions = {
   --  numbered = "true"
 }
 
+
 local render = {
   beginBlock = function(ttt)
-    local typlabelTag = ttt.ptyplabelTag
-    if #ttt.title > 0 then typlabelTag = typlabelTag..pcolon end
-    return pandoc.Inlines(pandoc.Underline({pandoc.Strong(typlabelTag)}..ttt.title))
+    local 
+   -- if #ttt.title > 0 then 
+      label = ttt.ptyplabelTag.. pspace .. penclose(ttt.title)..pspace
+    --end
+    return pandoc.Strong(label)
   end,
 
-  endBlock = function(ttt) return {} end
+  endBlock = function(ttt)
+    return {}
+  end,
+  
+  nonewline = true
 }
 
 return {

@@ -386,7 +386,9 @@ tostringtable = function(tbl)
 end
 
 
-local tt_from_blinfo = function(blinfo)
+
+
+local old_tt_from_blinfo = function(blinfo)
   local roptions = tostringtable(blinfo.renderoptions)  
   local thelink = "#"..blinfo.id
   if cnbx.isbook and blinfo.file~=nil then thelink = blinfo.file..".qmd"..thelink end
@@ -396,6 +398,25 @@ local tt_from_blinfo = function(blinfo)
       title = pandoc.Inlines(blinfo.pandoctitle), 
       typlabel = blinfo.label,
       typlabelTag = blinfo.label .. ifelse(blinfo.refnumber == "",""," "..blinfo.refnumber),
+      mdtitle = blinfo.mdtitle, 
+      options = roptions,
+      link = thelink
+    } 
+  return(tt)
+end
+
+
+local tt_from_blinfo = function(blinfo)
+  local roptions = tostringtable(blinfo.renderoptions)  
+  local thelink = "#"..blinfo.id
+  if cnbx.isbook and blinfo.file~=nil then thelink = blinfo.file..".qmd"..thelink end
+  tt = {id = blinfo.id,
+      type = blinfo.cnbclass, 
+      tag = pandoc.Inlines(pandoc.Str(blinfo.refnumber)),
+      title = pandoc.Inlines(blinfo.pandoctitle), 
+      typlabel = pandoc.Inlines(pandoc.Str(blinfo.label)),
+      typlabelTag = blinfo.label .. ifelse(blinfo.refnumber == "",""," "..blinfo.refnumber),
+      ptyplabelTag = pandoc.Inlines(pandoc.Str(blinfo.label .. ifelse(blinfo.refnumber == "",""," "..blinfo.refnumber))),
       mdtitle = blinfo.mdtitle, 
       options = roptions,
       link = thelink

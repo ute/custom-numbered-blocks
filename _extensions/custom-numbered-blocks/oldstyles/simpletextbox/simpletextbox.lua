@@ -29,12 +29,11 @@ postit.colors = {
 --- type label and number are set as strong
 --- @param ttt table contains information for the individual rendered block
 local pandoctitle = function(ttt)
-  local typlabelTag = ttt.ptyplabelTag
-  if #ttt.title > 0 then typlabelTag = typlabelTag..pcolon end
-  return pandoc.Inlines(pandoc.Underline({pandoc.Strong(typlabelTag)}..ttt.title))
+  local typlabelTag = ttt.typlabelTag
+  if #ttt.title > 0 then typlabelTag = typlabelTag..": " end
+  return pandoc.Inlines(pandoc.Underline(pandoc.Emph(
+         {pandoc.Strong(typlabelTag)} .. ttt.title )))
 end  
-
-
 
 postit.pdf = {
   headerincludes = "simpletextbox.tex",
@@ -54,9 +53,9 @@ postit.html = {
   beginBlock = function(ttt)
     local bgcolor = ttt.options.color
     return 
-      pandoc.Inlines(pandoc.RawInline("html", 
-        '<div class=simpletextbox style="background-color:'..bgcolor..';">'))..
-      pandoctitle(ttt)
+      {pandoc.RawInline("html", 
+        '<div class=simpletextbox style="background-color:'..bgcolor..';">')}
+      ..pandoctitle(ttt)
    end,
   endBlock = function(ttt)
    return pandoc.RawInline("html", '</div>') 

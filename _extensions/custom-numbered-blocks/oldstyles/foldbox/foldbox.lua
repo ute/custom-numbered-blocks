@@ -8,8 +8,8 @@ local defaultOptions = {
   }
 
 local pandoctitle = function(ttt)
-  local typlabelTag = ttt.ptyplabelTag
-  if #ttt.title > 0 then typlabelTag = typlabelTag..pcolon end
+  local typlabelTag = ttt.typlabelTag
+  if #ttt.title > 0 then typlabelTag = typlabelTag..": " end
   return pandoc.Inlines({pandoc.Strong(typlabelTag)} .. ttt.title)
 end  
 
@@ -45,7 +45,7 @@ local beginBlock_pdf = function(ttt)
   if ttt.options.boxstyle=="foldbox.simple" then texEnv = "fobxSimple" end
   return     
     {pandoc.RawInline("tex",'\\begin{'..texEnv..'}{'..ttt.type..'}{')}..
-    pandoctitle(ttt) ..
+    pandoctitle(ttt)  ..
     {pandoc.RawInline("tex" ,'}\n')}
      --{pandoc.RawInline("tex" ,'}\n'..'\\phantomsection\\label{'..ttt.id..'}\n')} -- necessary for crossreferencing
      -- this is no longer necessary :-)), how nice. I suppose it was the quarto crossref overhowl that makes

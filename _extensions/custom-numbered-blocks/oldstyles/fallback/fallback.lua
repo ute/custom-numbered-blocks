@@ -6,19 +6,20 @@ author: ute
 date: end 12/2025
 ]]--
 
-
 local defaultOptions = {
   --  numbered = "true"
 }
 
 local render = {
   beginBlock = function(ttt)
-    local typlabelTag = ttt.ptyplabelTag
-    if #ttt.title > 0 then typlabelTag = typlabelTag..pcolon end
-    return pandoc.Inlines(pandoc.Underline({pandoc.Strong(typlabelTag)}..ttt.title))
+    local typlabelTag = ttt.typlabelTag
+    if #ttt.title > 0 then typlabelTag = typlabelTag..": " end
+    return pandoc.Inlines(pandoc.Underline({
+      pandoc.Strong(typlabelTag)}..ttt.title))
   end,
-
-  endBlock = function(ttt) return {} end
+  endBlock = function(ttt)
+    return {}
+  end
 }
 
 return {

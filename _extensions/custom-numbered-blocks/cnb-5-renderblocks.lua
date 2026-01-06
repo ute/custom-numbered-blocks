@@ -4,7 +4,9 @@ cnbx = require "cnb-global"
 colut = require "cnb-colors"
 
 uti = require "cnb-utilities"
-local ifelse = uti.ifelse
+require "cnb-renderfunctions"
+
+--local ifelse = uti.ifelse
 
 local FileExists = uti.FileExists
 local warning = uti.warning
@@ -56,7 +58,7 @@ local insertBoxtypesPandoc = function(doc)
            name = key,      -- version = '0.0.1',
            stylesheets = {includefile}
          })
-        else warning("no file "..includefile.." provided")
+        else uti.warning("no file "..includefile.." provided")
         end
      -- else print( 'nothing to include')  
       end  
@@ -73,41 +75,46 @@ end;
 
 -- for renderoptions: everything to string, because yaml and attributes are inconsistent
 
-
+--[[ for later italic = {Str= function(elem) return pandoc.Emph(elem) end}]]
 
 renderDiv = function(thediv) 
-  local tt, blinfo, bty, rendr, id, roptions
+  local tt, blinfo, bty, rendr, id, boxcode --, roptions
   
   if cnbx.is_cunumblo(thediv) then
     id = thediv.identifier
       blinfo = cnbx.xref[id]
  
       tt = uti.tt_from_blinfo(blinfo)
-      --[[
-    roptions = tostringtable(blinfo.renderoptions)  
---  dev.showtable(blinfo, "the blinfo of "..id)
--- dev.showtable(cnbx.xref[id], "the xref of "..id)
-
-tt = {id = id,
-      type = blinfo.cnbclass, 
-      tag = blinfo.refnumber,
-      title = pandoc.Inlines(blinfo.pandoctitle), 
-      typlabel = blinfo.label,
-      typlabelTag = blinfo.label .. ifelse(blinfo.refnumber == "",""," "..blinfo.refnumber),
-      mdtitle = blinfo.mdtitle, 
-      options = roptions
-     -- link = thelink
-    } 
-    -]]
-  -- dev.showtable(tt, "tt for "..thediv.identifier)
-   
+    
     bty = cnbx.classDefaults[blinfo.cnbclass].boxtype
 --    print("render "..tt.id.." as ".. bty)
-    rendr = cnbx.boxtypes[bty].render
-    local beginBlock = rendr.beginBlock(tt)
-    local endBlock = rendr.endBlock(tt)
-  
+    boxcode = cnbx.boxtypes[bty].render
+    --rendr = cnbx.boxtypes[bty].render
+    local beginBlock = boxcode.beginBlock(tt)
+    local endBlock = boxcode.endBlock(tt)
+    
+    --if boxcode.nonewline then print("thisisgonnabeit")end
+    --[[ for later: ams like behaviour
+      print(" the div " .. thediv.identifier.. " has content length "..
+       #thediv.content.. " and type of first entry is "
+         .. pandoc.utils.stringify(thediv.content[1].t))
+   
+  if #thediv.content > 0 and thediv.content[1].t == "Para" and 
+      thediv.content[#thediv.content].t == "Para" then
+        table.insert(thediv.content[1].content, 1, beginBlock)
+      end
+    --print(" beginblock has length ".. #beg
+    
+     thediv = thediv:walk(italic)
+     ]]
+
+    if boxcode.nonewline and   #thediv.content > 0 and thediv.content[1].t == "Para" and 
+        thediv.content[#thediv.content].t == "Para" 
+    then
+      table.insert(thediv.content[1].content, 1, beginBlock)
+    else
     table.insert(thediv.content, 1, beginBlock)
+    end
     table.insert(thediv.content, endBlock)
   
   end  

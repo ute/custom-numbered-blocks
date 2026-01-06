@@ -10,6 +10,7 @@ custom-numbered-blocks:
     classes:
         Example: 
           listin: [allex]
+          boxtype: simpletextbox
 ---
 
 This is a test.
@@ -17,7 +18,9 @@ This is a test.
 ::: {#thm-quatsch}
 ## Putagoras
 
-$a^2+b^2=c^2$
+Es kamen ein mal ein *paar* Griechen, die wollten was der Welt beweisen:
+$$a^2+b^2=c^2$$
+ das isses
 :::
 
 ::: Example
@@ -35,6 +38,13 @@ This is top, not an example
 ::: {.Example listin="important"}
 # my *important* example $a^2+b^2$ that refers to @thm-quatsch
 
-This is an eminent example
+Es kamen ein mal ein *paar* Griechen, die wollten was der Welt beweisen:
+$$a^2+b^2=c^2$$
+ das isses
+:::
+
+::: Example
+
+Ohne titel
 :::
 

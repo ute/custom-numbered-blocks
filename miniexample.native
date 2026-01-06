@@ -1,0 +1,139 @@
+Pandoc
+  Meta
+    { unMeta =
+        fromList
+          [ ( "custom-numbered-blocks"
+            , MetaMap
+                (fromList
+                   [ ( "classes"
+                     , MetaMap
+                         (fromList
+                            [ ( "Example"
+                              , MetaMap
+                                  (fromList
+                                     [ ( "boxtype"
+                                       , MetaInlines [ Str "ams" ]
+                                       )
+                                     , ( "listin"
+                                       , MetaList
+                                           [ MetaInlines [ Str "allex" ]
+                                           ]
+                                       )
+                                     ])
+                              )
+                            ])
+                     )
+                   ])
+            )
+          , ( "title"
+            , MetaInlines [ Str "Mini" , Space , Str "example" ]
+            )
+          ]
+    }
+  [ Para
+      [ Str "This"
+      , Space
+      , Str "is"
+      , Space
+      , Str "a"
+      , Space
+      , Str "test."
+      ]
+  , Div
+      ( "thm-quatsch" , [ "theorem" ] , [] )
+      [ Para
+          [ Span
+              ( "" , [ "theorem-title" ] , [] )
+              [ Strong
+                  [ Str "Theorem"
+                  , Space
+                  , Str "1"
+                  , Space
+                  , Str "("
+                  , Str "Putagoras"
+                  , Str ")"
+                  ]
+              ]
+          , Space
+          , Math InlineMath "a^2+b^2=c^2"
+          ]
+      ]
+  , Div
+      ( "" , [ "Example" ] , [] )
+      [ Header
+          1
+          ( "my-first-example" , [] , [] )
+          [ Str "my"
+          , Space
+          , Str "first"
+          , Space
+          , Str "example"
+          , Space
+          , RawInline (Format "tex") "\\ref{thm-quatsch}"
+          ]
+      , Para
+          [ Str "This"
+          , Space
+          , Str "is"
+          , Space
+          , Str "an"
+          , Space
+          , Str "example"
+          ]
+      ]
+  , Div
+      ( "" , [ "Top" ] , [] )
+      [ Para
+          [ Str "This"
+          , Space
+          , Str "is"
+          , Space
+          , Str "top,"
+          , Space
+          , Str "not"
+          , Space
+          , Str "an"
+          , Space
+          , Str "example"
+          ]
+      ]
+  , Div
+      ( "" , [ "Example" ] , [ ( "listin" , "important" ) ] )
+      [ Header
+          1
+          ( "my-important-example-a2b2-that-refers-to-thm-quatsch"
+          , []
+          , []
+          )
+          [ Str "my"
+          , Space
+          , Emph [ Str "important" ]
+          , Space
+          , Str "example"
+          , Space
+          , Math InlineMath "a^2+b^2"
+          , Space
+          , Str "that"
+          , Space
+          , Str "refers"
+          , Space
+          , Str "to"
+          , Space
+          , Link
+              ( "" , [ "quarto-xref" ] , [] )
+              [ Str "Theorem" , Str "\160" , Str "1" ]
+              ( "#thm-quatsch" , "" )
+          ]
+      , Para
+          [ Str "This"
+          , Space
+          , Str "is"
+          , Space
+          , Str "an"
+          , Space
+          , Str "eminent"
+          , Space
+          , Str "example"
+          ]
+      ]
+  ]
