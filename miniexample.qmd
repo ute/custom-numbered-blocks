@@ -6,8 +6,10 @@ custom-numbered-blocks:
     styles:
         default:
             boxtype: simpletextbox
+            color: yellow
     classes:
-        Example: default
+        Example: 
+          list-in: [allex]
 ---
 
 This is a test.

@@ -285,7 +285,7 @@ local initClassDefaults = function (cunumbl)
    
     -- dev.showtable(clinfo, "virgin clinfo "..key)
    
-    local gropt, stylopt, boxopt
+    local gropt, stylopt, boxopt, defaultopt
     --if key == "TODO" then 
       --dev.showtable(clinfo, "original class info")
     
@@ -305,12 +305,17 @@ local initClassDefaults = function (cunumbl)
     
     local gboxtype = clinfo.boxtype
     -- there has to be a boxtype, otherwise
-    if gboxtype  ~= nil then
-      boxopt = deepcopy(cnbx.boxtypes[gboxtype].defaultOptions)
-      clinfo = updateTable(boxopt, clinfo)
-    else warning("class "..key.." has no boxtype. Please file an issue on gh :-)")
-    end
-
+    if gboxtype == nil then
+      -- warning("class "..key.." has no boxtype. Please file an issue on gh :-)")
+      -- update with default style
+      defaultopt = deepcopy(cnbx.styles.default)
+      clinfo = updateTable(defaultopt, clinfo)
+      gboxtype = clinfo.boxtype
+    end  
+    boxopt = deepcopy(cnbx.boxtypes[gboxtype].defaultOptions)
+    clinfo = updateTable(boxopt, clinfo)
+     -- no box type specified. use default style box type
+    
     -- dev.showtable(clinfo, " class info "..key.. " update by boxtype")
   
     clinfo.label = replaceifnil(clinfo.label, str(key))

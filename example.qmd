@@ -21,7 +21,6 @@ extensions:
         collapse: true
         colors: [b88bde, 584eab]
       postit:
-        parent: formalia # will work without parent once the attributing mechanism is changed
         boxtype: simpletextbox
         color: yellow # not implemented yet
  

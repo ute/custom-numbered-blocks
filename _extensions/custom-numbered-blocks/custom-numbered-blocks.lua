@@ -45,7 +45,7 @@ return{
   , require("cnb-3-crossref")
   , require("cnb-4-prepare-render")
   , require("cnb-5-renderblocks")  
-  --  , require("cnb-6-listof")  
+  , require("cnb-6-listof")  
 
   , require("cnb-9-cleanup")  
   
