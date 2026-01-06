@@ -73,18 +73,7 @@ end;
 
 -- for renderoptions: everything to string, because yaml and attributes are inconsistent
 
-tostringtable = function(tbl)
-  local result = {}
-  local vv
-  for k, v in pairs(tbl) do
-    if type(v) == "table" 
-      then vv = tostringtable(v)
-      else vv = tostring(v)
-      end  
-    result[k] = vv
-  end  
-  return result
-end
+
 
 renderDiv = function(thediv) 
   local tt, blinfo, bty, rendr, id, roptions
@@ -92,7 +81,9 @@ renderDiv = function(thediv)
   if cnbx.is_cunumblo(thediv) then
     id = thediv.identifier
       blinfo = cnbx.xref[id]
-   
+ 
+      tt = uti.tt_from_blinfo(blinfo)
+      --[[
     roptions = tostringtable(blinfo.renderoptions)  
 --  dev.showtable(blinfo, "the blinfo of "..id)
 -- dev.showtable(cnbx.xref[id], "the xref of "..id)
@@ -107,6 +98,7 @@ tt = {id = id,
       options = roptions
      -- link = thelink
     } 
+    -]]
   -- dev.showtable(tt, "tt for "..thediv.identifier)
    
     bty = cnbx.classDefaults[blinfo.cnbclass].boxtype

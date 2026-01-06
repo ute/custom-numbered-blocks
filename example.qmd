@@ -30,6 +30,7 @@ extensions:
         listin: [mathstuff]
       todos: #default  
         style: postit
+#        listin: [todos]
     classes:    
       Theorem:
         group: thmlike

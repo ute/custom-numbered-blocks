@@ -4,7 +4,6 @@
 
 uti = require("cnb-utilities")
 local ifelse = uti.ifelse
-local warning = uti.warning
 
 dev = require("devutils")
 
@@ -39,10 +38,6 @@ local initcounters = function(chapno)
     end     
   end
 end
-
-
-
-
 
 -- local blkcount = 0
 
@@ -123,7 +118,6 @@ local doCounting = function(el)
           info.tag = el.attributes.tag
           if info.tag ~= "" then info.refnumber = info.tag end
         end
-        
       end
       
       -- getting reflabel and label
@@ -139,9 +133,7 @@ local doCounting = function(el)
       end
       info.reflabel = reflabel
       
-      
     --  print("counted a cnbx "..info.reflabel.." "..info.refnumber)
-  
       
     end
   end

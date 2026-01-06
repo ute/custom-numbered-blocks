@@ -3,6 +3,7 @@ local cnbx={ -- global table, holds information for processing fboxes
    , -- todo drop this, it is only needed for books
    styles = {default = {numbered = true, boxtype = "foldbox"}},
    boxtypes = {},
+   lists = {}
   -- defaultboxtype = "foldbox",
 }
 

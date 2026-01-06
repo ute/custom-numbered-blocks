@@ -43,12 +43,16 @@ local ifelse = uti.ifelse
 local replaceifnil = uti.replaceifnil
 local findFile = uti.findFile
 local warning = uti.warning
+local mergelists = uti.mergeStringLists
 
 --local replaceifempty = uti.replaceifempty
 
 
----------- handling box types ------------
+--[[------------------------------
 
+      BOX TYPES
+
+----------------------------------]]
 
 -- screen all entries in custom-numbered-blocks yaml for rendering styles.
 -- check if found and add to list
@@ -115,7 +119,12 @@ local initBoxTypes = function (cnbyaml)
 end
 
 
----------- handling styles ------------
+
+--[[------------------------------
+
+      STYLES
+
+----------------------------------]]
 
 
 --- register block styles for rendering. 
@@ -170,7 +179,12 @@ end
 end
 
 
----------- handling groups ------------
+
+--[[------------------------------
+
+      GROUPS
+
+----------------------------------]]
 
 local groups = {}
 
@@ -205,7 +219,12 @@ local initGroupDefaults = function(cnbyaml)
 end
 
 
-------------- classes -------------
+
+--[[------------------------------
+
+      CLASSES
+
+----------------------------------]]
 
 
 --- "function factory" that detects if a pandoc Div has one of the classes given
@@ -285,14 +304,18 @@ local initClassDefaults = function (cunumbl)
    
     -- dev.showtable(clinfo, "virgin clinfo "..key)
    
-    local gropt, stylopt, boxopt, defaultopt
-    --if key == "TODO" then 
-      --dev.showtable(clinfo, "original class info")
+    local gropt, stylopt, boxopt, defaultopt 
     
+    -- take particular attention to merge the values for listin
+    if clinfo.listin == nil then clinfo.listin ={} end
+
     local ggroup = clinfo.group
     if ggroup ~= nil then
       gropt = deepcopy(cnbx.groupDefaults[ggroup])
-      clinfo = updateTable(gropt, clinfo)
+      if gropt.listin ~= nil then 
+        clinfo.listin = mergelists(clinfo.listin, gropt.listin) 
+      end
+      clinfo = updateTable(gropt, clinfo, "listin")
     end
     
  --   dev.showtable(clinfo, " class info update by group", {})
@@ -328,7 +351,7 @@ local initClassDefaults = function (cunumbl)
   --dev.showtable(clinfo, "updated clinfo "..key)
   
 -- now remove all unnecessary entries 
-    local keepkeys = {"cntname","numbered", "label", "reflabel", "group", "boxtype"}
+    local keepkeys = {"cntname","numbered", "label", "reflabel", "group", "boxtype", "listin"}
     local optionkeys = keynames(cnbx.boxtypes[clinfo.boxtype].defaultOptions)
     for _,v in pairs(optionkeys) do table.insert(keepkeys, v) end
    -- print(" keep "..table.concat(keepkeys, " , "))
@@ -340,30 +363,14 @@ local initClassDefaults = function (cunumbl)
     
 ------ end of making class defaults ---
 
+cnbx.is_cunumblo = makeKnownClassDetector(cnbx.knownclasses)
 
-  cnbx.is_cunumblo = makeKnownClassDetector(cnbx.knownclasses)
--- gather lists-of and make filenames by going through all classes
-  for _, val in pairs(cnbx.classDefaults) do
-  --  pout("--classdefault: "..str(key))
-  --  pout(val)
-    if val.listin then
-      for _,v in ipairs(val.listin) do
-        cnbx.lists[v] = {file = "list-of-"..str(v)..".qmd"}
-      end
-    end
-  end
--- initialize lists
-  for key, val in pairs(cnbx.lists) do
-    val.contents = ifelse(cnbx.isfirstfile, "\\providecommand{\\Pageref}[1]{\\hfill p.\\pageref{#1}}", "")
-  -- listin approach does not require knownclass, since listin is in classdefaults
-  end
- 
 -- document can give the chapter number for books in yaml header 
 -- this becomes the counter Prefix
 end
 
 
-
+--------------  MAIN   ---------------------
 return{
 Meta = function(meta)
   
@@ -387,8 +394,7 @@ Meta = function(meta)
     --dev.showtable(cnbx.groupDefaults, "groups") 
     initClassDefaults(cnbx.yaml) 
     -- dev.showtable(cnbx.classDefaults, "classDefaults")
-
-
+   
   end
 -- dev.showtable(cnbx, "cnbx")
   return(meta)

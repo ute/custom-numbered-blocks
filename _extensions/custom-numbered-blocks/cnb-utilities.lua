@@ -93,13 +93,17 @@ local function tablecontains(tbl, val)
 end  
 
 --- recursively gather entries with a given key from a table
+--- if returntable already exists, it is just updated
 --- make this global because it is recursive
-gatherentries = function(tbl, returnval, key)
+gatherentries = function(tbl, returntable, key, initialvalue)
+    if initialvalue == nil then 
+      -- print("no initval")
+      initialvalue = true end
     if tbl ~= nil then 
         for k, v in pairs(tbl) do
           if k == key then
-             returnval[str(v)] = true
-          elseif type(v) == "table" then  gatherentries(v, returnval, key) 
+             returntable[str(v)] = initialvalue
+          elseif type(v) == "table" then  gatherentries(v, returntable, key, initialvalue) 
           end
         end
       end
@@ -120,6 +124,20 @@ subtable = function(table, selkeys)
   for _,v in ipairs(selkeys) do
     result[v] = deepcopy(table[v])
   end
+  return result
+end
+
+-- merges lists of strings, return a deep copy of unique values
+local function mergeStringLists (list1, list2)
+  local result = {}
+  local keylist = {}
+  for _, val in ipairs(list1) do
+    keylist[val] = true
+  end  
+  for _, val in ipairs(list2) do
+    keylist[val] = true
+  end  
+  for key,_ in pairs(keylist) do table.insert(result, key) end
   return result
 end
 
@@ -354,7 +372,36 @@ local hasclass = function(el, class)
   return result
 end
 
+tostringtable = function(tbl)
+  local result = {}
+  local vv
+  for k, v in pairs(tbl) do
+    if type(v) == "table" 
+      then vv = tostringtable(v)
+      else vv = tostring(v)
+      end  
+    result[k] = vv
+  end  
+  return result
+end
 
+
+local tt_from_blinfo = function(blinfo)
+  local roptions = tostringtable(blinfo.renderoptions)  
+  local thelink = "#"..blinfo.id
+  if cnbx.ishtmlbook and blinfo.file~=nil then thelink = blinfo.file..".qmd"..thelink end
+  tt = {id = blinfo.id,
+      type = blinfo.cnbclass, 
+      tag = blinfo.refnumber,
+      title = pandoc.Inlines(blinfo.pandoctitle), 
+      typlabel = blinfo.label,
+      typlabelTag = blinfo.label .. ifelse(blinfo.refnumber == "",""," "..blinfo.refnumber),
+      mdtitle = blinfo.mdtitle, 
+      options = roptions,
+      link = thelink
+    } 
+  return(tt)
+end
 --[[-- make all this global later?
 ---]]
 return{
@@ -362,6 +409,7 @@ return{
     ifelse = ifelse,
     replaceifnil= replaceifnil,
     replaceifempty = replaceifempty,
+    mergeStringLists = mergeStringLists,
     updateTable = updateTable,
     vupdateTable = vupdateTable,
     filterTable = filterTable,
@@ -371,6 +419,7 @@ return{
     str_md = str_md,
     str_sanimath = str_sanimath,
     tt_from_attributes_id = tt_from_attributes_id,
+    tt_from_blinfo=tt_from_blinfo,
     warning = warning,
     FileExists = FileExists,
     findFile = findFile,

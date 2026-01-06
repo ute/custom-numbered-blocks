@@ -3,13 +3,13 @@ title: Mini example
 filters:
     - custom-numbered-blocks
 custom-numbered-blocks:
-    styles:
-        default:
-            boxtype: simpletextbox
-            color: yellow
+#    styles:
+#        default:
+#            boxtype: simpletextbox
+#            color: yellow
     classes:
         Example: 
-          list-in: [allex]
+          listin: [allex]
 ---
 
 This is a test.
@@ -18,5 +18,17 @@ This is a test.
 # my first example
 
 This is an example
+:::
+
+::: Top
+
+This is top, not an example
+
+:::
+
+::: {.Example listin="important"}
+# my *important* example $a^2+b^2$
+
+This is an eminent example
 :::
 

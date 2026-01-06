@@ -44,7 +44,7 @@ function registerdivs.Div(el)
     end
     local title = ""
     local pandoctitle = {}
-    local info = {}
+    local info = {id = idd}
     --if cnbx.is_cunumblo(el) then --cls == "blk" then
       el1 = el.content[1]
         if el1.t=="Header" then 

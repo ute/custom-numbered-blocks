@@ -1,0 +1,6 @@
+\providecommand{\Pageref}[1]{\hfill p.\pageref{#1}}
+ [**To do 1.1**](#custom-styles-almost-done): Custom **styles** almost done\Pageref{custom-styles-almost-done}
+
+ [**To do 1.2**](#change-internal-registration-of-divs): Change internal registration of Divs\Pageref{change-internal-registration-of-divs}
+
+ [**To do 1.3**](#colors): Colors\Pageref{colors}

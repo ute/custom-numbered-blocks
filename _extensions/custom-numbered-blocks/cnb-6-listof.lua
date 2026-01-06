@@ -1,76 +1,79 @@
-ute1 = require "cnb-utilities"
+uti = require "cnb-utilities"
 
-local ifelse = ute1.ifelse
-local tt_from_attributes_id = ute1.tt_from_attributes_id
+local ifelse = uti.ifelse
 
---[[
-local str = pandoc.utils.stringify
-local replaceifnil = ute1.replaceifnil
-local replaceifempty = ute1.replaceifempty
-local str_md = ute1.str_md
-local tablecontains = ute1.tablecontains
-local updateTable = ute1.updateTable
-local deInline = ute1.deInline
---]]--
+--- keep the pageref thing because one would not like to edit the list twice, for html and pdf
+
+--- init a list of stuff
+--- @param stuff string
+local initListOfX = function(stuff)
+  local stff = pandoc.utils.stringify(stuff)
+  result = {
+    file = "list-of-"..stff..".qmd",
+    contents = ifelse(cnbx.isfirstfile, 
+       "`\\providecommand{\\Pageref}[1]{\\hfill p.\\pageref{#1}}`{=latex}\n", "")
+  }
+  return result
+end
+
+--- make entry in list for one div  
+local makeEntry = function(blinfo)
+  local tt = uti.tt_from_blinfo(blinfo)
+  return ("\n [**"..tt.typlabelTag.."**](" .. tt.link ..")" ..
+                      ifelse(tt.mdtitle=="","",": "..tt.mdtitle) .. "\\Pageref{".. tt.id .."}\n")
+end
 
 
+-- going through all cnb-divs
+local filterdiv = {traverse="topdown"}
+
+filterdiv.Div = function(div)
+  local cls, id, listin, clistin, thelist, entry
+  cls = cnbx.is_cunumblo(div)
+  if cls ~= nil then
+    id = div.identifier
+    cls = cnbx.xref[id].cnbclass
+    listin = {div.attributes.listin}
+    clistin = cnbx.classDefaults[cls].listin
+    listin = uti.mergeStringLists(clistin, listin)
+    entry = makeEntry(cnbx.xref[id])
+    for _, listid in ipairs(listin) do
+      --print(listid)
+      thelist = cnbx.lists[listid]
+      if not thelist  then 
+        --print(type(thelist).." add list "..listid)  
+        thelist = initListOfX(listid)
+        cnbx.lists[listid] = thelist
+      --else print(type(thelist))
+       end
+        thelist.contents = thelist.contents .. entry
+    end
+  end
+  return(div)
+end
 
 
 local function Pandoc_makeListof(doc)
-  local tt = {}
-  local thelists = {}
-  local zeile = ""
+  
   local lstfilemode = ifelse(cnbx.isfirstfile, "w", "a")
-  if not cnbx.lists then return(doc) end
-  for i, blk in ipairs(doc.blocks) do
-    --[[ -- this may require manual deletion of headers in the list-of.qmd
-    -- and does in this form not help with html books anyway --
-    if blk.t=="Header" then 
-      if blk.level==1 then 
-        zeile = "\n\n## "..str(blk.content).."\n"
-      --- add to all lists
-        for _, lst in pairs (cnbx.lists) do
-          lst.contents = lst.contents..zeile
-        end
-      end
-      elseif blk.t=="Div" then 
-     ]]-- 
-     if blk.t=="Div" then 
-      if blk.attributes._process_me then
-        thelists = cnbx.classDefaults[blk.attributes._fbxclass].listin
-        if thelists ~= nil and thelists ~="" then
-          tt = tt_from_attributes_id (blk.attributes, blk.identifier)
-          -- pout("thett------");pout(tt)
-        --  zeile = ("\n[**"..tt.typtitel.."**](#"..blk.identifier..")"..ifelse(tt.mdtitle=="","",": "..tt.mdtitle)..
-        --      " \\Pageref{"..blk.identifier.."}\n")
-        -- TODO: should be like [**R-tip 1.1**](intro.qmd#Rtip-install)
-          --zeile = ("\n[**"..tt.titeltyp.." \\ref{"..blk.identifier.."}**]" ..
-            --       ifelse(tt.mdtitle=="","",": "..tt.mdtitle) ..
-              --     " \\Pageref{"..blk.identifier.."}\n") 
-            zeile = ("\n [**"..tt.typlabelTag.."**](" .. tt.link ..")" ..
-                     ifelse(tt.mdtitle=="","",": "..tt.mdtitle) .. "\\Pageref{".. tt.id .."}\n")                               
-          for _, lst in ipairs (thelists) do
-            cnbx.lists[lst].contents = cnbx.lists[lst].contents..zeile
-          end 
-        end
-      end 
-    end
-  end
+
   --- write to file ---
-  for nam, lst in pairs(cnbx.lists) do
+  for _, lst in pairs(cnbx.lists) do
     if lst.file ~= nil then 
       local file = io.open(lst.file, lstfilemode)
       if file then 
         file:write(lst.contents) 
         file:close()
-      else quarto.log.output("cannot write to file "..lst.file)  
+      else warning("cannot write to file "..lst.file)  
       end  
     end  
   end
+
   return(doc)
 end
 
 
 return{
-  Pandoc = Pandoc_makeListof 
+  Div = filterdiv.Div,
+  Pandoc = Pandoc_makeListof
 }
