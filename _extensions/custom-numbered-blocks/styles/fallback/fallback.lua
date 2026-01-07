@@ -15,9 +15,10 @@ local render = {
   beginBlock = function(ttt)
     local typlabelTag = ttt.ptyplabelTag
     if #ttt.title > 0 then typlabelTag = typlabelTag..pcolon end
---    return pandoc.Inlines(pandoc.Underline({pandoc.Strong(typlabelTag)}..ttt.title))
+    return pandoc.Inlines(pandoc.Underline({pandoc.Strong(typlabelTag)}..ttt.title))
 -- unfortunately, pandoc messes pdf with underline
-    return pandoc.Inlines({pandoc.Strong(typlabelTag)}..ttt.title)
+--    return pandoc.Inlines({pandoc.Strong(typlabelTag)}..ttt.title)
+-- solved by redefining command \ul in pdf
   end,
 
   endBlock = function(ttt) return {} end
