@@ -25,7 +25,9 @@ function registerdivs.Div(el)
   -- local cls = pandoc.utils.stringify(el.classes)
   local cls = cnbx.is_cunumblo(el)
   local xref = cnbx.xref
-  
+  local info = {}
+  local eltitle
+    
   if cls then
     divcount = divcount+1
     if idd==nil then idd="" end     
@@ -41,13 +43,21 @@ function registerdivs.Div(el)
       end
       el.identifier = idd
     end
-    local info = {id = idd}
+    info.id = idd
+    -- check if there is a header and mark it for removal if there is no title
+    -- save the preliminary mark down title without resolved references
+    eltitle = nil
+    if el.attributes then eltitle = el.attributes.title end
+    if eltitle == nil then  
       el1 = el.content[1]
-        if el1.t=="Header" then 
+      if el1.t=="Header" then 
           --  tag for later: title-from-header
-            el1.identifier = "___doomed-for-removal"
-        end
-      xref[el.identifier] = info
+        el1.identifier = "___doomed-for-removal"
+        eltitle = str_md(el1.content)
+      end
+    end
+    info.mdtitle = eltitle or ""
+    xref[el.identifier] = info
     -- end 
   end  
   return el

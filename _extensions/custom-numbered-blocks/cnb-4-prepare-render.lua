@@ -104,27 +104,29 @@ local filterAttributes = function(el)
 
 end  
 
+-- now references have been dereferenced, and we can gather pandoctitles
 local makeblocktitle = function(el)
   local id = el.identifier
   local info = cnbx.xref[id]  
-  local pandoctitle, mdtitle
+  local pandoctitle = {}
   if info == nil then
       return(el)
   end
-  el1 = el.content[1]
-  if el1.t=="Header" then 
-    pandoctitle = el1.content
-    mdtitle = str_md(pandoctitle)
+  if info.mdtitle ~= "" then 
+    el1 = el.content[1]
+    if el1.t=="Header" then 
+      pandoctitle = el1.content
+      -- mdtitle = str_md(pandoctitle)
         --  title = pandoc.utils.stringify(pandoctitle)  -- readable version without math
           -- do not remove this in the first run? or does it work anyway, because the cites are allready resolved, and refs get resolved later?
-  --TODO here remove comment
-      table.remove(el.content, 1) 
-    else 
-      mdtitle = ""
-      pandoctitle = {}
+        table.remove(el.content, 1) 
+      else 
+      -- mdtitle = ""
+      pandoctitle = {pandoc.Str(info.mdtitle)}
     end
-    info.mdtitle = mdtitle
-    info.pandoctitle = pandoctitle
+  end
+    --info.mdtitle = mdtitle
+  info.pandoctitle = pandoctitle
   return(el)
 end  
 

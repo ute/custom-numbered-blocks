@@ -47,8 +47,12 @@ $$a^2+b^2=c^2$$
  das isses
 :::
 
-::: Example
+::: {.Example}
 
 Ohne titel
 :::
 
+::: {.Example title="Titel als attribut angegeben"} 
+
+Mit titel, ohne Markdown
+:::

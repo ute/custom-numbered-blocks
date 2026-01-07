@@ -1,8 +1,0 @@
-\providecommand{\Pageref}[1]{\hfill p.\pageref{#1}}
- [**Definition P.1**](#fancy): F$\alpha$ncybox\Pageref{fancy}
-
- [**Conjecture P.3**](#TeachersHope)\Pageref{TeachersHope}
-
- [**Theorem P.4**](#TeacherHopes)\Pageref{TeacherHopes}
-
- [**Conjecture**](#cnb-13-Conjecture)\Pageref{cnb-13-Conjecture}
