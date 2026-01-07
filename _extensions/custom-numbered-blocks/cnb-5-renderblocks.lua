@@ -81,7 +81,7 @@ end;
 --[[ for later italic = {Str= function(elem) return pandoc.Emph(elem) end}]]
 
 renderDiv = function(thediv) 
-  local tt, blinfo, bty, rendr, id, boxcode --, roptions
+  local tt, blinfo, bty, id, boxcode --, roptions
   
   if cnbx.is_cunumblo(thediv) then
     id = thediv.identifier
@@ -92,7 +92,6 @@ renderDiv = function(thediv)
     bty = cnbx.classDefaults[blinfo.cnbclass].boxtype
 --    print("render "..tt.id.." as ".. bty)
     boxcode = cnbx.boxtypes[bty].render
-    --rendr = cnbx.boxtypes[bty].render
     local beginBlock = boxcode.beginBlock(tt)
     local endBlock = boxcode.endBlock(tt)
     

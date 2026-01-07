@@ -92,6 +92,12 @@
 \def\fps@figure{htbp}
 \makeatother
 
+\ifLuaTeX
+  \usepackage{luacolor}
+  \usepackage[soul]{lua-ul}
+\else
+  \usepackage{soul}
+\fi
 
 
 
@@ -160,6 +166,7 @@
 \makeatletter
 \@ifpackageloaded{tcolorbox}{}{\usepackage[many]{tcolorbox}}
 \makeatother
+\renewcommand{\ul}[1]{\underline{#1}} % because soul conflicts with tcolorbox
 %%%% ---foldboxy preamble ----- %%%%%
 
 \definecolor{fobx-default-color1}{HTML}{c7c7d0}
@@ -187,8 +194,11 @@ boxed title style={boxrule=0.0mm, fuzzy shadow={1pt}{-1pt}{0mm}{0.1mm}{gray}, ar
 \begin{tcolorbox}[breakable, sharp corners, boxrule=0pt, boxsep=1em, beforeafter skip=1em, leftright skip = 1em, colback=#1-color1]%
 }{\end{tcolorbox}}
 
+%\renewcommand{\ul}[1]{unterstrich #1}
+
 %%%% --- end simpletextbox preamble ----- %%%%%
 %%==== colors from yaml ===%
+\definecolor{Example-color1}{HTML}{44dee4}
 %=============%
 \usepackage{bookmark}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
@@ -220,19 +230,32 @@ beweisen: \[a^2+b^2=c^2\] das isses
 \end{theorem}
 
 \phantomsection\label{my-first-example.-but-see}
-\textbf{Example 1 (my first example. but see
-\hyperref[importantstuff]{Example 2}) }This is an example
+\begin{simpletextbox}{Example}\ul{\textbf{Example 1: }my first example.
+but see \hyperref[importantstuff]{Example 2}}
+
+This is an example
+
+\end{simpletextbox}
 
 \phantomsection\label{toptip}
 This is top, not an example
 
 \phantomsection\label{importantstuff}
-\textbf{Example 2 (my \emph{important} example \(a^2+b^2\) that refers
-to Theorem~\ref{thm-quatsch}) }Es kamen ein mal ein \emph{paar}
-Griechen, die wollten was der Welt beweisen: \[a^2+b^2=c^2\] das isses
+\begin{simpletextbox}{Example}\ul{\textbf{Example 2: }my
+\emph{important} example $a^2+b^2$ that refers to
+Theorem~\ref{thm-quatsch}}
+
+Es kamen ein mal ein \emph{paar} Griechen, die wollten was der Welt
+beweisen: \[a^2+b^2=c^2\] das isses
+
+\end{simpletextbox}
 
 \phantomsection\label{cnb-3-Example}
-\textbf{Example 3 }Ohne titel
+\begin{simpletextbox}{Example}\ul{\textbf{Example 3}}
+
+Ohne titel
+
+\end{simpletextbox}
 
 
 

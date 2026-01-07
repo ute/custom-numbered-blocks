@@ -1,6 +1,7 @@
 --[[
-Example for a simple boxtype that works with any format
-This is also used as fallback if rendering functions are missing
+Example for a simple appearance definition that works with any format,
+since it is solely built on pandoc.
+It mimics quartos theorem blocks, but not for latex, where it works without amsthm
 
 author: ute
 date: start 1/2026

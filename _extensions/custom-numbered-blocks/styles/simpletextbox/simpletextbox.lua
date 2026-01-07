@@ -1,6 +1,6 @@
 --[[
-Example for a simple boxtype with styling
-This boxtype encloses title and contents of the custom numbered box in a colored box
+Example for a simple appearance definition with styling
+This example encloses title and contents of the custom numbered box in a colored box
 with inner and outer margins of size 1 em to all sides.
 simpletextbox supports pdf and html format
 it is also an example for what you can do with pandoc functions, 
@@ -12,12 +12,7 @@ date: 29/12/2025
 
 local postit = {}
 
-postit.defaultOptions = {
-   -- numbered = "true",
-    color = "#D2E787"
-    --colors={"#9AE787"}
-  }
-
+postit.defaultOptions = {colors = {"#9AE787"}}
 --[[ for future extension to named colors
 postit.colors = {
     lightgreen = colors.hex("90ee90")

@@ -62,9 +62,9 @@ local initBoxTypes = function (cnbyaml)
   local allboxtypes, validboxtypes = {}, {}
   local defbx = cnbx.styles.default.boxtype
   
-  gatherentries(cnbyaml.styles, allboxtypes, "boxtype")
-  gatherentries(cnbyaml.groups, allboxtypes, "boxtype")
-  gatherentries(cnbyaml.classes, allboxtypes, "boxtype")
+  gatherentries(cnbyaml.styles, allboxtypes, "appearance")
+  gatherentries(cnbyaml.groups, allboxtypes, "appearance")
+  gatherentries(cnbyaml.classes, allboxtypes, "appearance")
   
     -- ensure default box type is included in the collection of box types
   allboxtypes[defbx] = true
@@ -147,6 +147,8 @@ local initStyles = function (cnbyaml)
     if type(sty) == "table" then
     for k, v in pairs(sty) do
       vv = v --deInline(v)
+      -- redefine boxtype to appearance  
+      if v.appearance ~= nil then v.boxtype = v.appearance end
       if vv.parent == nil then -- print("no parent") 
         basestyles[k] = vv
       end
@@ -198,6 +200,7 @@ local initGroupDefaults = function(cnbyaml)
   if grps ~= nil then 
     if type(grps) == "table" then
       for k, v in pairs(grps) do
+        if v.appearance ~= nil then v.boxtype = v.appearance end
         groups[k] = deepcopy(v)
       end
     end
@@ -282,7 +285,7 @@ local initClassDefaults = function (cunumbl)
 
   for key, val in pairs(cunumbl.classes) do
     -- print("class key "..key)
-
+    if val.appearance ~= nil then val.boxtype = val.appearance end
     clinfo = deepcopy(val) --deInline(val)
     -- print("0 class info numbered "..replaceifnil(clinfo.numbered,"not given"))
     

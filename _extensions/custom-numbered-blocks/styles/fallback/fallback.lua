@@ -1,5 +1,5 @@
 --[[
-Example for a simple boxtype that works with any format
+Example for a simple appearance definition that works with any format
 This is also used as fallback if rendering functions are missing
 
 author: ute

@@ -5,14 +5,14 @@ filters:
 custom-numbered-blocks:
   styles:
     postit:
-      boxtype: simpletextbox
-      #color: "#d4dee4"
-      color: yellow
+      appearance: simpletextbox
+      colors: ["44dee4"]
+      #color: yellow
   classes:
     Example: 
       listin: [allex]
       style: postit
-      boxtype: quartothm
+      #appearance: quartothm-like
       # colors: ["#b0b987", "#a0a000"]
 keep-tex: true      
 ---
@@ -39,7 +39,7 @@ This is top, not an example
 
 :::
 
-::: {.Example listin="important" #importantstuff}
+::: {.Example listin="important" #importantstuff appearance="blunt"}
 # my *important* example $a^2+b^2$ that refers to @thm-quatsch
 
 Es kamen ein mal ein *paar* Griechen, die wollten was der Welt beweisen:

@@ -27,18 +27,18 @@ local str = pandoc.utils.stringify
 
 cnbx = require "cnb-global"
 
-cnbx.ute="huhn"
+--cnbx.ute="huhn"
 
-ute1 = require "cnb-utilities"
+--ute1 = require "cnb-utilities"
 dev = require "devutils"
 
-local deInline = ute1.deInline
-local tablecontains = ute1.tablecontains
-local updateTable = ute1.updateTable
-local ifelse = ute1.ifelse
-local replaceifnil = ute1.replaceifnil
-local findFile = ute1.findFile
-local warn = ute1.warn
+-- local deInline = ute1.deInline
+-- local tablecontains = ute1.tablecontains
+-- local updateTable = ute1.updateTable
+-- local ifelse = ute1.ifelse
+-- local replaceifnil = ute1.replaceifnil
+-- local findFile = ute1.findFile
+-- local warn = ute1.warn
 
 --local replaceifempty = ute1.replaceifempty
 

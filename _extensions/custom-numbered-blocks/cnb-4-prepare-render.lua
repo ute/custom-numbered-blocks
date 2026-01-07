@@ -12,9 +12,8 @@ local tablecontains = uti.tablecontains
 local filterAttributes = function(el)
   local id = el.identifier
   local rattribs -- collect attributes for box styling
-  local norattribs -- the remaining attributes like label, boxtype, ...
+  local norattribs -- the remaining attributes like label, appearance, ...
   local ignoreargs
-
   
   -- TODO this is only looking at "first" example, for debugging. Remove if-then later
   --if id == "first" then
@@ -25,7 +24,7 @@ local filterAttributes = function(el)
       return(el)
   end
   
-  -- decision: do not allow changing style or boxtype. 
+  -- decision: do not allow changing style or appearance. 
   -- this can be achieved by grouping instead on a per element base
   -- classes are coherent in their options.
   -- if users really want this, it could be changed later.
@@ -33,7 +32,7 @@ local filterAttributes = function(el)
 
   local cls = info.cnbclass
 
-  --if bty then print ("boxtype given, tsts "..bty) end
+  --if bty then print ("appearance given, tsts "..bty) end
   --if sty then print ("style given, tsts "..sty) end
   --print("class is "..cla.." - now get all default options")
   
@@ -47,7 +46,7 @@ local filterAttributes = function(el)
 
   rattribs = {}
   norattribs = {}
-  local norendero = {"label", "reflabel", "tag", "style", "boxtype", "listin"}
+  local norendero = {"label", "reflabel", "tag", "style", "boxtype", "appearance", "listin"}
   for k, v in pairs(el.attributes) do
     if tablecontains(norendero, k) then
        -- print(k..": "..pandoc.utils.stringify(v))
@@ -64,7 +63,7 @@ local filterAttributes = function(el)
   -- ignore boxtype, style, color and colors. They cannot be changed per element  
   ignoreargs = ""
   local quotek = ""
-  local ignoreo = {"boxtype", "color", "colors", "style"}
+  local ignoreo = {"appearance", "boxtype", "color", "colors", "style"}
   for k,_ in pairs(norattribs) do
     if tablecontains(ignoreo, k) then
       quotek = '"'..k..'"'
