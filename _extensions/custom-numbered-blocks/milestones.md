@@ -3,13 +3,13 @@
 next steps:
 
 - [x] split: fmt in init
-- [ ] styles
+- [x] styles
   - [x] modify this, to allow title rendering in original format
     - [x] styles are hierarchical list that starts with format
     - [x] need to sandwich title in beginBlock. This could be more challenging for contributers. But who wants to make their own style. At most a handful of cracks.
     - [x] beginBlock returns **list of pandoc inlines**. Do the same for endBlock
 - [x] crossref reorg
-- [ ] title rendering reorg
+- [x] title rendering reorg
 - [ ] colors
 
 ## Split up in chunks
@@ -36,8 +36,8 @@ New parts:
 ## Change title rendering: make use of pandoc utilities
 
 do this concurrently with crossref reorganisation
-- [ ] store title as Inlines `pandoctitle`
-- [ ] use this stored title for rendering
+- [x] store title as Inlines `pandoctitle`
+- [x] use this stored title for rendering
 - [x] concurrently store md version as `mdtitle`, using the new translator function `str_md`
 
 ## Simplify stylez interface: no use of fmt
@@ -59,9 +59,9 @@ This is also a big one
 Also a quite comprehensive one
 
 - [x] no new extra arguments to divs, but store in global list with identifier
-- [ ] 1. round: crossreferences and identifiers, store as json (json later only for books, now for debugging)
+- [x] 1. round: crossreferences and identifiers, store as json (json later only for books, now for debugging)
 - [ ] for books: register if changes occur and if there are unresolved references
-- [ ] for monofile document types: json just do not generate it from start
+- [x] for monofile document types: json just do not generate it from start
   
 ## Use brand colors and define own palettes
 
