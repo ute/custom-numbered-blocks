@@ -1,4 +1,4 @@
-.fbx-default{
+.fobx-default{
   --color1: #c7c7d0;
   --color2: #a3a3aa;
   
@@ -18,11 +18,11 @@
 
 
 /* for button placement */
-details.fbx-default[open] {
+details.fobx-default[open] {
   position: relative;
 }
 
-details.fbx-default > summary{
+details.fobx-default > summary{
   background-color: var(--title-background-color);
   color: var(--title-color);
  
@@ -37,15 +37,15 @@ details.fbx-default > summary{
   padding-left: var(--padding-left);
 }
 
-details.fbx-default > summary:hover{
+details.fobx-default > summary:hover{
   box-shadow: var(--thickshadow);
 }
 
-details.fbx-default[open] > summary{
+details.fobx-default[open] > summary{
   border-bottom-left-radius: 0px;
 }
 
-details.fbx-default > div{
+details.fobx-default > div{
   padding: var(--padding-content);
   padding-left: var(--padding-left);
   padding-bottom: 0;
@@ -60,7 +60,7 @@ details.fbx-default > div{
 
 /* simple box */
 
-details.fbx-simplebox > div{
+details.fobx-simplebox > div{
   padding-bottom: 0;
   border-right: 1px solid var(--border-color);
   border-bottom-right-radius: .3rem;

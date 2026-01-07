@@ -1,0 +1,72 @@
+---
+title: "Custom-numbered-blocks Example"
+number-sections: true
+filters:
+  - custom-numbered-blocks
+format:
+  html: default
+  pdf: default
+
+extensions:
+  custom-numbered-blocks:
+    classes:    
+      TODO:
+        #boxtype: simpletextbox
+        boxtype: fallback
+        label: "To do"
+      NixDo: default
+
+
+# crossref:
+#  chapters: true
+---
+
+::: TODO
+### simpletextbox
+
+- [x] make referenceable - this works out of the box, I was sooo clever with the design ;-)
+:::
+
+# First heading
+
+::: TODO
+### Change internal registration of Divs {#first}
+This is relatively epic
+
+- [ ] do not use div attributes, but an internal table
+  - [ ] set up the table in parallel
+    - [ ] make identifiers for all divs
+    - [ ] add to cnbx.customblocks. Catch error: duplex
+  - [ ] test by inspection
+  - [ ] change how styles use the information
+    - [x] start with fallbackexample
+    - [ ] test fallbackexample 
+  - [ ] check if lists-of still are working. Now use mdtitle - maybe I already do this.
+
+:::
+
+::: {.DONE title = "not ywt done"}
+
+All is done
+
+:::
+
+::: TODO
+The div with no title
+:::
+
+# second heading
+
+::: TODO
+# this is only for testing purposes {#second}
+
+For example, to catch duplex identifiers
+:::
+
+::: TODO 
+# crossreferencing using pandoc
+An epic one, to enable independence of formats.
+Let's see if this is possible. A future thing.
+:::
+
+

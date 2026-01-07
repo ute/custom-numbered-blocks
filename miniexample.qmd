@@ -1,0 +1,58 @@
+---
+title: Mini example
+filters:
+    - custom-numbered-blocks
+custom-numbered-blocks:
+  styles:
+    postit:
+      appearance: simpletextbox
+      colors: ["44dee4"]
+      #color: yellow
+  classes:
+    Example: 
+      listin: [allex]
+      style: postit
+      #appearance: quartothm-like
+      # colors: ["#b0b987", "#a0a000"]
+keep-tex: true      
+---
+
+This is a test.
+
+::: {#thm-quatsch}
+## Putagoras
+
+Es kamen ein mal ein *paar* Griechen, die wollten was der Welt beweisen:
+$$a^2+b^2=c^2$$
+ das isses
+:::
+
+::: Example
+# my first example. but see \longref{importantstuff}
+
+This is an example
+:::
+
+::: {.Top #toptip}
+
+This is top, not an example
+
+:::
+
+::: {.Example listin="important" #importantstuff appearance="blunt"}
+# my *important* example $a^2+b^2$ that refers to @thm-quatsch
+
+Es kamen ein mal ein *paar* Griechen, die wollten was der Welt beweisen:
+$$a^2+b^2=c^2$$
+ das isses
+:::
+
+::: {.Example}
+
+Ohne titel
+:::
+
+::: {.Example title="Titel als attribut angegeben"} 
+
+Mit titel, ohne Markdown
+:::

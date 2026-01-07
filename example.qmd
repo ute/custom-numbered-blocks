@@ -6,37 +6,54 @@ filters:
 format:
   html: default
   pdf: default
+#  typst: default
 
-custom-numbered-blocks:
-  groups:
-    thmlike:
-      colors: [948bde, 584eab]
-      boxstyle: foldbox.simple
-      collapse: false
-      listin: [mathstuff]
-    todos: default  
-  classes:
-    Theorem:
-      group: thmlike
-    Corollary:
-      group: thmlike
-    Conjecture:
-      group: thmlike
-      collapse: true  
-    Definition:
-      group: thmlike
-      colors: [d999d3, a01793]
-      reflabel: "Def."
-    Feature: default
-    TODO:
-      label: "To do"
-      colors: [e7b1b4, 8c3236]
-      group: todos
-      listin: [stilltodo]
-    DONE:
-      label: "Done"
-      colors: [cce7b1, 86b754]  
-      group: todos
+extensions:
+  custom-numbered-blocks:
+    styles:
+      formalia:
+        boxtype: foldbox
+        colors: [948bde, 584eab]
+        boxstyle: foldbox.simple
+        collapse: false
+      besonders:
+        parent: formalia
+        collapse: true
+        colors: [b88bde, 584eab]
+      postit:
+        boxtype: simpletextbox
+        color: yellow # not implemented yet
+ 
+    groups:
+      thmlike:
+        style: formalia
+        listin: [mathstuff]
+      todos: #default  
+        style: postit
+#        listin: [todos]
+    classes:    
+      Theorem:
+        group: thmlike
+      Corollary:
+        group: thmlike
+        style: besonders
+      Conjecture:
+        group: thmlike
+        collapse: true  
+      Definition:
+        group: thmlike
+        colors: [d999d3, a01793]
+        reflabel: "Def."
+      Feature: default
+      TODO:
+        label: "To do"
+        colors: [e7b1b4, 8c3236]
+        group: todos
+        listin: [stilltodo]
+      DONE:
+        label: "Done"
+        colors: [cce7b1, 86b754]  
+        group: todos
 
 crossref:
   chapters: true
@@ -69,7 +86,7 @@ Crossreferences may need a re-run to update.
 
 ::: Feature
 ### Boxes can be nested
-However, inner boxes are not numbered -- it would be hard to put them in a sequence with outer boxes anyway.
+However, inner boxes are never numbered -- it would be hard to put them in a sequence with outer boxes anyway.
 :::
 :::
 
@@ -80,8 +97,30 @@ The default style for custom divs is `foldbox`: a collapsible similar to quarto'
 
 
 ::: TODO
-### Custom styles
-- [ ] create an API for user defined block styles
+### Custom **styles** almost done
+- [x] create an API for user defined block styles
+- [x] provide an example
+- [ ] and documentation
+- [x] secure that it also works for classes
+:::
+
+::: TODO
+### Change internal registration of Divs
+This is relatively epic
+
+- [ ] do not use div attributes, but an internal table
+  - [ ] set up the table in parallel
+  - [ ] test
+  - [ ] change how styles use the information
+    - [ ] start with fallbackexample
+:::
+
+::: TODO
+### Colors
+Use colors as they are defined in brand
+
+- [ ] Implement using brand colors 
+- [ ] Deprecate the old colors for foldboxes
 - [ ] provide an example
 - [ ] and documentation
 :::
@@ -89,8 +128,9 @@ The default style for custom divs is `foldbox`: a collapsible similar to quarto'
 ::: {.DONE #bref label="Done, may change" reflabel="Enhancement"}
 ### extended cross references that include label
 - [x] add a cross reference that includes the block type
-- [x] allow redefinition of the block type via attribute `reflabel`  
+- [x] allow redefinition of the block type via attribute `reflabel`
 - [ ] for now, the extended cross reference is called as `\longref` -- should this change? 
+- [ ] consider making crossreferences using `@label` as in plain quarto. Use the pandoc facilities for that
 :::
 
 ::: {.DONE label="Done, may change"}
@@ -113,6 +153,7 @@ In this context, by *fancy* we mean that the title of the box appears as a click
 
 
 ::: Corollary
+### fancy is fancy
 By \longref{fancy}, `foldboxes` are fancyboxes.
 :::
 

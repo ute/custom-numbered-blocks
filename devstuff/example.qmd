@@ -1,0 +1,11 @@
+---
+title: "Devstuff Example"
+filters:
+  - devstuff
+---
+
+## Heading
+
+This filter adds formatting to heading text.
+
+

@@ -1,0 +1,45 @@
+---
+title: "Example for Usage: Tips"
+format: native
+# filters: 
+#   - custom-numbered-blocks
+custom-numbered-blocks:
+   styles:
+      - default:
+        color: "#909090"
+        boxtype: "fallback"
+      - important:  [color = "red]
+      - lifehack: [color = "green"]
+      - postit: [color = "yellow", boxtype = "simpletextbox"]
+   groups:
+      tips:
+        boxtype: "foldbox"
+      info: [numbered = "false"]  
+   classes: 
+      - Tip:
+          group: tips   
+      - ImportantTip:
+          group: tips
+          style: important
+          label: "Tip (important!)"
+          reflabel: "important Tip"
+      - Lifehack:
+          group: tips  
+          style: lifehack
+          lable: "Tip (lifehack)"
+          reflabel: "Lifehack"
+      - Info:
+          label: "Information" 
+          reflabel: "Infobox"
+      - Block: default
+      - Postit:
+          style: postit
+          numbered: false 
+---   
+
+Here is the first tip:
+
+::: Tip
+## use custom numbered blocks
+it is fun
+:::

@@ -1,0 +1,250 @@
+Pandoc
+  Meta
+    { unMeta =
+        fromList
+          [ ( "custom-numbered-blocks"
+            , MetaMap
+                (fromList
+                   [ ( "classes"
+                     , MetaList
+                         [ MetaMap
+                             (fromList
+                                [ ( "Tip"
+                                  , MetaMap
+                                      (fromList
+                                         [ ( "group"
+                                           , MetaInlines [ Str "tips" ]
+                                           )
+                                         ])
+                                  )
+                                ])
+                         , MetaMap
+                             (fromList
+                                [ ( "ImportantTip"
+                                  , MetaMap
+                                      (fromList
+                                         [ ( "group"
+                                           , MetaInlines [ Str "tips" ]
+                                           )
+                                         , ( "label"
+                                           , MetaInlines
+                                               [ Str "Tip"
+                                               , Space
+                                               , Str "(important!)"
+                                               ]
+                                           )
+                                         , ( "reflabel"
+                                           , MetaInlines
+                                               [ Str "important"
+                                               , Space
+                                               , Str "Tip"
+                                               ]
+                                           )
+                                         , ( "style"
+                                           , MetaInlines
+                                               [ Str "important" ]
+                                           )
+                                         ])
+                                  )
+                                ])
+                         , MetaMap
+                             (fromList
+                                [ ( "Lifehack"
+                                  , MetaMap
+                                      (fromList
+                                         [ ( "group"
+                                           , MetaInlines [ Str "tips" ]
+                                           )
+                                         , ( "lable"
+                                           , MetaInlines
+                                               [ Str "Tip"
+                                               , Space
+                                               , Str "(lifehack)"
+                                               ]
+                                           )
+                                         , ( "reflabel"
+                                           , MetaInlines
+                                               [ Str "Lifehack" ]
+                                           )
+                                         , ( "style"
+                                           , MetaInlines
+                                               [ Str "lifehack" ]
+                                           )
+                                         ])
+                                  )
+                                ])
+                         , MetaMap
+                             (fromList
+                                [ ( "Info"
+                                  , MetaMap
+                                      (fromList
+                                         [ ( "label"
+                                           , MetaInlines
+                                               [ Str "Information" ]
+                                           )
+                                         , ( "reflabel"
+                                           , MetaInlines
+                                               [ Str "Infobox" ]
+                                           )
+                                         ])
+                                  )
+                                ])
+                         , MetaMap
+                             (fromList
+                                [ ( "Block"
+                                  , MetaInlines [ Str "default" ]
+                                  )
+                                ])
+                         , MetaMap
+                             (fromList
+                                [ ( "Postit"
+                                  , MetaMap
+                                      (fromList
+                                         [ ( "numbered"
+                                           , MetaBool False
+                                           )
+                                         , ( "style"
+                                           , MetaInlines
+                                               [ Str "postit" ]
+                                           )
+                                         ])
+                                  )
+                                ])
+                         ]
+                     )
+                   , ( "groups"
+                     , MetaMap
+                         (fromList
+                            [ ( "info"
+                              , MetaList
+                                  [ MetaInlines
+                                      [ Str "numbered"
+                                      , Space
+                                      , Str "="
+                                      , Space
+                                      , Quoted
+                                          DoubleQuote [ Str "false" ]
+                                      ]
+                                  ]
+                              )
+                            , ( "tips"
+                              , MetaMap
+                                  (fromList
+                                     [ ( "boxtype"
+                                       , MetaInlines [ Str "foldbox" ]
+                                       )
+                                     ])
+                              )
+                            ])
+                     )
+                   , ( "styles"
+                     , MetaList
+                         [ MetaMap
+                             (fromList
+                                [ ( "boxtype"
+                                  , MetaInlines [ Str "fallback" ]
+                                  )
+                                , ( "color"
+                                  , MetaInlines [ Str "#909090" ]
+                                  )
+                                , ( "default" , MetaString "" )
+                                ])
+                         , MetaMap
+                             (fromList
+                                [ ( "important"
+                                  , MetaList
+                                      [ MetaInlines
+                                          [ Str "color"
+                                          , Space
+                                          , Str "="
+                                          , Space
+                                          , Str "\8220red"
+                                          ]
+                                      ]
+                                  )
+                                ])
+                         , MetaMap
+                             (fromList
+                                [ ( "lifehack"
+                                  , MetaList
+                                      [ MetaInlines
+                                          [ Str "color"
+                                          , Space
+                                          , Str "="
+                                          , Space
+                                          , Quoted
+                                              DoubleQuote
+                                              [ Str "green" ]
+                                          ]
+                                      ]
+                                  )
+                                ])
+                         , MetaMap
+                             (fromList
+                                [ ( "postit"
+                                  , MetaList
+                                      [ MetaInlines
+                                          [ Str "color"
+                                          , Space
+                                          , Str "="
+                                          , Space
+                                          , Quoted
+                                              DoubleQuote
+                                              [ Str "yellow" ]
+                                          ]
+                                      , MetaInlines
+                                          [ Str "boxtype"
+                                          , Space
+                                          , Str "="
+                                          , Space
+                                          , Quoted
+                                              DoubleQuote
+                                              [ Str "simpletextbox" ]
+                                          ]
+                                      ]
+                                  )
+                                ])
+                         ]
+                     )
+                   ])
+            )
+          , ( "title"
+            , MetaInlines
+                [ Str "Example"
+                , Space
+                , Str "for"
+                , Space
+                , Str "Usage:"
+                , Space
+                , Str "Tips"
+                ]
+            )
+          ]
+    }
+  [ Para
+      [ Str "Here"
+      , Space
+      , Str "is"
+      , Space
+      , Str "the"
+      , Space
+      , Str "first"
+      , Space
+      , Str "tip:"
+      ]
+  , Div
+      ( "" , [ "Tip" ] , [] )
+      [ Header
+          2
+          ( "use-custom-numbered-blocks" , [] , [] )
+          [ Str "use"
+          , Space
+          , Str "custom"
+          , Space
+          , Str "numbered"
+          , Space
+          , Str "blocks"
+          ]
+      , Para [ Str "it" , Space , Str "is" , Space , Str "fun" ]
+      ]
+  ]
