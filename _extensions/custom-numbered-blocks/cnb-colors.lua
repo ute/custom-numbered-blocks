@@ -31,8 +31,8 @@ local colorCSSTeX_legacy = function (fmt, classDefs)
     for cls, options in pairs(classDefs) do
         --quarto.log.output(cls)
        thecolors = options.colors
-        dev.showtable(options,"the classDefs options")
-        print("los gehts"..pandoc.utils.stringify(options.colors))
+        --dev.showtable(options,"the classDefs options")
+       -- print("los gehts"..pandoc.utils.stringify(options.colors))
      
        if options.color~=nil then 
          if  thecolors == nil then thecolors = {options.color}  
@@ -56,7 +56,7 @@ local colorCSSTeX_legacy = function (fmt, classDefs)
     end  
   end
   result = pandoc.utils.stringify(StyleCSSTeX)
-  print(result)
+  -- print(result)
   if fmt == "html" then result = "<style>\n"..result.."</style>" end
   if fmt == "pdf" then result="%%==== colors from yaml ===%\n"..result.."%=============%\n" end
   return(result)

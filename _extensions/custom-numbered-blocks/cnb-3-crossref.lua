@@ -57,10 +57,13 @@ local doCounting = function(el)
   local cntkey, cnts, ClassDef, reflabel
   local prefixstr =""
   local notnumbered
+  local headid
   --local bxty, BoxDef, newattribs, UseAttribs
   
   ---------- headers ---------
   if el.t == "Header" then
+    headid = el.identifier
+    if headid ~=  "___doomed-for-removal" then
     lev = el.level -- + baselevel
     if lev > baselevel then
     secno = el.attributes.secno
@@ -81,7 +84,7 @@ local doCounting = function(el)
       if lev < maxlev then for i = lev+1, maxlev, 1 do hcounters[i] = 0 end end
       prefix = hcounterstring[1]
       for i = 2, math.min(lev, numberdepth), 1 do prefix = prefix..".".. hcounterstring[i] end 
-    end
+    end end
   end end 
 
   --------- custom numbered blocks --------
@@ -184,7 +187,7 @@ local writexref = function(filename)
     strippedxref.pandoctitle = nil
   end
 
-  dev.showtable(strippedxref, "I want to store this")
+  -- dev.showtable(strippedxref, "I want to store this")
   
   local xrjson = quarto.json.encode(strippedxref)
   local file = io.open(filename,"w")

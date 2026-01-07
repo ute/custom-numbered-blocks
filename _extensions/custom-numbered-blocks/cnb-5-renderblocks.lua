@@ -83,7 +83,7 @@ renderDiv = function(thediv)
   if cnbx.is_cunumblo(thediv) then
     id = thediv.identifier
       blinfo = cnbx.xref[id]
- 
+      -- dev.showtable(blinfo, "blinfo")
       tt = uti.tt_from_blinfo(blinfo)
     
     bty = cnbx.classDefaults[blinfo.cnbclass].boxtype

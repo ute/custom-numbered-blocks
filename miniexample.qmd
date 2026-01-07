@@ -6,14 +6,15 @@ custom-numbered-blocks:
   styles:
     postit:
       boxtype: simpletextbox
-      color: "#d4dee4"
+      #color: "#d4dee4"
+      color: yellow
   classes:
     Example: 
       listin: [allex]
       style: postit
-      # boxtype: foldbox
+      boxtype: quartothm
       # colors: ["#b0b987", "#a0a000"]
-      
+keep-tex: true      
 ---
 
 This is a test.
@@ -27,18 +28,18 @@ $$a^2+b^2=c^2$$
 :::
 
 ::: Example
-# my first example \ref{thm-quatsch}
+# my first example. but see \longref{importantstuff}
 
 This is an example
 :::
 
-::: Top
+::: {.Top #toptip}
 
 This is top, not an example
 
 :::
 
-::: {.Example listin="important"}
+::: {.Example listin="important" #importantstuff}
 # my *important* example $a^2+b^2$ that refers to @thm-quatsch
 
 Es kamen ein mal ein *paar* Griechen, die wollten was der Welt beweisen:

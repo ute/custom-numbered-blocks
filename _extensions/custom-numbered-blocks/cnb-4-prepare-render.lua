@@ -105,6 +105,39 @@ local filterAttributes = function(el)
 
 end  
 
+local makeblocktitle = function(el)
+  local id = el.identifier
+  local info = cnbx.xref[id]  
+  local pandoctitle, mdtitle
+  if info == nil then
+      return(el)
+  end
+  el1 = el.content[1]
+  if el1.t=="Header" then 
+    pandoctitle = el1.content
+    mdtitle = str_md(pandoctitle)
+        --  title = pandoc.utils.stringify(pandoctitle)  -- readable version without math
+          -- do not remove this in the first run? or does it work anyway, because the cites are allready resolved, and refs get resolved later?
+  --TODO here remove comment
+      table.remove(el.content, 1) 
+    else 
+      mdtitle = ""
+      pandoctitle = {}
+    end
+    info.mdtitle = mdtitle
+    info.pandoctitle = pandoctitle
+  return(el)
+end  
+
+
 return {
-  Div = filterAttributes
+  Div = function(el)
+    el = makeblocktitle(el)
+    filterAttributes(el)
+    return(el)
+  end , 
+  Pandoc = function(doc)
+    -- dev.showtable(cnbx.xref, "xref")
+    return(doc)
+  end  
 }

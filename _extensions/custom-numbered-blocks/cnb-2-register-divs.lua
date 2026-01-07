@@ -41,22 +41,12 @@ function registerdivs.Div(el)
       end
       el.identifier = idd
     end
-    local title = ""
-    local pandoctitle = {}
     local info = {id = idd}
-    --if cnbx.is_cunumblo(el) then --cls == "blk" then
       el1 = el.content[1]
         if el1.t=="Header" then 
-          pandoctitle = el1.content
-          title = str_md(pandoctitle)
-        --  title = pandoc.utils.stringify(pandoctitle)  -- readable version without math
-          -- do not remove this in the first run? or does it work anyway, because the cites are allready resolved, and refs get resolved later?
-  --TODO here remove comment
-          table.remove(el.content, 1) -- maybe tag for later: title-from-header
-        else title = ""
+          --  tag for later: title-from-header
+            el1.identifier = "___doomed-for-removal"
         end
-      info.mdtitle = title
-      info.pandoctitle = pandoctitle
       xref[el.identifier] = info
     -- end 
   end  

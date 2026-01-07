@@ -32,17 +32,18 @@ postit.colors = {
 local pandoctitle = function(ttt)
   local typlabelTag = ttt.ptyplabelTag
   if #ttt.title > 0 then typlabelTag = typlabelTag..pcolon end
-  return pandoc.Inlines(pandoc.Underline({pandoc.Strong(typlabelTag)}..ttt.title))
+  --return pandoc.Inlines(pandoc.Underline({pandoc.Strong(typlabelTag)}..ttt.title))
+  return pandoc.Inlines({pandoc.Strong(typlabelTag)}..ttt.title)
 end  
 
-
+-- !!! unforunately, pandoc creates problems with underline for pdf. See also https://github.com/quarto-dev/quarto-cli/issues/6962
 
 postit.pdf = {
   headerincludes = "simpletextbox.tex",
   beginBlock = function(ttt)
-    local bgcolor = ttt.options.color
+  --  local bgcolor = ttt.options.color
     return 
-       {pandoc.RawInline("tex", '\\begin{simpletextbox}{'..bgcolor..'}')}
+      {pandoc.RawInline("tex", '\\begin{simpletextbox}{'..tt.type..'}')}
        ..pandoctitle(ttt)
    end,
   endBlock = function(ttt)
