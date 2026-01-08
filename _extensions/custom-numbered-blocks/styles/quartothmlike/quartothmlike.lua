@@ -26,6 +26,7 @@ local render = {
     return {}
   end,
   
+  -- title on same line as content
   nonewline = true
 }
 

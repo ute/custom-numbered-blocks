@@ -34,31 +34,23 @@ ul.task-list li input[type="checkbox"] {
 <script src="example_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="example_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="example_files/libs/bootstrap/bootstrap-bb462d781dde1847d9e3ccf7736099dd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="example_files/libs/quarto-contrib/simpletextbox/simpletextbox.css" rel="stylesheet">
 <link href="example_files/libs/quarto-contrib/foldbox/foldbox.css" rel="stylesheet">
 <style>
 .Conjecture {
-  --color1: #948bde;
+  --color1: #b88bde;
   --color2: #584eab;
 }
-.Definition {
-  --color1: #d999d3;
-  --color2: #a01793;
+.Tip {
+  --color1: #f3f39e;
 }
-.Corollary {
-  --color1: #948bde;
-  --color2: #584eab;
-}
-.Theorem {
-  --color1: #948bde;
-  --color2: #584eab;
+.NewFeature {
+  --color1: #cce7b1;
+  --color2: #86b754;
 }
 .TODO {
   --color1: #e7b1b4;
   --color2: #8c3236;
-}
-.DONE {
-  --color1: #cce7b1;
-  --color2: #86b754;
 }
 .Feature {
   --color1: #c0c0c0;
@@ -126,64 +118,122 @@ window.Quarto = {
 
 <section id="custom-blocks-and-crossreferencing" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Custom blocks and crossreferencing</h1>
-<p>With this filter, you can define custom div classes (environments) that come with numbering, such as theorems, examples, exercises. The filter supports output formats pdf and html.</p>
-<div id="numbering-new-adapted-to-quarto-1.4-cross-reference-overhaul" class="Feature" title="Numbering: new, adapted to quarto 1.4 cross reference overhaul">
-<details class="Feature fbx-default closebutton"><summary><strong>Feature 1.1: </strong>Numbering: new, adapted to quarto 1.4 cross reference overhaul</summary><div>
+<p>With this filter, you can define custom div classes (environments) that come with numbering, such as theorems, examples, exercises. The filter currently supports output formats pdf and html.</p>
+<p>It is possible to define shared counters for multiple classes of blocks, similar to LaTeX’s amsthm, by defining <code>groups</code>.</p>
+<div id="cnb-1-NewFeature" class="NewFeature" title="New options for block appearance">
+<details class="NewFeature fobx-default closebutton"><summary><strong>New feature 1.1: </strong>New options for block appearance</summary><div>
+<p>The default appearance for custom divs is <strong>foldbox</strong>: a collapsible similar to quarto’s callouts, with a collapse button at the bottom that makes it easier collapse long boxes, and box open to the right. It comes with the variant <code>foldbox.simple</code>, with closed box and no additional close button.</p>
+<p>Two new ways a custom block can be rendered are available now:</p>
+<ul>
+<li><strong>quartothmlike</strong> mimics the appearance of theorem blocks in quarto, however they look alike in both <code>html</code> and <code>pdf</code> formats</li>
+<li><strong>simpletextbox</strong> is a simple example for a definition that uses color</li>
+</ul>
+</div></details>
+</div>
+<div id="numbering-cross-reference-overhaul-with-slightly-changed-behaviour" class="Feature">
+<details class="Feature fobx-default closebutton"><summary><strong>Feature 1.2: </strong>Numbering: cross reference overhaul with slightly changed behaviour</summary><div>
 <p>Numbering is by default within document and without section prefix for single documents, or within chapter and with chapter prefix for books. Grouped classes share the same counter, and the same default style.</p>
-<p>The default behaviour can be changed by setting the item <code>chapters</code> in yaml-lkey <code>crossreference</code> to <code>true</code> or <code>false</code>, to comply with quarto’s (no longer so) new crossreferencing options.</p>
+<p>The default behaviour can be changed by setting the item <code>chapters</code> in yaml-key <code>crossreference</code> to <code>true</code> or <code>false</code>, to comply with quarto’s (no longer so) new crossreferencing options.</p>
 <p>In the present single document, yaml contains</p>
 <pre><code>crossref:
   chapters: true</code></pre>
 <p>Numbered custom blocks can be cross-referenced with <code>\ref</code>.</p>
+<div style="background-color: lightblue">
 <p>Default numbering can be switched off for the whole class by setting the <code>numbered</code> to false, or for an individual block by adding the class <code>unnumbered</code>.</p>
-<p>Crossreferences my need a re-run to update.</p>
-<div id="boxes-can-be-nested" class="Feature" title="Boxes can be nested">
-<p></p><details class="Feature fbx-default closebutton"><summary><strong>Feature: </strong>Boxes can be nested</summary><div>However, inner boxes are not numbered – it would be hard to put them in a sequence with outer boxes anyway.<p></p>
+</div>
+<p>Crossreferences may need a re-run to update.</p>
+<div id="nested-blocks-may-be-numbered" class="NewFeature unnumbered">
+<details class="NewFeature fobx-default closebutton"><summary><strong>New feature: </strong>Nested blocks may be numbered</summary><div>
+<p>With the new version, nested blocks are numbered. This does not always make sense – you can and probably should alter this behaviour by specifying class <code>.unnumbered</code>, because inner blocks come first in numbering sequence, not necessarily logical from a reader perspective.</p>
 </div></details>
 </div>
 </div></details>
 </div>
-<div id="Feature-1.2" class="Feature" title="Block box style">
-<p></p><details class="Feature fbx-default closebutton"><summary><strong>Feature 1.2: </strong>Block box style</summary><div>The default style for custom divs is <code>foldbox</code>: a collapsible similar to quarto’s callouts, with a collapse button at the bottom that makes it easier collapse long boxes, and box open to the right. It comes with the variant <code>foldbox.simple</code>, with closed box and no additional close button.<p></p>
+<div id="custom-styles" class="NewFeature">
+<details class="NewFeature fobx-default closebutton"><summary><strong>New feature 1.3: </strong>Custom <em>styles</em></summary><div>
+<p>yaml now allows for a new key group <code>styles</code>. Here, you can define general appearance of blocks and optional properties such as color.</p>
+<p>This way, appearance of multiple classes can be unified even if they do not belong to the same numbering <code>group</code></p>
+<div id="change-in-color-specification" class="NewFeature unnumbered" data-label="Change" data-collapse="false">
+<details class="NewFeature fobx-default closebutton" open=""><summary><strong>Change: </strong>Change in color specification</summary><div>
+<p>Colors should now be specified as hex strings starting with <code>#</code>. This is supported by most major editors, and the canonical way in quarto <code>brand</code> (the old syntax is still working)</p>
 </div></details>
 </div>
-<div id="custom-styles" class="TODO" title="Custom styles">
-<details class="TODO fbx-default closebutton"><summary><strong>To do 1.1: </strong>Custom styles</summary><div>
+</div></details>
+</div>
+<div id="bref" class="NewFeature" data-reflabel="Enhancement">
+<details class="NewFeature fobx-default closebutton"><summary><strong>New feature 1.4: </strong><code>longref</code> for cross references that include block name</summary><div>
+<p>Cross references have previously only been possible in LaTeX style, via <code>\ref{thelabel}</code>. Now a new variant, <code>\longref{thelabel}</code>, has been added, that adds the name of the environment as a reference prefix to the resolved link. By default, the reference prefix is equal to the environment name, which can be changed as attribute <code>label</code>. The reference prefix can be redefined via the attribute <code>reflabel</code>.</p>
+<div id="cnb-7-TODO" class="TODO" title="future plans for cross references">
+<div class="simpletextbox"><u><strong>To do 1.1: </strong>future plans for cross references</u>
 <ul class="task-list">
-<li><label><input type="checkbox">create an API for user defined block styles</label></li>
-<li><label><input type="checkbox">provide an example</label></li>
-<li><label><input type="checkbox">and documentation</label></li>
+<li><label><input type="checkbox">should I change <code>label</code> to <code>blockname</code>? It would be breaking for those who have used it.</label></li>
+<li><label><input type="checkbox">consider making crossreferences using <code>@thelabel</code> as in plain quarto. Use the pandoc facilities for that</label></li>
 </ul>
+</div>
+</div>
 </div></details>
 </div>
-<div id="custom-list-of-blocks" class="DONE" data-label="Done, may change" title="Custom list of blocks">
-<p></p><details class="DONE fbx-default closebutton"><summary><strong>Done, may change 1.2: </strong>Custom list of blocks</summary><div>Generate <code>.qmd</code> files that contains a list of selected block classes, intermitted with headers from the document for easy customization and commenting. This way, one can make a list of all definitions, examples, or {theorems, propositions and lemmas} etc., edit it later and attach to the main document. If you edit, make sure to rename the autogenerated list first, otherwise it will get overwritten in the next run and all work is lost …<p></p>
+<div id="custom-lists-of-blocks" class="Feature">
+<details class="Feature fobx-default closebutton"><summary><strong>Feature 1.5: </strong>Custom lists-of blocks</summary><div>
+<p>Generate <code>.qmd</code> files that contains a list of selected block classes, intermitted with headers from the document for easy customization and commenting.</p>
+<p>This way, one can make a list of all definitions, examples, or {theorems, propositions and lemmas} etc., edit it later and attach to the main document. If you edit, make sure to rename the autogenerated list first, otherwise it will get overwritten in the next run and all work is lost …</p>
 <p>Currently, you need to give a key <code>listin</code> for any class or group of classes that should appear in a list of things. The value of this key is an array of names, also if only one list is to be generated. These names are turned into files <code>list-of-</code>name<code>.qmd</code>. I am considering replacing the yaml interface by a sub-key to <code>custom-numbered-classes</code>. This would allow to define arbitrary classes that can be attached to any custom div block, such as <code>.important</code>.</p>
+<div id="automatic-inclusion-of-lists-of" class="Tip">
+<div class="simpletextbox"><u><strong>Tip: </strong>automatic inclusion of lists-of</u>
+<p>You can include generated lists-of using a quarto shortcut. To do this, you need to compile the document twice, in order to get the list-of file.</p>
+<div class="callout callout-style-default callout-warning callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You need to comment out the include shortcode until the first version of the “list-of” qmd file is generated.</p>
+<p>If you include files inside a custom numbered block, it may break the div structure. To avoid this, enclose it in another div</p>
+</div>
+</div>
+<div class="safeguarding-div">
+<!--to avoid breaking the structure -->
+<section id="new-features-mentioned-in-this-document" class="level5 unnumbered">
+<h5 class="unnumbered anchored" data-anchor-id="new-features-mentioned-in-this-document">New features mentioned in this document:</h5>
+<p></p>
+<p><a href="#cnb-1-NewFeature"><strong>New feature 1.1</strong></a>: New options for block appearance</p>
+<p><a href="#nested-blocks-may-be-numbered"><strong>New feature</strong></a>: Nested blocks may be numbered</p>
+<p><a href="#change-in-color-specification"><strong>Change</strong></a>: Change in color specification</p>
+<p><a href="#custom-styles"><strong>New feature 1.3</strong></a>: Custom <em>styles</em></p>
+<p><a href="#bref"><strong>New feature 1.4</strong></a>: longref for cross references that include block name</p>
+</section>
+</div>
+</div>
+</div>
 </div></details>
 </div>
 </section>
-<section id="pseudomath-examples" class="level1" data-numberprefix="Pseudo" data-number="2">
-<h1 data-numberprefix="Pseudo" data-number="2"><span class="header-section-number">2</span> Pseudomath examples</h1>
-<div id="fancy" class="Definition" title="F\alphancybox">
-<p></p><details class="Definition fbx-simplebox fbx-default" open=""><summary><strong>Definition Pseudo.1: </strong>F<span class="math inline">\(\alpha\)</span>ncybox</summary><div>A box is called <em>f<span class="math inline">\(\alpha\)</span>ncybox</em> if it looks quite fancy.<p></p>
+<section id="pseudomath-examples" class="level1" data-numberprefix="P" data-number="2">
+<h1 data-numberprefix="P" data-number="2"><span class="header-section-number">2</span> Pseudomath examples</h1>
+<p>The blocks in this section are mostly <code>quartothmlike</code> blocks. The section also demonstrates that the section prefix can be changed by specifying the attribute <code>numberprefix</code> in the section heading. So here, section number”2” is replaced by “P”.</p>
+<div id="fancy" class="Definition">
+<p><strong>Definition P.1 (F<span class="math inline">\(\alpha\)</span>ncybox) </strong>A box is called <em>f<span class="math inline">\(\alpha\)</span>ncybox</em> if it looks quite fancy.</p>
 <p>In this context, by <em>fancy</em> we mean that the title of the box appears as a clickable button when rendered as html, where <em>clickable</em> implies that it throws a small shadow that becomes bigger when hovering over it.</p>
-</div></details>
 </div>
-<div id="Corollary-Pseudo.2" class="Corollary">
-<p></p><details class="Corollary fbx-simplebox fbx-default" open=""><summary><strong>Corollary Pseudo.2</strong></summary><div>By Definition <a href="#fancy">Pseudo.1</a>, <code>foldboxes</code> are fancyboxes.<p></p>
-</div></details>
+<div id="fancy-is-fancy" class="Corollary">
+<p><strong>Corollary P.2 (fancy is fancy) </strong>By <a href="#fancy">Definition P.1</a>, <code>foldboxes</code> are fancyboxes.</p>
 </div>
 <div id="TeachersHope" class="Conjecture">
-<p></p><details class="Conjecture fbx-simplebox fbx-default"><summary><strong>Conjecture Pseudo.3</strong></summary><div>Students are lured into clicking on the title and unfolding the fancybox.<p></p>
+<details class="Conjecture fobx-default closebutton"><summary><strong>Conjecture P.3</strong></summary><div>
+<p>Students are lured into clicking on the title and unfolding the fancybox.</p>
 </div></details>
 </div>
 <div id="TeacherHopes" class="Theorem" data-collapse="true">
-<p></p><details class="Theorem fbx-simplebox fbx-default"><summary><strong>Theorem Pseudo.4</strong></summary><div>This extension has been written by a teacher who hopes that students read the course notes…<p></p>
-</div></details>
+<p><strong>Theorem P.4 </strong>This extension has been written by a teacher who hopes that students read the course notes…</p>
 </div>
-<p>Theorem <a href="#TeacherHopes">Pseudo.4</a> is suggested by Conjecture <a href="#TeachersHope">Pseudo.3</a>, but it cannot be proven theoretically. It does give rise to more conjectures, though.</p>
-<div id="Conjecture*-Pseudo.1" class="Conjecture unnumbered">
-<p></p><details class="Conjecture fbx-simplebox fbx-default"><summary><strong>Conjecture</strong></summary><div>The teacher mentioned in Theorem <a href="#TeacherHopes">Pseudo.4</a> is a statistician who got addicted to quarto due to James J Balamuta’s fantastic web-r extension, and desparately wanted to have a common counter for theorems and alike. She got also convinced that everything is possible in quarto by the many nice extensions from Shafayet Khan Shafee.<p></p>
+<p><a href="#TeacherHopes">Theorem P.4</a> is suggested by Conjecture <a href="#TeachersHope">P.3</a>, but it cannot be proven theoretically. It does give rise to more conjectures, though. Here a reference <span class="math inline">\(\ref{Hope}\)</span> to an unknown object.</p>
+<div id="cnb-14-Conjecture" class="Conjecture unnumbered">
+<details class="Conjecture fobx-default closebutton"><summary><strong>Conjecture</strong></summary><div>
+<p>The teacher mentioned in Theorem <a href="#TeacherHopes">P.4</a> is a statistician who got addicted to quarto due to James J Balamuta’s fantastic web-r extension, and desparately wanted to have a common counter for theorems and alike. She got also convinced that everything is possible in quarto by the many nice extensions from Shafayet Khan Shafee.</p>
 </div></details>
 </div>
 <!-- append autogenerated list here. You may want to rename and edit first.

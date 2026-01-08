@@ -11,49 +11,51 @@ format:
 extensions:
   custom-numbered-blocks:
     styles:
-      formalia:
-        boxtype: foldbox
-        colors: [948bde, 584eab]
-        boxstyle: foldbox.simple
-        collapse: false
-      besonders:
-        parent: formalia
+      mathblock:
+        appearance: quartothmlike
+      specialmathblock:
+        appearance: foldbox
         collapse: true
-        colors: [b88bde, 584eab]
+        colors: ['#b88bde', '#584eab']
       postit:
-        boxtype: simpletextbox
-        color: yellow # not implemented yet
+        appearance: simpletextbox
+        colors: ['#f3f39e']
  
     groups:
       thmlike:
-        style: formalia
+        style: mathblock
         listin: [mathstuff]
-      todos: #default  
-        style: postit
-#        listin: [todos]
+      features: default   
+      
     classes:    
       Theorem:
         group: thmlike
       Corollary:
         group: thmlike
-        style: besonders
       Conjecture:
         group: thmlike
-        collapse: true  
+        style: specialmathblock
       Definition:
         group: thmlike
-        colors: [d999d3, a01793]
+        colors: ['#d999d3', '#a01793'] # is ignored by quartothmlike
         reflabel: "Def."
-      Feature: default
+      Feature: 
+        group: feature
+      NewFeature:
+        group: feature
+        label: "New feature"
+        reflabel: "Feature (new!)"
+        colors: ['#cce7b1', '#86b754'] 
+        listin: [news]
       TODO:
         label: "To do"
-        colors: [e7b1b4, 8c3236]
-        group: todos
-        listin: [stilltodo]
-      DONE:
-        label: "Done"
-        colors: [cce7b1, 86b754]  
-        group: todos
+        colors: ['#e7b1b4', '#8c3236']
+        style: postit
+        listin: [todos]
+      Tip:
+        style: postit
+        numbered: false  
+        
 
 crossref:
   chapters: true
@@ -62,10 +64,24 @@ crossref:
 
 # Custom blocks and crossreferencing
 
-With this filter, you can define custom div classes (environments) that come with numbering, such as theorems, examples, exercises. The filter supports output formats pdf and html.
+With this filter, you can define custom div classes (environments) that come with numbering, such as theorems, examples, exercises. The filter currently supports output formats pdf and html.
 
-::: Feature
-### Numbering: new, adapted to quarto 1.4 cross reference overhaul
+It is possible to define shared counters for multiple classes of blocks, similar to LaTeX's amsthm, by defining `groups`.
+
+::: {.NewFeature title="New options for block appearance"}
+The default appearance for custom divs is **foldbox**: a collapsible similar to quarto's callouts, with a collapse button at the bottom that makes it easier collapse long boxes, and box open to the right. It comes with the variant `foldbox.simple`, with closed box and no additional close button.
+
+Two new ways a custom block can be rendered are available now:
+ 
+ - **quartothmlike** mimics the appearance of theorem blocks in quarto, however they look alike in both `html` and `pdf` formats
+ - **simpletextbox** is a simple example for a definition that uses color
+
+:::
+
+
+
+::: {.Feature }
+### Numbering: cross reference overhaul with slightly changed behaviour
 
 Numbering is by default within document and without section prefix for single documents, or within chapter and with chapter prefix for books. Grouped classes share the same counter, and the same default style.
 
@@ -80,69 +96,92 @@ crossref:
 
 Numbered custom blocks can be cross-referenced with `\ref`.
 
+::: {style="background-color: lightblue"}
+
 Default numbering can be switched off for the whole class by setting the `numbered` to false, or for an individual block by adding the class `unnumbered`.
+
+:::
 
 Crossreferences may need a re-run to update.
 
-::: Feature
-### Boxes can be nested
-However, inner boxes are never numbered -- it would be hard to put them in a sequence with outer boxes anyway.
-:::
+::: {.NewFeature .unnumbered}
+### Nested blocks may be numbered
+With the new version, nested blocks are numbered. This does not always make sense -- you can and probably should alter this behaviour by specifying class `.unnumbered`, because inner blocks come first in numbering sequence,  not necessarily logical from a reader perspective.
 :::
 
-
-::: {.Feature title="Block box style"}
-The default style for custom divs is `foldbox`: a collapsible similar to quarto's callouts, with a collapse button at the bottom that makes it easier collapse long boxes, and box open to the right. It comes with the variant `foldbox.simple`, with closed box and no additional close button.
 :::
 
 
-::: TODO
-### Custom **styles** almost done
-- [x] create an API for user defined block styles
-- [x] provide an example
-- [ ] and documentation
-- [x] secure that it also works for classes
+::: NewFeature
+### Custom *styles*
+yaml now allows for a new key group `styles`. Here, you can define general appearance of blocks and optional properties such as color.
+
+This way, appearance of multiple classes can be unified even if they do not belong to the same numbering `group`
+
+:::: {.NewFeature .unnumbered label="Change" collapse=false}
+#### Change in color specification
+
+Colors should now be specified as hex strings starting with `#`. This is supported by most major editors, and the canonical way in quarto `brand` (the old syntax is still working)
+
+::::
+
 :::
 
-::: TODO
-### Change internal registration of Divs
-This is relatively epic
+::: {.NewFeature #bref reflabel="Enhancement"}
+### `longref` for cross references that include block name
 
-- [ ] do not use div attributes, but an internal table
-  - [ ] set up the table in parallel
-  - [ ] test
-  - [ ] change how styles use the information
-    - [ ] start with fallbackexample
+Cross references have previously only been possible in LaTeX style, via `\ref{thelabel}`. Now a new variant, `\longref{thelabel}`, has been added, that adds the name of the environment as a reference prefix to the resolved link. 
+By default, the reference prefix is equal to the environment name, which can be changed as attribute `label`.
+The reference prefix can be redefined via the attribute `reflabel`.
+
+::::{.TODO title="future plans for cross references"}
+
+- [ ] should I change `label` to `blockname`? It would be breaking for those who have used it.
+- [ ] consider making crossreferences using `@thelabel` as in plain quarto. Use the pandoc facilities for that
+
+::::
+
 :::
 
-::: TODO
-### Colors
-Use colors as they are defined in brand
+::: {.Feature}
+### Custom lists-of blocks
 
-- [ ] Implement using brand colors 
-- [ ] Deprecate the old colors for foldboxes
-- [ ] provide an example
-- [ ] and documentation
-:::
-
-::: {.DONE #bref label="Done, may change" reflabel="Enhancement"}
-### extended cross references that include label
-- [x] add a cross reference that includes the block type
-- [x] allow redefinition of the block type via attribute `reflabel`
-- [ ] for now, the extended cross reference is called as `\longref` -- should this change? 
-- [ ] consider making crossreferences using `@label` as in plain quarto. Use the pandoc facilities for that
-:::
-
-::: {.DONE label="Done, may change"}
-### Custom list of blocks
 Generate `.qmd` files that contains a list of selected block classes, intermitted with headers from the document for easy customization and commenting. 
+
 This way, one can make a list of all definitions, examples, or {theorems, propositions and lemmas} etc., edit it later and attach to the main document.
 If you edit, make sure to rename the autogenerated list first, otherwise it will get overwritten in the next run and all work is lost ...
 
 Currently, you need to give a key `listin` for any class or group of classes that should appear in a list of things. The value of this key is an array of names, also if only one list is to be generated. These names are turned into files `list-of-`name`.qmd`. I am considering replacing the yaml interface by a sub-key to `custom-numbered-classes`. This would allow to define arbitrary classes that can be attached to any custom div block, such as `.important`.
+
+:::: Tip
+
+### automatic inclusion of lists-of
+You can include generated lists-of using a quarto shortcut. 
+To do this, you need to compile the document twice, in order to get the list-of file.
+
+::::: {.callout-warning}
+You need to comment out the include shortcode until the first version of the "list-of" qmd file is generated.
+
+If you include files inside a custom numbered block, it may break the div structure. To avoid this, enclose it in another div
+
+:::::
+
+::: safeguarding-div 
+<!--to avoid breaking the structure -->
+
+##### New features mentioned in this document:{.unnumbered}
+
+{{< include list-of-news.qmd >}}
+
+:::
+
+::::
+
 :::
 
 # Pseudomath examples {numberprefix="P"}
+
+The blocks in this section are mostly `quartothmlike` blocks. The section also demonstrates that the section prefix can be changed by specifying the attribute `numberprefix` in the section heading. So here, section number"2" is replaced by "P".
 
 ::: {.Definition #fancy}
 ### F$\alpha$ncybox
@@ -172,9 +211,8 @@ Here a reference \ref{Hope} to an unknown object.
 The teacher mentioned in Theorem \ref{TeacherHopes} is a statistician who got addicted to quarto due to James J Balamuta's fantastic web-r extension, and desparately wanted to have a common counter for theorems and alike. She got also convinced that everything is possible in quarto by the many nice extensions from Shafayet Khan Shafee. 
 :::
 
-# Final test for crossreferencing "far away" in document
 
-I hope long extended cross references, see \longref{bref}, work as they should. They should, but needs a bit taking temperature for syntax.
+
 
 <!-- append autogenerated list here. You may want to rename and edit first.
 # List of math boxes

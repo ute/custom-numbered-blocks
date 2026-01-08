@@ -37,17 +37,14 @@ if cnbx.fmt == "unsupported" then
 end  
 
 return{
-    require("cnb-1-init-yaml")
-  , require("cnb-1-init-options") -- Meta: set up classes, groups etc
+    require("cnb-1-init-yaml") 
+  , require("cnb-1-init-options")  -- Meta: set up classes, groups etc
   , require("cnb-1-init-chapters") -- Meta: set up chapter numbers and classes   
-  , require("cnb-1-init-xref")
-  , require("cnb-2-register-divs") 
-  , require("cnb-3-crossref")
-  , require("cnb-4-prepare-render")
-  , require("cnb-5-renderblocks")  
-  , require("cnb-6-listof")  
-
- -- , require("cnb-9-cleanup")  
-  
+  , require("cnb-1-init-xref")     -- Meta: for books read crossref information from other chapters
+  , require("cnb-2-register-divs") -- make indices for all cunumblo divs, register raw title
+  , require("cnb-3-crossref")      -- follow headers and count cross references. Resolve \ref
+  , require("cnb-4-prepare-render") -- filter element attributes and register rendered titles 
+  , require("cnb-5-renderblocks")  -- do the rendering, register colors 
+  , require("cnb-6-listof")        -- generate List-of qmd files
 }
 
