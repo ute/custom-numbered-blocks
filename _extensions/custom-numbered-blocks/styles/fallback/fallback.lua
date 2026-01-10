@@ -21,7 +21,9 @@ local render = {
 -- solved by redefining command \ul in pdf
   end,
 
-  endBlock = function(ttt) return {} end
+  endBlock = function(ttt) return {} end,
+
+  headerinline = false -- whether or not the block header is inserted in line with content
 }
 
 return {

@@ -167,7 +167,7 @@ local doCounting = function(el)
 end
 
 
-local function resolveref(data)
+local function resolvelatexref(data)
   return { 
     RawInline = function(el)
       local refid = el.text:match("\\ref{(.*)}")
@@ -247,7 +247,7 @@ numberingfilter.Pandoc = function(doc)
   -- doc:walk {RawInline = resolveref}
   --dev.showtable(cnbx.xref, "xref")
   if cnbx.isbook then writexref(cnbx.xreffile) end
-  return doc:walk(resolveref(cnbx.xref))
+  return doc:walk(resolvelatexref(cnbx.xref))
 end
 
 return( numberingfilter )

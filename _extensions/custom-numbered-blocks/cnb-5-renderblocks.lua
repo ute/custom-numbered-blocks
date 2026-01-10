@@ -118,23 +118,9 @@ renderDiv = function(thediv)
     local beginBlock = boxcode.beginBlock(tt)
     local endBlock = boxcode.endBlock(tt)
     
-    --if boxcode.nonewline then print("thisisgonnabeit")end
-    --[[ for later: ams like behaviour
-      print(" the div " .. thediv.identifier.. " has content length "..
-       #thediv.content.. " and type of first entry is "
-         .. pandoc.utils.stringify(thediv.content[1].t))
-   
-  if #thediv.content > 0 and thediv.content[1].t == "Para" and 
-      thediv.content[#thediv.content].t == "Para" then
-        table.insert(thediv.content[1].content, 1, beginBlock)
-      end
-    --print(" beginblock has length ".. #beg
-    
-     thediv = thediv:walk(italic)
-     ]]
-
-    if boxcode.nonewline and   #thediv.content > 0 and thediv.content[1].t == "Para" and 
-        thediv.content[#thediv.content].t == "Para" 
+    if boxcode.headerinline and   
+      #thediv.content > 0 and thediv.content[1].t == "Para" and 
+      thediv.content[#thediv.content].t == "Para" 
     then
       table.insert(thediv.content[1].content, 1, beginBlock)
     else

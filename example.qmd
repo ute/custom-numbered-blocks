@@ -162,22 +162,24 @@ To do this, you need to compile the document twice, in order to get the list-of 
 ::::: {.callout-warning}
 You need to comment out the include shortcode until the first version of the "list-of" qmd file is generated.
 
-If you include files inside a custom numbered block, it may break the div structure. To avoid this, enclose it in another div
+If your custom block has headers inside, it may break the div structure. To avoid this, enclose the header n another div
 
 :::::
 
-::: safeguarding-div 
+::::: safeguarding-div 
 <!--to avoid breaking the structure -->
 
-##### New features mentioned in this document:{.unnumbered}
+ ### New features mentioned in this document:{.unnumbered} 
+
+::::: 
+<!-- end of safeguarding div -->
 
 {{< include list-of-news.qmd >}}
-
-:::
 
 ::::
 
 :::
+
 
 # Pseudomath examples {numberprefix="P"}
 
@@ -189,7 +191,6 @@ A box is called *f$\alpha$ncybox* if it looks quite fancy.
 
 In this context, by *fancy* we mean that the title of the box appears as a clickable button when rendered as html, where *clickable* implies that it throws a small shadow that becomes bigger when hovering over it.
 :::
-
 
 ::: Corollary
 ### fancy is fancy
@@ -208,7 +209,7 @@ This extension has been written by a teacher who hopes that students read the co
 Here a reference \ref{Hope} to an unknown object.
 
 ::: {.Conjecture .unnumbered}
-The teacher mentioned in Theorem \ref{TeacherHopes} is a statistician who got addicted to quarto due to James J Balamuta's fantastic web-r extension, and desparately wanted to have a common counter for theorems and alike. She got also convinced that everything is possible in quarto by the many nice extensions from Shafayet Khan Shafee. 
+The teacher mentioned in Theorem \ref{TeacherHopes} is a statistician who got addicted to quarto due to James J Balamuta's fantastic [quarto-webr extension](https://github.com/coatless/quarto-webr), and desparately wanted to have a common counter for theorems and alike. She got also convinced that everything is possible in quarto by the many nice extensions from Shafayet Khan Shafee. 
 :::
 
 

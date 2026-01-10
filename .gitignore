@@ -10,3 +10,5 @@ list-of-*.qmd
 *.code-workspace
 .local
 examples
+future
+
