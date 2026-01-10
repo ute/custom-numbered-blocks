@@ -18,8 +18,9 @@ extensions:
         collapse: true
         colors: ['#b88bde', '#584eab']
       postit:
-        appearance: simpletextbox
+        appearance: textbox
         colors: ['#f3f39e']
+        sizes: {padding: '1em', margin: '1em'}
  
     groups:
       thmlike:
@@ -74,7 +75,7 @@ The default appearance for custom divs is **foldbox**: a collapsible similar to 
 Two new ways a custom block can be rendered are available now:
  
  - **quartothmlike** mimics the appearance of theorem blocks in quarto, however they look alike in both `html` and `pdf` formats
- - **simpletextbox** is a simple example for a definition that uses color
+ - **textbox** a colored text box
 
 :::
 
@@ -96,11 +97,7 @@ crossref:
 
 Numbered custom blocks can be cross-referenced with `\ref`.
 
-::: {style="background-color: lightblue"}
-
 Default numbering can be switched off for the whole class by setting the `numbered` to false, or for an individual block by adding the class `unnumbered`.
-
-:::
 
 Crossreferences may need a re-run to update.
 
@@ -169,7 +166,7 @@ If your custom block has headers inside, it may break the div structure. To avoi
 ::::: safeguarding-div 
 <!--to avoid breaking the structure -->
 
- ### New features mentioned in this document:{.unnumbered} 
+#### New features mentioned in this document:{.unnumbered} 
 
 ::::: 
 <!-- end of safeguarding div -->

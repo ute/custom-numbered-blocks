@@ -38,3 +38,5 @@ end
 
 pspace = pandoc.Inlines(pandoc.Space())
 pcolon = pandoc.Inlines(pandoc.Str(": "))
+pblankline = pandoc.Inlines{pandoc.LineBreak(),pandoc.Space(), pandoc.LineBreak()}
+    

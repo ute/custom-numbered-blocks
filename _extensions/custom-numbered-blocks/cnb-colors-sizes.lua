@@ -1,5 +1,6 @@
 -- this module is for managing colors.
 -- it is still in legacy mode.
+-- sizes have been added
 
 --- extract colors from Class options, and generate css or tex code
 --- 
@@ -48,8 +49,8 @@ local legacycolor = function(cols)
   return(result)
 end
 
-local colorCSSTeX_legacy = function (fmt, classDefs)
-  local result, thecolors
+local colorsizeCSSTeX_legacy = function (fmt, classDefs)
+  local result, thecolors, thesizes
   local StyleCSSTeX = {}
   if classDefs ~= nil then
     for cls, options in pairs(classDefs) do
@@ -57,24 +58,45 @@ local colorCSSTeX_legacy = function (fmt, classDefs)
        thecolors = options.colors
         --dev.showtable(options,"the classDefs options")
        -- print("los gehts"..pandoc.utils.stringify(options.colors))
-     
-       if options.color~=nil then 
-         if  thecolors == nil then thecolors = {options.color}  
-        end end
-       if thecolors then   thecolors = legacycolor(thecolors)
         
-       -- dev.tprint(options.colors)
-    
+       -- if only one color is given, store it as colors array. 
+       -- todo: call a function that turns color into colors array
+       if options.color~=nil then 
+         if  thecolors == nil then thecolors = {options.color} end 
+       end
+       -- make sure both types of color strings are understood, with and without hash 
+       if thecolors then  thecolors = legacycolor(thecolors) end
+        
+       -- handle sizes
+       thesizes = options.sizes
+       
+       if thecolors or thesizes then
+         -- make css classes or tex definitions
         if fmt == "html" then
           table.insert(StyleCSSTeX, "."..cls.." {\n")
-            for i, col in ipairs(thecolors) do
-               table.insert(StyleCSSTeX, "  --color"..i..": #"..col..";\n") 
-           end    
+          if thecolors then
+            for key, col in ipairs(thecolors) do
+               table.insert(StyleCSSTeX, "  --color"..key..": #"..col..";\n") 
+            end 
+          end
+          if thesizes then
+            for k, v in pairs(thesizes) do
+               table.insert(StyleCSSTeX, "  --"..k..": "..v..";\n") 
+            end 
+          end
           table.insert(StyleCSSTeX, "}\n")
         elseif fmt == "pdf" then
-          for i, col in ipairs(thecolors) do
-           table.insert(StyleCSSTeX, "\\definecolor{"..cls.."-color"..i.."}{HTML}{"..col.."}\n")
-          end  
+          if thecolors then
+            for key, col in pairs(thecolors) do
+              table.insert(StyleCSSTeX, "\\definecolor{"..cls.."-color"..key.."}{HTML}{"..col.."}\n")
+            end
+          end
+          -- no elegant way to store and recall sizes
+          -- if thesizes then
+          --   for key, val in pairs(thesizes) do
+          --      table.insert(StyleCSSTeX, "\\newcommand{\\"..cls.."size"..key.."}{"..val.."}\n") 
+          --   end 
+          -- end
         end  
       end  
     end  
@@ -87,5 +109,5 @@ local colorCSSTeX_legacy = function (fmt, classDefs)
 end
 
 return{
-    colorCSSTeX_legacy=colorCSSTeX_legacy
+    SetVariablesCSSTeX=colorsizeCSSTeX_legacy
 }

@@ -24,7 +24,8 @@ SOFTWARE.
 -- TODO split into formats and render, eventually
 
 cnbx = require "cnb-global"
-colut = require "cnb-colors"
+colut = require "cnb-colors-sizes"
+-- colut = require "cnb-colors"
 
 uti = require "cnb-utilities"
 require "cnb-renderfunctions"
@@ -33,7 +34,7 @@ require "cnb-renderfunctions"
 
 local FileExists = uti.FileExists
 local warning = uti.warning
-local colorCSSTeX = colut.colorCSSTeX_legacy
+local setVariablesCSSTeX = colut.SetVariablesCSSTeX
 
 --[[
 
@@ -51,7 +52,7 @@ local insertBoxtypesPandoc = function(doc)
   -- Done: decided on 26.12.25: for pdf and html use standard packages until change needed
 -- insert extra css and latex with same name in same directory
   
-  local preamblestuff = colorCSSTeX(cnbx.fmt, cnbx.classDefaults)
+  local preamblestuff = setVariablesCSSTeX(cnbx.fmt, cnbx.classDefaults)
     
    if cnbx.fmt == "pdf" then
     quarto.doc.use_latex_package("tcolorbox","many")
