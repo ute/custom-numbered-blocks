@@ -35,8 +35,8 @@ local numberingfilter={}
 
 local zaehlweiter = true -- increase counters also when secno is given, but non numeric.
 
-local numberdepth = 2
-local maxlev = numberdepth
+--local numberdepth = cnbx.numberlevel
+local maxlev, numberdepth
 local hcounters = {}
 local hcounterstring ={}
 
@@ -45,6 +45,10 @@ local baselevel = 0
 local prefix = ""
 
 local initcounters = function(chapno)
+  maxlev = cnbx.numberlevel
+  numberdepth = maxlev
+print("maxlev is "..tostring(maxlev).. " cnbx.numberlevel is"..cnbx.numberlevel)
+  if maxlev > 0 then
   for i=1, maxlev do hcounters[i] = 0 end
   for i=1, maxlev do hcounterstring[i] = "" end
   if cnbx.isbook then
@@ -60,7 +64,7 @@ local initcounters = function(chapno)
       hcounterstring[1] = chapno
     end     
   end
-end
+end end
 
 -- local blkcount = 0
 

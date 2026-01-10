@@ -173,7 +173,7 @@ Meta = function(meta)
  -- get numbering depth
   cnbx.numberlevel = 0
   if meta.crossref then
-    if meta.crossref.chapters then 
+    if tostring(meta.crossref.chapters) == "true" then 
       cnbx.numberlevel = 1 end
   end
   initRenderInfo(meta)

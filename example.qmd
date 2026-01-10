@@ -42,6 +42,7 @@ extensions:
         reflabel: "Def."
       Feature: 
         group: feature
+        title: "click to expand"
       NewFeature:
         group: feature
         label: "New feature"
@@ -82,7 +83,8 @@ Two new ways a custom block can be rendered are available now:
 
 
 ::: {.Feature }
-### Numbering: cross reference overhaul with slightly changed behaviour
+
+#### Numbering: cross reference overhaul with slightly changed behaviour
 
 Numbering is by default within document and without section prefix for single documents, or within chapter and with chapter prefix for books. Grouped classes share the same counter, and the same default style.
 

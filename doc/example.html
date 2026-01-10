@@ -37,28 +37,28 @@ ul.task-list li input[type="checkbox"] {
 <link href="example_files/libs/quarto-contrib/textbox/textbox.css" rel="stylesheet">
 <link href="example_files/libs/quarto-contrib/foldbox/foldbox.css" rel="stylesheet">
 <style>
+.TODO {
+  --color1: #e7b1b4;
+  --color2: #8c3236;
+  --margin: 1em;
+  --padding: 1em;
+}
 .NewFeature {
   --color1: #cce7b1;
   --color2: #86b754;
 }
-.Conjecture {
-  --color1: #b88bde;
-  --color2: #584eab;
+.Tip {
+  --color1: #f3f39e;
+  --margin: 1em;
+  --padding: 1em;
 }
 .Feature {
   --color1: #c0c0c0;
   --color2: #808080;
 }
-.Tip {
-  --color1: #f3f39e;
-  --padding: 1em;
-  --margin: 1em;
-}
-.TODO {
-  --color1: #e7b1b4;
-  --color2: #8c3236;
-  --padding: 1em;
-  --margin: 1em;
+.Conjecture {
+  --color1: #b88bde;
+  --color2: #584eab;
 }
 </style>
 
@@ -130,7 +130,7 @@ window.Quarto = {
 <p>Two new ways a custom block can be rendered are available now:</p>
 <ul>
 <li><strong>quartothmlike</strong> mimics the appearance of theorem blocks in quarto, however they look alike in both <code>html</code> and <code>pdf</code> formats</li>
-<li><strong>simpletextbox</strong> is a simple example for a definition that uses color</li>
+<li><strong>textbox</strong> a colored text box</li>
 </ul>
 </div></details>
 </div>
@@ -219,13 +219,11 @@ Warning
 <h1 data-numberprefix="P" data-number="2"><span class="header-section-number">2</span> Pseudomath examples</h1>
 <p>The blocks in this section are mostly <code>quartothmlike</code> blocks. The section also demonstrates that the section prefix can be changed by specifying the attribute <code>numberprefix</code> in the section heading. So here, section number”2” is replaced by “P”.</p>
 <div id="fancy" class="Definition">
-<strong>Definition P.1 (F<span class="math inline">\(\alpha\)</span>ncybox) </strong>
-<p>A box is called <em>f<span class="math inline">\(\alpha\)</span>ncybox</em> if it looks quite fancy.</p>
+<p><strong>Definition P.1 (F<span class="math inline">\(\alpha\)</span>ncybox) </strong>A box is called <em>f<span class="math inline">\(\alpha\)</span>ncybox</em> if it looks quite fancy.</p>
 <p>In this context, by <em>fancy</em> we mean that the title of the box appears as a clickable button when rendered as html, where <em>clickable</em> implies that it throws a small shadow that becomes bigger when hovering over it.</p>
 </div>
 <div id="fancy-is-fancy" class="Corollary">
-<strong>Corollary P.2 (fancy is fancy) </strong>
-<p>By <a href="#fancy">Definition P.1</a>, <code>foldboxes</code> are fancyboxes.</p>
+<p><strong>Corollary P.2 (fancy is fancy) </strong>By <a href="#fancy">Definition P.1</a>, <code>foldboxes</code> are fancyboxes.</p>
 </div>
 <div id="TeachersHope" class="Conjecture">
 <details class="Conjecture fobx-default closebutton"><summary><strong>Conjecture P.3</strong></summary><div>
@@ -233,8 +231,7 @@ Warning
 </div></details>
 </div>
 <div id="TeacherHopes" class="Theorem" data-collapse="true">
-<strong>Theorem P.4 </strong>
-<p>This extension has been written by a teacher who hopes that students read the course notes…</p>
+<p><strong>Theorem P.4 </strong>This extension has been written by a teacher who hopes that students read the course notes…</p>
 </div>
 <p><a href="#TeacherHopes">Theorem P.4</a> is suggested by Conjecture <a href="#TeachersHope">P.3</a>, but it cannot be proven theoretically. It does give rise to more conjectures, though. Here a reference <span class="math inline">\(\ref{Hope}\)</span> to an unknown object.</p>
 <div id="cnb-14-Conjecture" class="Conjecture unnumbered">
