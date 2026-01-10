@@ -47,13 +47,13 @@ local prefix = ""
 local initcounters = function(chapno)
   maxlev = cnbx.numberlevel
   numberdepth = maxlev
-print("maxlev is "..tostring(maxlev).. " cnbx.numberlevel is"..cnbx.numberlevel)
+-- print("maxlev is "..tostring(maxlev).. " cnbx.numberlevel is"..cnbx.numberlevel)
   if maxlev > 0 then
   for i=1, maxlev do hcounters[i] = 0 end
   for i=1, maxlev do hcounterstring[i] = "" end
   if cnbx.isbook then
   -- check if chapno is numeric
-    print("the chapter number is "..chapno)
+  --  print("the chapter number is "..chapno)
     baselevel = 1
     prefix = tostring(chapno)
     if tonumber(cnbx.chapno) then
