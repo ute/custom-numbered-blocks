@@ -10,20 +10,20 @@ format:
 
 extensions:
   custom-numbered-blocks:
-    styles:
+    appearances:
       mathblock:
-        appearance: quartothmlike
+        containter: quartothmlike
       specialmathblock:
-        appearance: foldbox
+        container: foldbox
         collapse: true
         colors: ['#b88bde', '#584eab']
       postit:
-        appearance: simpletextbox
+        container: simpletextbox
         colors: ['#faec6b']
         
     groups:
       thmlike:
-        style: mathblock
+        appearance: mathblock
         listin: [mathstuff]
       features: default   
       
@@ -34,7 +34,7 @@ extensions:
         group: thmlike
       Conjecture:
         group: thmlike
-        style: specialmathblock
+        appearance: specialmathblock
       Definition:
         group: thmlike
         colors: ['#d999d3', '#a01793'] # is ignored by quartothmlike
@@ -51,10 +51,10 @@ extensions:
       TODO:
         label: "To do"
         colors: ['#e7b1b4', '#8c3236']
-        style: postit
+        appearance: postit
         listin: [todos]
       Tip:
-        style: postit
+        appearance: postit
         numbered: false  
         
 
@@ -85,7 +85,7 @@ Two new ways a custom block can be rendered are available now:
 
 #### Numbering: cross reference overhaul with slightly changed behaviour
 
-Numbering is by default within document and without section prefix for single documents, or within chapter and with chapter prefix for books. Grouped classes share the same counter, and the same default style.
+Numbering is by default within document and without section prefix for single documents, or within chapter and with chapter prefix for books. Grouped classes share the same counter, and the same default appearance.
 
 The default behaviour can be changed by setting the item `chapters` in yaml-key `crossreference` to `true` or `false`, to comply with quarto's (no longer so) new crossreferencing options.
 
@@ -111,8 +111,8 @@ With the new version, nested blocks are numbered. This does not always make sens
 
 
 ::: NewFeature
-### Custom *styles*
-yaml now allows for a new key group `styles`. Here, you can define general appearance of blocks and optional properties such as color.
+### Custom *appearances*
+yaml now allows for a new key group `appearances`. Here, you can define general appearance of blocks and optional properties such as color.
 
 This way, appearance of multiple classes can be unified even if they do not belong to the same numbering `group`
 

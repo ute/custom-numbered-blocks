@@ -2,9 +2,9 @@
 
 This extension provides user defined custom div classes (environments) that come with numbering, such as theorems, examples, exercises. Numbered blocks can be **cross referenced**.
 
-- By default, the div's text block is enclosed in a collapsible box, similar to quarto callouts. Other **appearances** may be chosen.
-- **Groups** of classes can be defined that share style and numbering, similar to LaTeX amsthm.
-- Shortcuts for **styles**  of blocks, including options such as color, can be defined.
+- By default, the div's text block is enclosed in a collapsible box, similar to quarto callouts. Other **text container types** may be chosen.
+- **Groups** of classes can be defined that share appearance and numbering, similar to LaTeX amsthm.
+- Shortcuts for **appearances**  of blocks, including container type and properties such as color, can be defined.
 - **Lists-of-classes** can be extracted, such as a list of all theorems. It is also possible to generate a list for a group of classes, or a custom collection.
 
 The filter currently supports output formats pdf and html. It aims at similar appearance in both formats, and therefore does not use the LaTeX `amsthm` package, but `tcolorbox`.
@@ -15,7 +15,7 @@ The filter currently supports output formats pdf and html. It aims at similar ap
 ## Status
 Works with Quarto 1.7.
 
-<!-- 🎅🎄An extended version of custom-numbered-blocks is on the way! It will among others allow for different block styles. -->
+<!-- 🎅🎄An extended version of custom-numbered-blocks is on the way! It will among others allow for different block types. -->
 
 <!--
 Setting the number prefix per page/chapter coming soon.  
@@ -31,8 +31,8 @@ The internal mechanism has been virtually completely rewritten. This solves a co
 
 Major new features:
 
-  - style definitions
-  - new appearances of blocks, e.g. like quarto theorem divs
+  - appearance definitions
+  - new text container types for rendering blocks, e.g. `quartothmlike` that gives an appearance similar to quarto theorem divs
  
 Issues solved
 
@@ -82,7 +82,7 @@ here is some exemplary text
 
 ### Customization
 
-Options can be set on a per block, per class, or per group basis, and can be collected and reused under the yaml key `styles`.
+Appearance properties can be set on a per block, per class, or per group basis, and can be collected and reused under the yaml key `appearances`.
 (Only the color cannot be changed individually per block with the current implementation.)
 
 #### Options for referencing
@@ -95,27 +95,27 @@ The following options can be set on a per group, per class or per block basis:
 
 ### Change default rendering options
 
-To change the overall style that a class is rendered in, use the key `appearance`. It can be set per class, per group, or per style.
+To change the text container that a class is rendered in, use the key `container`. It can be set per class, per group, or per appearance.
 
 The following definition counts Theorems and Propositions separately, and with `quartothmlike` appearance:
 
 ``` yaml
 custom-numbered-blocks:
-  styles:
+  appearances:
     math: 
-      appearance: quartothmlike
+      container: quartothmlike
   classes:
     Theorem:
-      style: math
+      appearance: math
     Proposition:
-      style: math      
+      appearance: math      
 ```
 
 The default appearance `foldbox` renders as a collapsible box with title button, similar to quarto callouts. It comes with a small close button bottom right. You can change the following options in yaml or individually in the div specification:
 
   - `colors` : an array of two hex rgb color codes, for title button color and frame color. `colors: ['#a08080', '#500000']` would give a pink title button and dark red frame.
   - `collapse`: boolean, default `true`. Initial state of the collapsible box.
-  - `boxstyle`: set to `foldbox.simple` for a boxed environment without close button. There will quite likely come more options in a future version.
+  - `boxstyle`: set to `foldbox.simple` for a boxed environment without close button. T
   
 Two other appearances are provided:
 
@@ -123,8 +123,8 @@ Two other appearances are provided:
   - `quartothmlike` has no further options, and mimics the appearance of theorems in quarto.
   
 
-### Groups of classes with joint counter and joint default style
-Jointly counted block classes are specified by yaml option `groups`. These groups can also have a common default style. For each class, option `group` indicates membership. 
+### Groups of classes with joint counter and joint default appearance
+Jointly counted block classes are specified by yaml option `groups`. These groups can also have a common default appearance. For each class, option `group` indicates membership. 
  
 **Example**: we want to jointly count theorems, lemmas and propositions, and render boxes  with initially open status, but propositions should be collapsed:
 ```yaml

@@ -1,5 +1,5 @@
 --[[
-Example for a simple appearance definition with styling
+Example for a simple container definition with styling
 This example encloses title and contents of the custom numbered box in a colored box
 with inner and outer margins of size 1 em to all sides.
 simpletextbox supports pdf and html format

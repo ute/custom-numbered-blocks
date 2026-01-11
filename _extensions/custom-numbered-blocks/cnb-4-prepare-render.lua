@@ -35,7 +35,7 @@ local tablecontains = uti.tablecontains
 local filterAttributes = function(el)
   local id = el.identifier
   local rattribs -- collect attributes for box styling
-  local norattribs -- the remaining attributes like label, appearance, ...
+  local norattribs -- the remaining attributes like label, container, ...
   local ignoreargs
   
   -- TODO this is only looking at "first" example, for debugging. Remove if-then later
@@ -47,7 +47,7 @@ local filterAttributes = function(el)
       return(el)
   end
   
-  -- decision: do not allow changing style or appearance. 
+  -- decision: do not allow changing appearance or container. 
   -- this can be achieved by grouping instead on a per element base
   -- classes are coherent in their options.
   -- if users really want this, it could be changed later.
@@ -55,8 +55,8 @@ local filterAttributes = function(el)
 
   local cls = info.cnbclass
 
-  --if bty then print ("appearance given, tsts "..bty) end
-  --if sty then print ("style given, tsts "..sty) end
+  --if bty then print ("container given, tsts "..bty) end
+  --if sty then print ("appearance given, tsts "..sty) end
   --print("class is "..cla.." - now get all default options")
   
   local clopt = cnbx.classDefaults[cls]
@@ -69,7 +69,7 @@ local filterAttributes = function(el)
 
   rattribs = {}
   norattribs = {}
-  local norendero = {"label", "reflabel", "tag", "style", "boxtype", "appearance", "listin"}
+  local norendero = {"label", "reflabel", "tag", "appearance", "container", "listin"}
   for k, v in pairs(el.attributes) do
     if tablecontains(norendero, k) then
        -- print(k..": "..pandoc.utils.stringify(v))
@@ -83,10 +83,10 @@ local filterAttributes = function(el)
   --dev.showtable(norattribs, "no render attributes for "..id)
   -- make sure to adjust reflabel to label, if label is given but not reflabel
 
-  -- ignore boxtype, style, color and colors. They cannot be changed per element  
+  -- ignore container type, appearance, color and colors. They cannot be changed per element  
   ignoreargs = ""
   local quotek = ""
-  local ignoreo = {"appearance", "boxtype", "color", "colors", "style"}
+  local ignoreo = {"container", "boxtype", "color", "colors", "appearance"}
   for k,_ in pairs(norattribs) do
     if tablecontains(ignoreo, k) then
       quotek = '"'..k..'"'
@@ -100,7 +100,7 @@ local filterAttributes = function(el)
   
   if ignoreargs ~=""  then
     warning("elementwise attributes for block "..id..": "..ignoreargs..
-      " are ignored. These can only be specified by class (or group, style)")
+      " are ignored. These can only be specified by class (or group, appearance)")
   end
   
   --dev.showtable(clopt,"class options") 

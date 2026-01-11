@@ -1,5 +1,5 @@
 -- global utility function for boxtype implementations
--- this will likely change, and is meant to make addition of appearances easier
+-- this will likely change, and is meant to make addition of containers easier
 
 --[[
 MIT License

@@ -1,7 +1,7 @@
 --[[
 MIT License
 
-Copyright (c) 2023, 2026 Ute Hahn
+Copyright (c) 2023-2026 Ute Hahn
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@ SOFTWARE.
 
 --[[
 
-initialize storage for box types, styles, groups, block classes.
+initialize storage for box types, appearances, groups, block classes.
 
 ]]--
 
@@ -54,7 +54,7 @@ local mergelists = uti.mergeStringLists
 
 ----------------------------------]]
 
--- screen all entries in custom-numbered-blocks yaml for rendering styles.
+-- screen all entries in custom-numbered-blocks yaml for rendering appearances.
 -- check if found and add to list
 -- uses global function gatherentries from cnb-utilities
 local initBoxTypes = function (cnbyaml)
@@ -62,23 +62,23 @@ local initBoxTypes = function (cnbyaml)
   local allboxtypes, validboxtypes = {}, {}
   local defbx = cnbx.styles.default.boxtype
   
-  gatherentries(cnbyaml.styles, allboxtypes, "appearance")
-  gatherentries(cnbyaml.groups, allboxtypes, "appearance")
-  gatherentries(cnbyaml.classes, allboxtypes, "appearance")
+  gatherentries(cnbyaml.appearances, allboxtypes, "container")
+  gatherentries(cnbyaml.groups, allboxtypes, "container")
+  gatherentries(cnbyaml.classes, allboxtypes, "container")
   
     -- ensure default box type is included in the collection of box types
   allboxtypes[defbx] = true
 
-  defaultlua = findFile(defbx..".lua",{"styles/","styles/"..defbx.."/"})
+  defaultlua = findFile(defbx..".lua",{"textcontainers/","textcontainers/"..defbx.."/"})
   
-  -- this belongs to checking styles, or just to general sanity checks. 
-  -- check if default boxtype is available, otherwise it is a fatal error
-  -- it can only happen if the styles have been tampered, or the defaults.
+  -- this belongs to checking containers, or just to general sanity checks. 
+  -- check if default container type is available, otherwise it is a fatal error
+  -- it can only happen if the code has been tampered, or the defaults.
   if not defaultlua.found then 
-    quarto.log.error("Code for default box type "..defbx.." is not available")
+    quarto.log.error("Code for default text container type "..defbx.." is not available")
   end
 
-  -- include fallback style
+  -- include fallback container
   allboxtypes.fallback = true
   
   -- verify if boxtypes actually exist. otherwise replace by fallback
@@ -86,9 +86,9 @@ local initBoxTypes = function (cnbyaml)
   -- replace the remaining ones by default type, and issue warning
   for k, _ in pairs(allboxtypes) do
     fnamstr = str(k)
-    findlua = findFile(fnamstr..".lua",{"styles/","styles/"..fnamstr.."/"})
+    findlua = findFile(fnamstr..".lua",{"textcontainers/","textcontainers/"..fnamstr.."/"})
     if not findlua.found then 
-      warning ("code for boxtype "..fnamstr.." not found, replace by default ") 
+      warning ("code for text container type "..fnamstr.." not found, replace by default ") 
       findlua = defaultlua
       allboxtypes[k] = false -- if this is of interest later
     end
@@ -132,7 +132,7 @@ end
 --- in all cases set up styles/default, if no custom style is given
 --- no return value, but side effect
 local initStyles = function (cnbyaml)
-  local sty = cnbyaml.styles
+  local sty = cnbyaml.appearances
   local basestyles, allstyles = {}, {}
   --local minimaldefault = cnbx.styles.default --{boxtype = cnbx.defaultboxtype}
   local vv, vp
@@ -147,8 +147,8 @@ local initStyles = function (cnbyaml)
     if type(sty) == "table" then
     for k, v in pairs(sty) do
       vv = v --deInline(v)
-      -- redefine boxtype to appearance  
-      if v.appearance ~= nil then v.boxtype = v.appearance end
+      -- redefine boxtype to container  
+      if v.container ~= nil then v.boxtype = v.container end
       if vv.parent == nil then -- print("no parent") 
         basestyles[k] = vv
       end
@@ -200,7 +200,7 @@ local initGroupDefaults = function(cnbyaml)
   if grps ~= nil then 
     if type(grps) == "table" then
       for k, v in pairs(grps) do
-        if v.appearance ~= nil then v.boxtype = v.appearance end
+        if v.container ~= nil then v.boxtype = v.container end
         groups[k] = deepcopy(v)
       end
     end
@@ -285,7 +285,7 @@ local initClassDefaults = function (cunumbl)
 
   for key, val in pairs(cunumbl.classes) do
     -- print("class key "..key)
-    if val.appearance ~= nil then val.boxtype = val.appearance end
+    if val.container ~= nil then val.boxtype = val.container end
     clinfo = deepcopy(val) --deInline(val)
     -- print("0 class info numbered "..replaceifnil(clinfo.numbered,"not given"))
     
@@ -381,8 +381,8 @@ Meta = function(meta)
   if cnbx.yaml then 
    -- dev.showtable(cnbx.yaml, " yaml table")
  -- reset default style if given 
-    if cnbx.yaml.styles then 
-      local userdefault = cnbx.yaml.styles.default
+    if cnbx.yaml.appearances then 
+      local userdefault = cnbx.yaml.appearances.default
       if userdefault then
       -- replace default style by user defined
         cnbx.styles.default = updateTable(cnbx.styles.default, userdefault) 

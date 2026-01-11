@@ -3,10 +3,10 @@
 next steps:
 
 - [x] split: fmt in init
-- [x] styles
+- [x] appearances
   - [x] modify this, to allow title rendering in original format
-    - [x] styles are hierarchical list that starts with format
-    - [x] need to sandwich title in beginBlock. This could be more challenging for contributers. But who wants to make their own style. At most a handful of cracks.
+    - [x] appearances are hierarchical list that starts with format
+    - [x] need to sandwich title in beginBlock. This could be more challenging for contributers. But who wants to make their own container. At most a handful of cracks.
     - [x] beginBlock returns **list of pandoc inlines**. Do the same for endBlock
 - [x] crossref reorg
 - [x] title rendering reorg
@@ -40,19 +40,19 @@ do this concurrently with crossref reorganisation
 - [x] use this stored title for rendering
 - [x] concurrently store md version as `mdtitle`, using the new translator function `str_md`
 
-## Simplify stylez interface: no use of fmt
+## Simplify rendering containers interface: no use of fmt
 
 This is a big one. Remove looking up format. Let return separate lists for each format, and only insert the one for the current format.
 
 - [x] so far inserted both lists and chose from format
 - [x] remove evt. dependency on format by preselecting what to insert. Then use `.render.xxx` instead of `.render[cnbx.fmt].xxx`
 
-## Allow concurrent stylez
+## Allow concurrent container typez
 
 This is also a big one
 
 - [x] decide on interface and implement it
-- [x] make a template for a simple style, not using details-summary
+- [x] make a template for a simple container, not using details-summary
 
 ## Reorganize the whole crossref thing
 
