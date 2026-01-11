@@ -118,7 +118,9 @@ renderDiv = function(thediv)
     boxcode = cnbx.boxtypes[bty].render
     local beginBlock = boxcode.beginBlock(tt)
     local endBlock = boxcode.endBlock(tt)
-    
+    dev.showtable(boxcode,"available code")
+    if boxcode.makeclass ~= nil then boxcode.makeclass(tt) end
+
     if boxcode.headerinline and   
       #thediv.content > 0 and thediv.content[1].t == "Para" and 
       thediv.content[#thediv.content].t == "Para" 
