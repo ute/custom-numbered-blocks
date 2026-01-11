@@ -1,0 +1,36 @@
+---
+title: "Custom Numbered Blocks Extension"
+filters:
+    - custom-numbered-blocks
+#    - search-replace
+
+search-replace:
+  +rend : "`<div class=rendered>`{=html}"
+  +/div : "`</div>`{=html}"
+extensions:
+  custom-numbered-blocks:
+    styles:
+      txtbx:
+        appearance: textbox
+        sizes:
+          margin: "1em"
+          padding: "1em"
+        color: "#aabbdd"  
+    classes:
+      Box: 
+        style: txtbx  
+      ToDo: default
+      TODOplain:
+        boxtype: fallback
+crossref:
+  chapters: false        
+---
+
+## Changing the overall appearance of a block
+
+::: {.Box}
+### First results
+
+Lorem ipsum
+
+:::

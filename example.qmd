@@ -18,10 +18,9 @@ extensions:
         collapse: true
         colors: ['#b88bde', '#584eab']
       postit:
-        appearance: textbox
-        colors: ['#f3f39e']
-        sizes: {padding: '1em', margin: '1em'}
- 
+        appearance: simpletextbox
+        colors: ['#faec6b']
+        
     groups:
       thmlike:
         style: mathblock
