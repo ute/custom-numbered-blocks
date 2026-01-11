@@ -66,6 +66,7 @@ local initBoxTypes = function (cnbyaml)
   gatherentries(cnbyaml.groups, allboxtypes, "container")
   gatherentries(cnbyaml.classes, allboxtypes, "container")
   
+  --dev.showtable(allboxtypes, "the containers found")
     -- ensure default box type is included in the collection of box types
   allboxtypes[defbx] = true
 
@@ -104,7 +105,7 @@ local initBoxTypes = function (cnbyaml)
     validboxtypes[k] = findlua 
   end  
   
-  -- dev.showtable(allboxtypes, "all box types wanted")
+   -- dev.showtable(allboxtypes, "all box types wanted")
   
   -- replace missing functions in contributed box type code by fallback version
   for _, v in pairs(validboxtypes) do
@@ -172,7 +173,7 @@ end
   for _, v in pairs(basestyles) do
     if v.boxtype == nil then v.boxtype = cnbx.styles.default.boxtype end
   end
-  -- dev.showtable(basestyles, "all base styles")
+ -- dev.showtable(basestyles, "all base styles")
 
   allstyles = deepcopy(basestyles)
 
@@ -210,10 +211,10 @@ local initGroupDefaults = function(cnbyaml)
       if type(v) ~= "table" then
         if str(v) == "default" then 
           -- print(k.." is default") 
-          v = {style = "default", numbered = true}
+          v = {appearance = "default", numbered = true}
           groups[k] = v
         end
-      elseif v.style == nil then v.style = "default" 
+      elseif v.appearance == nil then v.appearance = "default" 
       end
     end
   end
@@ -322,7 +323,7 @@ local initClassDefaults = function (cunumbl)
     end
     
  --   dev.showtable(clinfo, " class info update by group", {})
-    local gstyle = clinfo.style
+    local gstyle = clinfo.appearance
     if gstyle ~= nil  then
       stylopt = deepcopy(cnbx.styles[gstyle])
       clinfo = updateTable(stylopt, clinfo)
@@ -390,13 +391,13 @@ Meta = function(meta)
     end
    --  dev.showtable(cnbx.styles.default, "default style")
     initBoxTypes(cnbx.yaml)
-  --  dev.showtable(cnbx.boxtypes, "boxtypes")
+   -- dev.showtable(cnbx.boxtypes, "boxtypes")
     initStyles(cnbx.yaml)
   --  dev.showtable(cnbx.styles, "styles")
     initGroupDefaults(cnbx.yaml)
     --dev.showtable(cnbx.groupDefaults, "groups") 
     initClassDefaults(cnbx.yaml) 
-    -- dev.showtable(cnbx.classDefaults, "classDefaults")
+   -- dev.showtable(cnbx.classDefaults, "classDefaults")
    
   end
 -- dev.showtable(cnbx, "cnbx")
