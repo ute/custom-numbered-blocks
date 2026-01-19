@@ -36,7 +36,7 @@ postit.pdf = {
   beginBlock = function(ttt)
     --- here new experimental ------------
     local optionstring = "" -- if it is allowed to change anything on individual basis [bla]
-    local texstring = "\\begin{cnb"..ttt.type.."}"..optionstring -- normalerweise mit titel{}
+    local texstring = "\\begin{cnb-"..ttt.type.."}"..optionstring -- normalerweise mit titel{}
     print(texstring)
     local pdt = pandoctitle(ttt)
     if pdt then pdt = pandoc.utils.stringify(pdt) else pdt = "" end
@@ -47,7 +47,7 @@ postit.pdf = {
        ..pandoctitle(ttt)
    end,
   endBlock = function(ttt)
-    local texstring = "\\end{cnb"..ttt.type.."}"
+    local texstring = "\\end{cnb-"..ttt.type.."}"
     print(texstring)
     return pandoc.RawInline("tex","\\end{simpletextbox}")
   end ,
@@ -58,7 +58,7 @@ postit.pdf = {
     cls=cls or "Theorem"
     -- local opt = ttt.options ist hier nicht notwendig
     --dev.showtable(ttt)
-    local envname = "\\cnb"..cls
+    local envname = "\\cnb-"..cls
     local result = "\\newenvironment{"..envname.."}[2][]"..
          "{\\begin{simpletextbox}[#1]{"..cls.."}#2".."{\\end{\\simpletextbox}}"
     print(result)     
