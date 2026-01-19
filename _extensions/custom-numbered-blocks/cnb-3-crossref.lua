@@ -183,9 +183,9 @@ local childfilter = {
     if cls then
       info = cnbx.xref[el.identifier]
       parentid = el.attributes["_nested"]
-      if parentid then print("parent is "..parentid) 
+      if parentid then -- print("parent is "..parentid) 
         childid = el.attributes["_childid"]
-        if childid then print("childid = "..childid) 
+        if childid then -- print("childid = "..childid) 
           prefix = cnbx.xref[parentid].refnumber
           info.prefix = prefix
           info.counter = childid

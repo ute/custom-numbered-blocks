@@ -81,9 +81,9 @@ Two new ways a custom block can be rendered are available now:
 
 
 
-::: {.Feature}
+::: {.NewFeature label="Change"}
 
-#### Numbering: cross reference overhaul with slightly changed behaviour
+#### Numbering: cross reference overhaul with nested counters
 
 Numbering is by default within document and without section prefix for single documents, or within chapter and with chapter prefix for books. Grouped classes share the same counter, and the same default appearance.
 
@@ -104,7 +104,7 @@ Crossreferences may need a re-run to update.
 
 ::: {.NewFeature}
 ### Nested blocks may be numbered
-With the new version, nested blocks are numbered within the enclosing parent block, if the parent block is also numbered. To suppress numbers,  specify class `.unnumbered` as usual.
+With the new version, nested blocks are numbered *within* the enclosing parent block, if the parent block is also numbered. To suppress numbers,  specify class `.unnumbered` as usual.
 :::
 
 :::
