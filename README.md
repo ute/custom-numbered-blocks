@@ -202,7 +202,9 @@ For single file Quarto documents, the numbering according to section number can 
   ::::
   other stuff
   ```
+<!--  
 - To use `layout` blocks within custom numbered blocks, you need to add the option `fig-pos="H"` to your column block, see [issue #16](https://github.com/ute/custom-numbered-blocks/issues/16)
+  -->
   
 ## Similar quarto extensions
 
