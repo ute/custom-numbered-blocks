@@ -34,12 +34,14 @@ end
 postit.pdf = {
   headerincludes = "simpletextbox.tex",
   beginBlock = function(ttt)
+    --- here new experimental ------------
     local optionstring = "" -- if it is allowed to change anything on individual basis [bla]
     local texstring = "\\begin{cnb"..ttt.type.."}"..optionstring -- normalerweise mit titel{}
     print(texstring)
     local pdt = pandoctitle(ttt)
     if pdt then pdt = pandoc.utils.stringify(pdt) else pdt = "" end
     print(texstring.."{"..pdt.."}")
+    --- end(experient) ---------------
     return 
       {pandoc.RawInline("tex", '\\begin{simpletextbox}{'..ttt.type..'}')}
        ..pandoctitle(ttt)
@@ -51,6 +53,7 @@ postit.pdf = {
   end ,
 
 -- make latex code that generates new class environment
+--- experimental ----
   makeclass = function(ttt, cls)
     cls=cls or "Theorem"
     -- local opt = ttt.options ist hier nicht notwendig
