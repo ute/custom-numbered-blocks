@@ -202,7 +202,8 @@ For single file Quarto documents, the numbering according to section number can 
   ::::
   other stuff
   ```
-
+- To use `layout-cols` blocks within custom numbered blocks, you need to add the option `fig-pos="H"` to your column block, see [issue #16](https://github.com/ute/custom-numbered-blocks/issues/16)
+  
 ## Similar quarto extensions
 
 - If you are mainly interested customizable callout boxes, check out James Balamuta's neat and handy extension [custom-callout](https://quarto.thecoatlessprofessor.com/custom-callout/). It allows to define own callout types with custom color and icon in a very simple and consistent way and comes with fantastic documentation.
