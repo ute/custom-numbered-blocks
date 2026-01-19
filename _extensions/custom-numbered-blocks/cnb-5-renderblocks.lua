@@ -118,7 +118,7 @@ renderDiv = function(thediv)
     boxcode = cnbx.boxtypes[bty].render
     local beginBlock = boxcode.beginBlock(tt)
     local endBlock = boxcode.endBlock(tt)
-    dev.showtable(boxcode,"available code")
+    -- this to the init part
     if boxcode.makeclass ~= nil then boxcode.makeclass(tt) end
 
     if boxcode.headerinline and   

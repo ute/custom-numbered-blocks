@@ -47,6 +47,7 @@ end
 
 
 function M.showtable (tbl, name, dott)
+  name = name or "you slacker"
   print("========== "..name.." ===========")
   if tbl ~= nil then 
     if type(tbl) == 'table' then 

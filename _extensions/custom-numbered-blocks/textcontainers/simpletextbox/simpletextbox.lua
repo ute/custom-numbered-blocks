@@ -34,23 +34,32 @@ end
 postit.pdf = {
   headerincludes = "simpletextbox.tex",
   beginBlock = function(ttt)
+    local optionstring = "" -- if it is allowed to change anything on individual basis [bla]
+    local texstring = "\\begin{cnb"..ttt.type.."}"..optionstring -- normalerweise mit titel{}
+    print(texstring)
+    local pdt = pandoctitle(ttt)
+    if pdt then pdt = pandoc.utils.stringify(pdt) else pdt = "" end
+    print(texstring.."{"..pdt.."}")
     return 
       {pandoc.RawInline("tex", '\\begin{simpletextbox}{'..ttt.type..'}')}
        ..pandoctitle(ttt)
    end,
   endBlock = function(ttt)
+    local texstring = "\\end{cnb"..ttt.type.."}"
+    print(texstring)
     return pandoc.RawInline("tex","\\end{simpletextbox}")
   end ,
 
 -- make latex code that generates new class environment
-  makeclass = function(ttt)
+  makeclass = function(ttt, cls)
+    cls=cls or "Theorem"
     -- local opt = ttt.options ist hier nicht notwendig
-    dev.showtable(ttt)
-    local envname = "\\cnb"..ttt.class
+    --dev.showtable(ttt)
+    local envname = "\\cnb"..cls
     local result = "\\newenvironment{"..envname.."}[2][]"..
-         "{\\begin{simpletextbox}[#1]#2\\newline}".."{\\end{\\simpletextbox}}"
+         "{\\begin{simpletextbox}[#1]{"..cls.."}#2".."{\\end{\\simpletextbox}}"
     print(result)     
-    return(result)
+    --return(result)
   end
 }
 
@@ -64,7 +73,17 @@ postit.html = {
    end,
   endBlock = function(ttt)
    return pandoc.RawInline("html", '</div>') 
-  end 
+  end ,
+
+  makeclass = function(ttt, cls)
+    cls=cls or "Theorem"
+    -- local opt = ttt.options ist hier nicht notwendig
+    local envname = "cnb-"..cls
+    local result = "."..envname.."{\n"..
+         "stuff=stiff\n".."}"
+    print(result)     
+    --return(result)
+  end
 }
 
 return postit
