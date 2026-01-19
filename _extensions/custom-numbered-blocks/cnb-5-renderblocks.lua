@@ -58,7 +58,7 @@ local insertBoxtypesPandoc = function(doc)
     quarto.doc.use_latex_package("tcolorbox","many")
     -- now a workaround for ul from soul that clashes with tcolorbox
     quarto.doc.include_text("in-header", 
-       "\\renewcommand{\\ul}[1]{\\underline{#1}} % because soul conflicts with tcolorbox")
+       "\\ifdefined\\ul\\renewcommand{\\ul}[1]{\\underline{#1}}\\fi % because soul conflicts with tcolorbox")
     for _, val in pairs(cnbx.boxtypes) do
        includefile = val.render.headerincludes
        if includefile ~= nil then
