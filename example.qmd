@@ -81,7 +81,7 @@ Two new ways a custom block can be rendered are available now:
 
 
 
-::: {.Feature }
+::: {.Feature}
 
 #### Numbering: cross reference overhaul with slightly changed behaviour
 
@@ -102,9 +102,9 @@ Default numbering can be switched off for the whole class by setting the `number
 
 Crossreferences may need a re-run to update.
 
-::: {.NewFeature .unnumbered}
+::: {.NewFeature}
 ### Nested blocks may be numbered
-With the new version, nested blocks are numbered. This does not always make sense -- you can and probably should alter this behaviour by specifying class `.unnumbered`, because inner blocks come first in numbering sequence,  not necessarily logical from a reader perspective.
+With the new version, nested blocks are numbered within the enclosing parent block, if the parent block is also numbered. To suppress numbers,  specify class `.unnumbered` as usual.
 :::
 
 :::

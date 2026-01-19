@@ -85,6 +85,7 @@ local doCounting = function(el)
   local prefixstr =""
   local notnumbered
   local headid
+  local parentid
   --local bxty, BoxDef, newattribs, UseAttribs
   
   ---------- headers ---------
@@ -129,8 +130,11 @@ local doCounting = function(el)
       info.file = cnbx.processedfile -- for book crossreferences
       
       info.cnbclass = cls
+      
+      parentid = el.attributes["_nested"]
+     -- if parentid then print("parent is "..parentid) end
 
-      notnumbered = uti.hasclass(el, "unnumbered") or not ClassDef.numbered
+      notnumbered = uti.hasclass(el, "unnumbered") or not ClassDef.numbered or parentid ~= nil
       if notnumbered then
         info.prefix = ""
         info.counter = ""
@@ -169,6 +173,46 @@ local doCounting = function(el)
   end
   return(el)  
 end
+
+
+local childfilter = {
+  traverse="topdown",
+  Div = function (el)
+    local parentid, childid, info, prefix, prefixstr, cls
+    cls = cnbx.is_cunumblo(el)
+    if cls then
+      info = cnbx.xref[el.identifier]
+      parentid = el.attributes["_nested"]
+      if parentid then print("parent is "..parentid) 
+        childid = el.attributes["_childid"]
+        if childid then print("childid = "..childid) 
+          prefix = cnbx.xref[parentid].refnumber
+          info.prefix = prefix
+          info.counter = childid
+          if prefix ~="" then prefixstr = prefix.."." else prefixstr = "" end
+          info.refnumber = prefixstr..tostring(childid)
+         if el.attributes.tag ~= nil then 
+          info.tag = el.attributes.tag
+          if info.tag ~= "" then info.refnumber = info.tag end
+        end
+            -- getting reflabel and label
+        label = el.attributes.label
+        if label == nil then
+          label = cnbx.classDefaults[cls].label
+        end
+        info.label = label
+        
+        reflabel = el.attributes.reflabel
+        if reflabel == nil then
+          reflabel = info.label
+        end
+        info.reflabel = reflabelend
+        end   
+    end
+    end
+    return el
+  end  
+}
 
 
 local function resolvelatexref(data)
@@ -248,6 +292,7 @@ numberingfilter.Pandoc = function(doc)
   --dev.showtable(cnbxref, "xref")
   initcounters(cnbx.chapno)
   doc:walk {Block = doCounting}
+  doc = doc:walk(childfilter)
   -- doc:walk {RawInline = resolveref}
   --dev.showtable(cnbx.xref, "xref")
   if cnbx.isbook then writexref(cnbx.xreffile) end

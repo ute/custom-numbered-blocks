@@ -8,6 +8,8 @@
 
  ]]--
 
+uti = require("cnb-utilities")
+
 local islayout = function(attr)
     if attr ~= nil then
         for k, _ in pairs(attr) do
@@ -19,13 +21,28 @@ end
 
 --local indi = 0
 
+local parentid =""
+local parentisnumbered = true
+local childid = 1
+
 local sanitize_nested = {
- traverse ='topdown',   
+ traverse ='topdown',
  Div =  function(el)
-     if islayout(el.attributes) then
+    local cls, numbered
+    if islayout(el.attributes) then
         el.attributes["fig-pos"] = "H"
-    end
-    -- el.attributes["_nested"] = "true" -- for later use
+    else
+        cls = cnbx.is_cunumblo(el) 
+        if cls then
+            el.attributes["_nested"] = parentid -- for later use
+            numbered = not uti.hasclass(el, "unnumbered") and
+                        cnbx.classDefaults[cls].numbered and parentisnumbered
+            if numbered then
+               el.attributes["_childid"] = childid
+               childid = childid + 1
+            end
+        end    
+    end  
     -- el.identifier="nest"..tostring(indi)
     -- indi = indi+1
     return(el)
@@ -36,7 +53,9 @@ local divnest = function(el)
  --   local ela = el.attributes
     local cls = cnbx.is_cunumblo(el)
     if cls then
-  --      indi = indi+1   
+       parentid = el.identifier
+       childid = 1
+       parentisnumbered = not uti.hasclass(el, "unnumbered") and cnbx.classDefaults[cls].numbered 
        return el:walk(sanitize_nested), true
     end
     -- if(islayout(ela)) then print("Achtung, layout") 
