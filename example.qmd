@@ -10,10 +10,10 @@ format:
 
 extensions:
   custom-numbered-blocks:
-    nestednumber: alpha a
+    nestednumber: alpha
     appearances:
       mathblock:
-        containter: quartothmlike
+        container: quartothmlike
       specialmathblock:
         container: foldbox
         collapse: true
