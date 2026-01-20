@@ -31,7 +31,6 @@ require "cnb-global"
 local readxref = function(filename)
   local xrefs ={}
   -- print("reading the xref "..filename)
-  
   --if cnbx.isbook then
     local file = io.open(filename,"r")
     if file ~= nil then 

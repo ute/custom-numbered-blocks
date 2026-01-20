@@ -73,7 +73,52 @@ end end
 -- counterstring[1] = "5"
 
 
-numberingfilter.traverse = "topdown"
+--- add label and reflabel to info
+--- @param el pandoc object element (div)
+--- @param cls string  class
+--- @param info table to attach reflabel and label to
+--- @return info updated table
+local makelabels = function(el, cls, info)
+  local label, reflabel
+  label = el.attributes.label
+  if label == nil then
+    label = cnbx.classDefaults[cls].label
+  end
+  info.label = label
+
+  reflabel = el.attributes.reflabel
+  if reflabel == nil then
+    reflabel = info.label
+  end
+  info.reflabel = reflabel 
+  return(info)      
+end
+
+--- make info entries prefix, refnum, counter, tag
+--- @param el pandoc object (div)
+--- @param cnt integer counter
+--- @param prefix string to put in front of counter
+--- @param info table to populate with prefix, counter, refnumber, tag
+--- @return info updated table
+local makerefnum = function(el, cnt, theprefix, info, alpha)
+  local prefixstr = ""
+  local cntstring = ""
+  if alpha 
+    then cntstring = string.char(cnt + 96)
+    else cntstring = tostring(cnt)
+  end
+  info.prefix = theprefix
+  info.counter = cnt
+  if theprefix ~="" then prefixstr = theprefix.."." else prefixstr = "" end
+  info.refnumber = prefixstr..cntstring
+  if el.attributes.tag ~= nil then 
+     info.tag = el.attributes.tag
+     if info.tag ~= "" then info.refnumber = info.tag end
+  end
+  return(info)      
+end
+
+
 
 --numberingfilter.Block = function(el)
 local doCounting = function(el)  
@@ -81,8 +126,7 @@ local doCounting = function(el)
   local info
   local secno = {}
   local cls 
-  local cntkey, cnts, ClassDef, reflabel
-  local prefixstr =""
+  local cntkey, cnts, ClassDef
   local notnumbered
   local headid
   local parentid
@@ -143,32 +187,11 @@ local doCounting = function(el)
         -- blkcount = blkcount + 1
         cnts = cnbx.counter[cntkey] +1
         cnbx.counter[cntkey] = cnts
-        info.prefix = prefix
-        info.counter = cnts
-        if prefix ~="" then prefixstr = prefix.."." else prefixstr = "" end
-        info.refnumber = prefixstr..cnts 
-        -- check if a tag is given 
-        if el.attributes.tag ~= nil then 
-          info.tag = el.attributes.tag
-          if info.tag ~= "" then info.refnumber = info.tag end
-        end
+        info = makerefnum (el, cnts, prefix, info)       
       end
       
-      -- getting reflabel and label
-      label = el.attributes.label
-      if label == nil then
-        label = ClassDef.label
-      end
-      info.label = label
-      
-      reflabel = el.attributes.reflabel
-      if reflabel == nil then
-        reflabel = info.label
-      end
-      info.reflabel = reflabel
-      
-    --  print("counted a cnbx "..info.reflabel.." "..info.refnumber)
-      
+      info = makelabels(el, cls, info)
+           
     end
   end
   return(el)  
@@ -178,7 +201,13 @@ end
 local childfilter = {
   traverse="topdown",
   Div = function (el)
-    local parentid, childid, info, prefix, prefixstr, cls
+    local parentid, childid, info, cls--, alphanum
+    -- alphanum = cnbx.yaml.nestednumber
+    -- if alphanum == nil then alphanum = false
+    -- elseif type(alphanum) == "table" then 
+    --   alphanum = (pandoc.utils.stringify(alphanum) == "alpha")
+    -- end
+       
     cls = cnbx.is_cunumblo(el)
     if cls then
       info = cnbx.xref[el.identifier]
@@ -186,31 +215,13 @@ local childfilter = {
       if parentid then -- print("parent is "..parentid) 
         childid = el.attributes["_childid"]
         if childid then -- print("childid = "..childid) 
-          prefix = cnbx.xref[parentid].refnumber
-          info.prefix = prefix
-          info.counter = childid
-          if prefix ~="" then prefixstr = prefix.."." else prefixstr = "" end
-          info.refnumber = prefixstr..tostring(childid)
-         if el.attributes.tag ~= nil then 
-          info.tag = el.attributes.tag
-          if info.tag ~= "" then info.refnumber = info.tag end
-        end
-            -- getting reflabel and label
-        label = el.attributes.label
-        if label == nil then
-          label = cnbx.classDefaults[cls].label
-        end
-        info.label = label
-        
-        reflabel = el.attributes.reflabel
-        if reflabel == nil then
-          reflabel = info.label
-        end
-        info.reflabel = reflabelend
-        end   
+          info = makerefnum (el, childid, cnbx.xref[parentid].refnumber, info, 
+          cnbx.alphanum)
+        end  
+      end      -- getting reflabel and label
+      info = makelabels(el, cls, info)
     end
-    end
-    return el
+    return(el)
   end  
 }
 
@@ -285,6 +296,8 @@ local writexref = function(filename)
   end
 end
 
+
+numberingfilter.traverse = "topdown"
 
 numberingfilter.Pandoc = function(doc)
 --  readxref()

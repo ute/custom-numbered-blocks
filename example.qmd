@@ -10,6 +10,7 @@ format:
 
 extensions:
   custom-numbered-blocks:
+    nestednumber: alpha
     appearances:
       mathblock:
         containter: quartothmlike
@@ -104,7 +105,11 @@ Crossreferences may need a re-run to update.
 
 ::: {.NewFeature}
 ### Nested blocks may be numbered
-With the new version, nested blocks are numbered *within* the enclosing parent block, if the parent block is also numbered. To suppress numbers,  specify class `.unnumbered` as usual.
+With the new version, nested blocks are numbered *within* the enclosing parent block, if the parent block is also numbered. With the yaml subkey `nestednumber`, you can control this behaviour. Set
+
+  - `nestednumber: false` to suppress numbering of nested blocks
+  - `nestednumber: alpha` to use a, b, c,... for numbering nested blocks
+  
 :::
 
 :::

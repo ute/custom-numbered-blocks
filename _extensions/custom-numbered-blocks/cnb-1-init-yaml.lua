@@ -83,12 +83,27 @@ end
 
 return{
 Meta = function(meta)
-  local myyaml
+  local myyaml, nestnum
 
   --print("1. Init Meta get the yaml")
   myyaml = cunumblo_yaml(meta)
   cnbx.yaml = myyaml
  
+-- decide if nested blocks should be counted, and if the counter should be alpha
+  nestnum = myyaml.nestednumber
+  cnbx.numnest = true
+  cnbx.alphanum = false  
+  if nestnum ~= nil then 
+    if type(nestnum) == "table" 
+    then nestnum = pandoc.utils.stringify(nestnum)
+    else nestnum = tostring(nestnum)      
+    end
+    if nestnum ~= "false" then 
+      cnbx.alphanum = nestnum == "alpha"
+    else cnbx.numnest = false  
+    end
+  end  
+
 --  -- get numbering depth
 --   cnbx.numberlevel = 0
 --   if meta.crossref then

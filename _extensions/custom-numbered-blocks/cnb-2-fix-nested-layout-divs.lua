@@ -35,7 +35,7 @@ local sanitize_nested = {
         cls = cnbx.is_cunumblo(el) 
         if cls then
             el.attributes["_nested"] = parentid -- for later use
-            numbered = not uti.hasclass(el, "unnumbered") and
+            numbered = cnbx.numnest and not uti.hasclass(el, "unnumbered") and
                         cnbx.classDefaults[cls].numbered and parentisnumbered
             if numbered then
                el.attributes["_childid"] = childid
@@ -58,9 +58,6 @@ local divnest = function(el)
        parentisnumbered = not uti.hasclass(el, "unnumbered") and cnbx.classDefaults[cls].numbered 
        return el:walk(sanitize_nested), true
     end
-    -- if(islayout(ela)) then print("Achtung, layout") 
-    --      ela["fig-pos"] = "H"
-    -- end
 end
 
 return{

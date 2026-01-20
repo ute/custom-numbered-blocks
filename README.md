@@ -28,7 +28,9 @@ And documentation will be extended :-)
 <details><summary style ="font-size:1.2rem;">v. 0.7.1</summary>
 
 Change: 
-- nested custom blocks are numbered within their parent block, if the parent block is numbered
+- nested custom blocks are numbered within their parent block, if the parent block is numbered. With the yaml subkey `nestednumber`, you can control this behaviour:
+  - `nestednumber: false` sets all nested blocks to unnumbered
+  - `nestednumber: alpha` uses a, b, c,... for numbering nested blocks
 
 Issue solved:
 - using layout blocks within custom numbered blocks does no longer give a LaTeX error with pdf format (#16 reported by @EngineerJB)
