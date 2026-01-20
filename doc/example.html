@@ -37,25 +37,28 @@ ul.task-list li input[type="checkbox"] {
 <link href="example_files/libs/quarto-contrib/foldbox/foldbox.css" rel="stylesheet">
 <link href="example_files/libs/quarto-contrib/simpletextbox/simpletextbox.css" rel="stylesheet">
 <style>
-.Definition {
-  --color1: #d999d3;
-  --color2: #a01793;
-}
-.Theorem {
-  --color1: #c0c0c0;
-  --color2: #808080;
-}
 .Conjecture {
   --color1: #b88bde;
   --color2: #584eab;
+}
+.NewFeature {
+  --color1: #cce7b1;
+  --color2: #86b754;
+}
+.Definition {
+  --color1: #d999d3;
+  --color2: #a01793;
 }
 .Feature {
   --color1: #c0c0c0;
   --color2: #808080;
 }
-.NewFeature {
-  --color1: #cce7b1;
-  --color2: #86b754;
+.Theorem {
+  --color1: #c0c0c0;
+  --color2: #808080;
+}
+.Tip {
+  --color1: #faec6b;
 }
 .TODO {
   --color1: #e7b1b4;
@@ -64,9 +67,6 @@ ul.task-list li input[type="checkbox"] {
 .Corollary {
   --color1: #c0c0c0;
   --color2: #808080;
-}
-.Tip {
-  --color1: #faec6b;
 }
 </style>
 
@@ -153,8 +153,12 @@ window.Quarto = {
 <p>Default numbering can be switched off for the whole class by setting the <code>numbered</code> to false, or for an individual block by adding the class <code>unnumbered</code>.</p>
 <p>Crossreferences may need a re-run to update.</p>
 <div id="nested-blocks-may-be-numbered" class="NewFeature" data-_nested="numbering-cross-reference-overhaul-with-nested-counters" data-_childid="1">
-<details class="NewFeature fobx-default closebutton"><summary><strong>New feature 1.2.1: </strong>Nested blocks may be numbered</summary><div>
-<p>With the new version, nested blocks are numbered <em>within</em> the enclosing parent block, if the parent block is also numbered. To suppress numbers, specify class <code>.unnumbered</code> as usual.</p>
+<details class="NewFeature fobx-default closebutton"><summary><strong>New feature 1.2.a: </strong>Nested blocks may be numbered</summary><div>
+<p>With the new version, nested blocks are numbered <em>within</em> the enclosing parent block, if the parent block is also numbered. With the yaml subkey <code>nestednumber</code>, you can control this behaviour. Set</p>
+<ul>
+<li><code>nestednumber: false</code> to suppress numbering of nested blocks</li>
+<li><code>nestednumber: alpha</code> to use a, b, c,… for numbering nested blocks</li>
+</ul>
 </div></details>
 </div>
 </div></details>
@@ -174,7 +178,7 @@ window.Quarto = {
 <details class="NewFeature fobx-default closebutton"><summary><strong>New feature 1.4: </strong><code>longref</code> for cross references that include block name</summary><div>
 <p>Cross references have previously only been possible in LaTeX style, via <code>\ref{thelabel}</code>. Now a new variant, <code>\longref{thelabel}</code>, has been added, that adds the name of the environment as a reference prefix to the resolved link. By default, the reference prefix is equal to the environment name, which can be changed as attribute <code>label</code>. The reference prefix can be redefined via the attribute <code>reflabel</code>.</p>
 <div id="cnb-7-TODO" class="TODO" title="future plans for cross references" data-_nested="bref" data-_childid="1">
-<div class="simpletextbox"><u><strong>To do 1.4.1: </strong>future plans for cross references</u>
+<div class="simpletextbox"><u><strong>To do 1.4.a: </strong>future plans for cross references</u>
 <ul class="task-list">
 <li><label><input type="checkbox">should I change <code>label</code> to <code>blockname</code>? It would be breaking for those who have used it.</label></li>
 <li><label><input type="checkbox">consider making crossreferences using <code>@thelabel</code> as in plain quarto. Use the pandoc facilities for that</label></li>
@@ -214,7 +218,7 @@ Warning
 <!-- end of safeguarding div -->
 <p></p>
 <p><a href="#cnb-1-NewFeature"><strong>New feature 1.1</strong></a>: New options for block appearance</p>
-<p><a href="#nested-blocks-may-be-numbered"><strong>New feature 1.2.1</strong></a>: Nested blocks may be numbered</p>
+<p><a href="#nested-blocks-may-be-numbered"><strong>New feature 1.2.a</strong></a>: Nested blocks may be numbered</p>
 <p><a href="#numbering-cross-reference-overhaul-with-nested-counters"><strong>Change 1.2</strong></a>: Numbering: cross reference overhaul with nested counters</p>
 <p><a href="#change-in-color-specification"><strong>Change</strong></a>: Change in color specification</p>
 <p><a href="#custom-appearances"><strong>New feature 1.3</strong></a>: Custom <em>appearances</em></p>
