@@ -42,6 +42,7 @@ return{
   , require("cnb-1-init-chapters") -- Meta: set up chapter numbers and classes   
   , require("cnb-1-init-xref")     -- Meta: for books read crossref information from other chapters
   , require("cnb-2-register-divs") -- make indices for all cunumblo divs, register raw title
+  , require("cnb-2-fix-nested-layout-divs") -- fix the floating figure type for nested layout blocks
   , require("cnb-3-crossref")      -- follow headers and count cross references. Resolve \ref
   , require("cnb-4-prepare-render") -- filter element attributes and register rendered titles 
   , require("cnb-5-renderblocks")  -- do the rendering, register colors 

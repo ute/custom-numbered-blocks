@@ -25,7 +25,18 @@ And documentation will be extended :-)
 
 ## News
 
-### v. 0.7.0
+<details><summary style ="font-size:1.2rem;">v. 0.7.1</summary>
+
+Change: 
+- nested custom blocks are numbered within their parent block, if the parent block is numbered. With the yaml subkey `nestednumber`, you can control this behaviour:
+  - `nestednumber: false` sets all nested blocks to unnumbered
+  - `nestednumber: alpha` uses a, b, c,... for numbering nested blocks
+
+Issue solved:
+- using layout blocks within custom numbered blocks does no longer give a LaTeX error with pdf format (#16 reported by @EngineerJB)
+</details>
+
+<details><summary style ="font-size:1.2rem;">v. 0.7.0</summary>
 
 The internal mechanism has been virtually completely rewritten. This solves a couple of old issues, introduces new features and opens up for future enhancements and extensions.
 
@@ -34,10 +45,11 @@ Major new features:
   - appearance definitions
   - new text container types for rendering blocks, e.g. `quartothmlike` that gives an appearance similar to quarto theorem divs
  
-Issues solved
+Issues solved:
 
   - citations not resolved in block titles [issue raised by @ntq2022](https://github.com/ute/custom-numbered-blocks/issues/7#issue-1967404151)
   - enable including the 'label' for the environment in the reference link [suggestion by @dhodge180](https://github.com/ute/custom-numbered-blocks/issues/14#issuecomment-3386057503)
+</details>
 
 See more in the [example.qmd](https://ute.github.io/custom-numbered-blocks/example.qmd)
 
@@ -202,7 +214,9 @@ For single file Quarto documents, the numbering according to section number can 
   ::::
   other stuff
   ```
-- To use `layout-cols` blocks within custom numbered blocks, you need to add the option `fig-pos="H"` to your column block, see [issue #16](https://github.com/ute/custom-numbered-blocks/issues/16)
+<!--  
+- To use `layout` blocks within custom numbered blocks, you need to add the option `fig-pos="H"` to your column block, see [issue #16](https://github.com/ute/custom-numbered-blocks/issues/16)
+  -->
   
 ## Similar quarto extensions
 
