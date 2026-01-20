@@ -10,7 +10,7 @@ format:
 
 extensions:
   custom-numbered-blocks:
-    nestednumber: alpha
+    nestednumber: alpha a
     appearances:
       mathblock:
         containter: quartothmlike

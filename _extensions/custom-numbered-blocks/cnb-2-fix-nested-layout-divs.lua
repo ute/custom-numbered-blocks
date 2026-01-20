@@ -38,7 +38,7 @@ local sanitize_nested = {
             numbered = cnbx.numnest and not uti.hasclass(el, "unnumbered") and
                         cnbx.classDefaults[cls].numbered and parentisnumbered
             if numbered then
-               el.attributes["_childid"] = childid
+               el.attributes["_childid"] = tostring(childid)
                childid = childid + 1
             end
         end    

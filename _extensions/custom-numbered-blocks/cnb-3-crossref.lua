@@ -74,10 +74,10 @@ end end
 
 
 --- add label and reflabel to info
---- @param el pandoc object element (div)
+--- @param el userdata (pandoc object: div)
 --- @param cls string  class
 --- @param info table to attach reflabel and label to
---- @return info updated table
+--- @return table info updated table
 local makelabels = function(el, cls, info)
   local label, reflabel
   label = el.attributes.label
@@ -215,7 +215,7 @@ local childfilter = {
       if parentid then -- print("parent is "..parentid) 
         childid = el.attributes["_childid"]
         if childid then -- print("childid = "..childid) 
-          info = makerefnum (el, childid, cnbx.xref[parentid].refnumber, info, 
+          info = makerefnum (el, tonumber(childid), cnbx.xref[parentid].refnumber, info, 
           cnbx.alphanum)
         end  
       end      -- getting reflabel and label
