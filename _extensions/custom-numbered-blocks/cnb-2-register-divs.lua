@@ -48,7 +48,7 @@ function registerdivs.Div(el)
   local cls = cnbx.is_cunumblo(el)
   local xref = cnbx.xref
   local info = {}
-  local eltitle
+  local eltitle, fakeheader
     
   if cls then
     divcount = divcount+1
@@ -71,7 +71,13 @@ function registerdivs.Div(el)
     -- save the preliminary mark down title without resolved references
     eltitle = nil
     if el.attributes then eltitle = el.attributes.title end
-    if eltitle == nil then  
+    -- if a title was given insert it as header
+  --   if eltitle ~= nil then
+  --     fakeheader = pandoc.Header(4, quarto.utils.as_inlines(eltitle))
+  --     fakeheader.identifier = "___doomed-for-removal"
+  --     el.content:insert(1,fakeheader)
+  --   else  
+   if eltitle == nil then  
       el1 = el.content[1]
       if el1.t=="Header" then 
           --  tag for later: title-from-header

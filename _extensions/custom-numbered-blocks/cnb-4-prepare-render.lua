@@ -145,9 +145,14 @@ local makeblocktitle = function(el)
         table.remove(el.content, 1) 
       else 
       -- mdtitle = ""
-      pandoctitle = {pandoc.Str(info.mdtitle)}
+      -- pandoctitle = {pandoc.Str(info.mdtitle)}
+      -- pandoctitle = stringToInlines(info.mdtitle)
+      pandoctitle = quarto.utils.as_inlines(info.mdtitle)
+    --  print("     mdtitle: "..info.mdtitle.." thus pandoctitle "..pandoc.utils.stringify(pandoctitle))
     end
   end
+   --print("pandoctitle: "..pandoc.utils.stringify(pandoctitle))
+     
     --info.mdtitle = mdtitle
   info.pandoctitle = pandoctitle
   return(el)

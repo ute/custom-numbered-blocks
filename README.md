@@ -200,6 +200,7 @@ For single file Quarto documents, the numbering according to section number can 
 ## Limitations
 
 - Cross-reference labels that are interpretable for Quarto, such as labels starting with `thm-` or `fig-`, cannot be used with this extension, since they will be processed by Quarto. This results in unexpected output, see [this issue by gyu-eun-lee](https://github.com/ute/custom-numbered-blocks/issues/8).
+- Markdown in a "title=" attribute is not resolved (see [this issue  by @EngineerJB](https://github.com/ute/custom-numbered-blocks/issues/17)). To include math formulae, references, citations or markdown in a block title, put the block title as header before the block contents.
   
 ## Workarounds and precautions to avoid clashes with other extensions
 - If you use [parse-latex](https://github.com/tarleb/parse-latex), make sure that custom-numbered-blocks comes first in the filter pipeline to process LaTeX references (`\ref`).
