@@ -1,0 +1,28 @@
+$schema: https://m.canouil.dev/quarto-wizard/assets/schema/v1/extension-schema.json
+
+options:
+  custom-numbered-blocks:
+    type: object
+    description: Configuration for custom numbered block classes, groups, and appearances.
+    properties:
+      classes:
+        type: object
+        description: Named custom block classes and their per-class settings.
+      groups:
+        type: object
+        description: Group definitions for shared counters and default appearance.
+      appearances:
+        type: object
+        description: Reusable appearance presets for custom numbered blocks.
+
+attributes:
+  Div:
+    label:
+      type: string
+      description: Display label prefix for a specific numbered block instance.
+    appearance:
+      type: string
+      description: Appearance preset name used for this block instance.
+    listin:
+      type: string
+      description: List target name where this block should be included.
