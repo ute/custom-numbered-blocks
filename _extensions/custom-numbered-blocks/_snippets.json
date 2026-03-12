@@ -1,0 +1,22 @@
+{
+  "Custom numbered blocks setup": {
+    "prefix": "setup",
+    "body": [
+      "custom-numbered-blocks:",
+      "  classes:",
+      "    ${1:example}:",
+      "      label: \"${2:Example}\""
+    ],
+    "description": "Define a basic numbered block class in document metadata."
+  },
+  "Custom numbered block": {
+    "prefix": "block",
+    "body": [
+      "::: {.${1:example} #${2:ex-basic}}",
+      "## ${3:Example title}",
+      "${4:Block content.}",
+      ":::"
+    ],
+    "description": "Insert a numbered custom block with class and identifier."
+  }
+}
